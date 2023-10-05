@@ -10,10 +10,10 @@ Contributors / Licensing
 
 Authors:
     
-* Firstname Lastname
-* Firstname Lastname
-* Firstname Lastname
-* Firstname Lastname
-* Firstname Lastnmae
+* Ogooluwa Samuel
+* Rahul Korde
+* Glory Omosomwan
+* Jefferson Fong 
+* Matheus Duncan
 
 Generally everything is LICENSE'D under the ______________.
