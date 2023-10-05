@@ -16,4 +16,4 @@ Authors:
 * Jefferson Fong 
 * Matheus Duncan
 
-Generally everything is LICENSE'D under the ______________.
+Generally everything is LICENSE'D under the  Apache 2 license by Abram Hindle.
