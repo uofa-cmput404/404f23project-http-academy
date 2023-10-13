@@ -5,6 +5,8 @@ CMPUT 404 Project: Social Distribution
 
 [Project requirements](https://github.com/uofa-cmput404/project-socialdistribution/blob/master/project.org) 
 
+[Team Wiki](https://github.com/uofa-cmput404/404f23project-http-academy/wiki)
+
 Contributors / Licensing
 ========================
 
