@@ -34,6 +34,6 @@ jobs:
       run: npm run build --if-present
       working-directory: frontend
     - name: Run React Tests
-      run: npm test --passWithNoTests
+      run: npm test
       working-directory: frontend
       
