@@ -29,3 +29,12 @@ jobs:
       run: |
         cd backend
         python manage.py test
+
+
+# in
+separet e foldeers for them
+wach comments 
+
+serrializers.py
+ dont' need micro services. need macro services
+
