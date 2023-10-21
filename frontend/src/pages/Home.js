@@ -1,15 +1,23 @@
 import React, { useState } from "react";
 import Post from "../components/Post";
 import "../css/Home.css"
+import { useNavigate } from "react-router-dom";
 
 export default function Home() {
 
-    // TODO: replace these default test values with data from the backend
-    const [posts, setPosts] = useState([{title: "Test", body: "Body"}]);
+    // TODO: fetch posts from backend
+    const defaultPosts = [
+        {title: "Test", body: "Body"},
+        {title: "Test", body: "Body"},
+        {title: "Test", body: "Body"},
+        {title: "Test", body: "Body"},
+    ];
+    const [posts, setPosts] = useState(defaultPosts);
 
-    const addPost = (title, body) => {
-        setPosts([...posts, {title, body}]);
-    };
+    let navigate = useNavigate();
+    const createPost = () => {
+        navigate("/post/create");
+    }
 
     const postsChunks = posts.reduce((resultArray, item, index) => {
         const chunkIndex = Math.floor(index / 3);
@@ -33,7 +41,9 @@ export default function Home() {
                     ))}
                 </div>
             ))}
-            <button onClick={() => addPost("Test", "Body")}>Add Post</button>
+            <button onClick={() => createPost()}>Add Post</button>
+            <div className="square">
+            </div>
         </div>
     );
 }

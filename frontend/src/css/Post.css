@@ -1,11 +1,16 @@
+.card {
+    width: fit-content;
+    flex: 0.33;
+    margin: 2px;
+}
+
 .card-body {
     display: flex;
     flex-direction: column;
     justify-content: center;
+    align-items: center;
     background-color: aliceblue;
-    width: 100%;
-    margin: 1px;
-    flex: 1;
+    max-height: 300px;
 }
 
 .card-body:hover {
@@ -13,6 +18,7 @@
     background-color: antiquewhite;
 }
 
-h2, p {
+.card-title, .card-text {
     text-align: center;
+    width: fit-content;
 }
