@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import "../css/EditPost.css";
 import axios from 'axios'
+import postService from '../services/posts'
 
 export default function EditPost({posts}) {
     const [post, setPost] = useState(null);
@@ -10,13 +11,13 @@ export default function EditPost({posts}) {
     let navigate = useNavigate();
     let { id } = useParams();
 
-    const url = `http://localhost:3001/posts/${id}`
+
 
     useEffect(() => {
-        axios.get(url)
-          .then(response => {
-            console.log("Post fetched for editing", response.data);
-            setPost(response.data);
+        postService.get(id)
+          .then(retrievedPost => {
+            console.log("Post fetched for editing", retrievedPost);
+            setPost(retrievedPost);
           })
           .catch(error => {
             console.log("Error fetching post for editing", error);
@@ -34,9 +35,9 @@ export default function EditPost({posts}) {
         }
         
         const updatedPost = {...post, title: updatedtitle, body: updatedbody}
-        axios.put(url, updatedPost)
-            .then(response => {
-            setPost(posts.map(post => post.id !== id ? post : response.data));
+        postService.update(id, updatedPost)
+            .then(newPost => {
+            setPost(posts.map(post => post.id !== id ? post : newPost.data));
             })
             .catch(error => {
             console.log("Error updating post", error);

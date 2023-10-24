@@ -1,10 +1,14 @@
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../css/MakePost.css"
 import getCurrentDateTime from "../utils/datetime";
 import axios from "axios";
+import postService from '../services/posts'
 
 export default function MakePost() {
+
+	const [post, setPost] = useState([])
+
 
 	let navigate = useNavigate();
 	const addPost = (title, body) => {
@@ -33,9 +37,9 @@ export default function MakePost() {
 			comments: []  
 		}
 
-		axios.post('http://localhost:3001/posts', postobject)
-			.then(response => {
-				console.log(response)
+		postService.create(postobject)
+			.then(postCreated => {
+				setPost(post.concat(postCreated))
 			})
 	}
 	const returnHome = () => {

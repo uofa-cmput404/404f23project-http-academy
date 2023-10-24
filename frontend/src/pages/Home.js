@@ -3,27 +3,18 @@ import Post from "../components/Post";
 import "../css/Home.css"
 import { useNavigate } from "react-router-dom";
 import axios from 'axios'
+import PostService from '../services/posts'
 
 export default function Home() {
-
-    // TODO: fetch posts from backend
-    // const defaultPosts = [
-    //     {title: "Test", body: "Body", id: 1},
-    //     {title: "Test", body: "Body", id: 2},
-    //     {title: "Test", body: "Body", id: 3},
-    //     {title: "Test", body: "Body", id: 4},
-    // ];
 
     const [posts, setPosts] = useState([]);
 
     let navigate = useNavigate();
 
     useEffect(() => {
-        axios.get('http://localhost:3001/posts')
-        .then(response => {
-            console.log('promise fulfilled')
-            setPosts(response.data)
-            console.log('here is my post', response.data)
+        PostService.getAll()
+        .then(post => {
+            setPosts(post)
         })
     }, [])
 
