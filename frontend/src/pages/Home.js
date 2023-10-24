@@ -19,11 +19,47 @@ export default function Home() {
     }, [])
 
    
+// import axiosInstance from "../axiosInstance";
+
+// export default function Home() {
+
+//     // TODO: fetch posts from backend
+//     const defaultPosts = [
+//         {title: "Test", body: "Body"},
+//         {title: "Test", body: "Body"},
+//         {title: "Test", body: "Body"},
+//         {title: "Test", body: "Body"},
+//     ];
+//     const [posts, setPosts] = useState(defaultPosts);
+
+//     // on page load, fetch posts from backend
+//     useEffect(() => {
+//         axiosInstance.get('posts/').then(response => {
+//             console.log(response);
+//             setPosts(response.data);
+//         }).catch(error => {
+//             console.log(error);
+//         }
+//         )}, []);
 
 
     const createPost = () => {
         navigate("/post/create");
     }
+
+
+
+    // const postsChunks = posts.reduce((resultArray, item, index) => {
+    //     const chunkIndex = Math.floor(index / 3);
+
+    //     if (!resultArray[chunkIndex]) {
+    //         resultArray[chunkIndex] = [];
+    //     }
+
+    //     resultArray[chunkIndex].push(item);
+
+    //     return resultArray;
+    // }, []);
 
     return (
         <div className="posts-container">
@@ -38,37 +74,5 @@ export default function Home() {
             </div>
         </div>
     );
-    
-
-    // const postsChunks = posts.reduce((resultArray, item, index) => {
-    //     const chunkIndex = Math.floor(index / 3);
-
-    //     if (!resultArray[chunkIndex]) {
-    //         resultArray[chunkIndex] = [];
-    //     }
-
-    //     resultArray[chunkIndex].push(item);
-
-    //     return resultArray;
-    // }, []);
-
-    // return (
-    //     <div className="posts-container">
-    //         <h1>Home</h1>
-    //         {/* {posts.map((chunk, chunkIndex) => (
-    //             <div key={chunkIndex} className="posts-row">
-    //                 {chunk.map((post, postIndex) => (
-    //                     <Post key={postIndex} post={post}/>
-    //                 ))}
-    //             </div>
-    //         ))} */}
-    //         {posts.map((post) => {
-    //             <Post key = {post.id} post = {post}/>
-    //         })}
-    //         <button onClick={() => createPost()}>Add Post</button>
-    //         <div className="square">
-    //         </div>
-    //     </div>
-    // );
 
 }
