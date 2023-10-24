@@ -3,6 +3,7 @@ import "../css/Post.css"
 import { Link } from 'react-router-dom'
 
 export default function Post({ post }) {
+    // TODO: Potentially move this into Post.css
     const neutral = {
         color: 'black',
         textDecoration: 'none'
