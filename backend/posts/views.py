@@ -58,3 +58,24 @@ def comment_detail(request, pk):
             return Response('Comment does not exist')
     else:
         return Response(serializer.data)
+    
+@api_view(['GET', 'POST', 'DELETE'])
+def like_post(request, pk):
+    post = Post.objects.get(id=pk)
+    if request.method == 'POST':
+        try:
+            post.likes += 1
+            post.save()
+            return Response('Post liked successfully')
+        except:
+            return Response('Post does not exist')
+    elif request.method == 'DELETE':
+        try:
+            post.likes -= 1
+            post.save()
+            return Response('Post unliked successfully')
+        except:
+            return Response('Post does not exist')
+    else:
+        likes = post.likes
+        return Response(likes)

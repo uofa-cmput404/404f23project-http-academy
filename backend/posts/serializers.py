@@ -5,7 +5,7 @@ class PostSerializer(serializers.ModelSerializer):
     # create a serializer for the Post model
     class Meta:
         model = Post
-        fields = ['id', 'author', 'published', 'title', 'content', 'contentType', 'categories', 'count', 'comments', 'visibility', 'unlisted']
+        fields = '__all__'
 
     # when a GET request is made, use the comments field and the CommentSerializer to return the comments
     def to_representation(self, instance):
@@ -14,6 +14,7 @@ class PostSerializer(serializers.ModelSerializer):
         if comments is not None:
             # get all comments with postId = instance.id
             representation['comments'] = CommentSerializer(comments, many=True).data
+            representation['count'] = len(comments)
         return representation
 
     def create(self, validated_data):
@@ -30,6 +31,7 @@ class PostSerializer(serializers.ModelSerializer):
         instance.comments = validated_data.get('comments', instance.comments)
         instance.visibility = validated_data.get('visibility', instance.visibility)
         instance.unlisted = validated_data.get('unlisted', instance.unlisted)
+        instance.likes = validated_data.get('likes', instance.likes)
         instance.save()
         return instance
     

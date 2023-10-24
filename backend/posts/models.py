@@ -12,8 +12,9 @@ class Post(models.Model):
     content = models.TextField(max_length=500)
     contentType = models.CharField(max_length=20, default='text/plain')
     categories = models.ForeignKey('Category', on_delete=models.CASCADE, default=None, null=True)
-    count = models.IntegerField(default=0) # number of comments
+    count = models.IntegerField(default=0)
     comments = models.ForeignKey('Comment', on_delete=models.CASCADE, default=None, null=True)
+    likes = models.IntegerField(default=0)
     visibility = models.CharField(max_length=100, default='PUBLIC')
     unlisted = models.BooleanField()
 
