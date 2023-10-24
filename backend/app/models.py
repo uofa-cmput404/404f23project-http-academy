@@ -8,3 +8,4 @@ class User(models.Model):
     displayName = models.CharField(max_length=100)
     github = models.CharField(max_length=100)
     profileImage = models.CharField(max_length=100)
+    user_id = models.AutoField(primary_key=True)
