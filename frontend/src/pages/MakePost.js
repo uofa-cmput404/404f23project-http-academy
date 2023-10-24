@@ -10,7 +10,6 @@ import FormControl from '@mui/material/FormControl';
 export default function MakePost() {
     const [post, setPost] = useState([]);
     const [title, setTitle] = useState("");
-    const [content, setContent] = useState("");
     const [contentType, setContentType] = useState("text/plain");
     const [visibility, setVisibility] = useState("Public");
 	const [imagePreview, setImagePreview] = useState(null)
