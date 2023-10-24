@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import Post from "../components/Post";
 import "../css/Home.css"
 import { useNavigate } from "react-router-dom";
-import axios from 'axios'
 import PostService from '../services/posts'
 
 export default function Home() {
