@@ -35,11 +35,15 @@ const update = (id, newObject) => {
 }
 
 
-
-
-export default {
-    getAll: getAll,
-    create: create, 
-    update: update,
-    get: get
-}
+const remove = (id) => {
+    const request = axios.delete(`${baseUrl}/${id}`);
+    return request.then(response => response.data);
+  };
+  
+  export default {
+    getAll,
+    create, 
+    update,
+    get,
+    remove 
+  };

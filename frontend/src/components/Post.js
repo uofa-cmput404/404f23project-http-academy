@@ -17,9 +17,17 @@ export default function Post({ post }) {
             <div className="card-body">
                 
                 <h2 className="card-title">{post.title}</h2>
-                <p className="card-text">{post.body}</p>
+                
+                {post.contentType === 'image/png;base64' || post.contentType === 'image/jpeg;base64' ? 
+                    <img src={`data:${post.contentType};base64,${post.content}`} alt={post.title} width = "200" height = "200"/> :
+                    null
+                }
+                
+                <p className="card-text">{post.description}</p>
+                
                 <button onClick={() => editPost()}>Edit</button>
             </div>
         </div>
     );
+    
 }
