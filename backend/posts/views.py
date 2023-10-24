@@ -20,7 +20,7 @@ def posts_list(request):
         serializer = PostSerializer(posts, many=True)
     return Response(serializer.data)
 
-@api_view(['GET', 'DELETE'])
+@api_view(['GET', 'DELETE', 'PATCH'])
 def post_detail(request, pk):
     # get the post with the specified ID
     post = Post.objects.get(id=pk)
@@ -33,11 +33,16 @@ def post_detail(request, pk):
             return Response('Post deleted successfully')
         except:
             return Response('Post does not exist')
+    elif request.method == 'PATCH':
+        # if we want to update a post, update it and return a success message if it exists
+        try:
+            serializer.update(post, request.data)
+            return Response('Post updated successfully')
+        except:
+            return Response('Post does not exist')
     else:
         # if we want to get a post, use the serializer to return the post
         return Response(serializer.data)
-
-# TODO: add the ability to PATCH posts
 
 @api_view(['GET', 'POST'])
 def comments_list(request, pk):
@@ -54,7 +59,7 @@ def comments_list(request, pk):
         serializer = CommentSerializer(comments, many=True)
     return Response(serializer.data)
 
-@api_view(['GET', 'DELETE'])
+@api_view(['GET', 'DELETE', 'PATCH'])
 def comment_detail(request, pk):
     # get the comment with the specified ID
     comment = Comment.objects.get(id=pk)
@@ -67,12 +72,17 @@ def comment_detail(request, pk):
             return Response('Comment deleted successfully')
         except:
             return Response('Comment does not exist')
+    elif request.method == 'PATCH':
+        # if we want to update a comment, update it and return a success message if it exists
+        try:
+            serializer.update(comment, request.data)
+            return Response('Comment updated successfully')
+        except:
+            return Response('Comment does not exist')
     else:
         # if we want to get a comment, use the serializer to return the comment
         return Response(serializer.data)
     
-# TODO: add the ability to PATCH comments
-
 @api_view(['GET', 'POST', 'DELETE'])
 def like_post(request, pk):
     # get the post with the specified ID

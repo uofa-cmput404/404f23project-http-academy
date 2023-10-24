@@ -23,17 +23,12 @@ class PostSerializer(serializers.ModelSerializer):
     
     def update(self, instance, validated_data):
         # Update and return an existing `Post` instance, given the validated data
-        instance.user = validated_data.get('author', instance.user)
-        instance.published = validated_data.get('published', instance.published)
         instance.title = validated_data.get('title', instance.title)
         instance.content = validated_data.get('content', instance.content)
-        instance.contentType = validated_data.get('contentType', instance.contentType)
         instance.categories = validated_data.get('categories', instance.categories)
-        instance.count = validated_data.get('count', instance.count)
         instance.comments = validated_data.get('comments', instance.comments)
         instance.visibility = validated_data.get('visibility', instance.visibility)
         instance.unlisted = validated_data.get('unlisted', instance.unlisted)
-        instance.likes = validated_data.get('likes', instance.likes)
         instance.save()
         return instance
     
@@ -55,11 +50,7 @@ class CommentSerializer(serializers.ModelSerializer):
     
     def update(self, instance, validated_data):
         # Update and return an existing `Comment` instance, given the validated data
-        instance.user = validated_data.get('author', instance.user)
         instance.comment = validated_data.get('comment', instance.comment)
-        instance.contentType = validated_data.get('contentType', instance.contentType)
-        instance.published = validated_data.get('published', instance.published)
-        instance.postId = validated_data.get('post', instance.postId)
         instance.save()
         return instance
     
