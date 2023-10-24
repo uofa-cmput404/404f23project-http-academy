@@ -1,6 +1,6 @@
 from django.shortcuts import render
-from .models import Post
-from .serializers import PostSerializer
+from .models import Post, Comment
+from .serializers import PostSerializer, CommentSerializer
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
@@ -29,5 +29,32 @@ def post_detail(request, pk):
             return Response('Post deleted successfully')
         except:
             return Response('Post does not exist')
+    else:
+        return Response(serializer.data)
+
+@api_view(['GET', 'POST'])
+def comments_list(request, pk):
+    if request.method == 'POST':
+        serializer = CommentSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+        else:
+            return Response(serializer.errors)
+    else:
+        comments = Comment.objects.filter(postId=pk)
+        serializer = CommentSerializer(comments, many=True)
+    return Response(serializer.data)
+
+@api_view(['GET', 'DELETE'])
+def comment_detail(request, pk):
+    comment = Comment.objects.get(id=pk)
+    serializer = CommentSerializer(comment, many=False)
+
+    if request.method == 'DELETE':
+        try:
+            comment.delete()
+            return Response('Comment deleted successfully')
+        except:
+            return Response('Comment does not exist')
     else:
         return Response(serializer.data)

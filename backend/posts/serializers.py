@@ -9,11 +9,11 @@ class PostSerializer(serializers.ModelSerializer):
 
     # when a GET request is made, use the comments field and the CommentSerializer to return the comments
     def to_representation(self, instance):
-        if instance.comments is None:
-            instance.comments = []
-            return super().to_representation(instance)
         representation = super().to_representation(instance)
-        representation['comments'] = CommentSerializer(instance.comments.all(), many=True).data
+        comments = Comment.objects.filter(postId=instance.id).all()
+        if comments is not None:
+            # get all comments with postId = instance.id
+            representation['comments'] = CommentSerializer(comments, many=True).data
         return representation
 
     def create(self, validated_data):
@@ -42,7 +42,7 @@ class CommentSerializer(serializers.ModelSerializer):
     # create a serializer for the Comment model
     class Meta:
         model = Comment
-        fields = ['id', 'author', 'comment', 'contentType', 'published', 'post']
+        fields = ['id', 'author', 'comment', 'contentType', 'published', 'postId']
 
     def create(self, validated_data):
         return Comment.objects.create(**validated_data)
@@ -52,7 +52,7 @@ class CommentSerializer(serializers.ModelSerializer):
         instance.comment = validated_data.get('comment', instance.comment)
         instance.contentType = validated_data.get('contentType', instance.contentType)
         instance.published = validated_data.get('published', instance.published)
-        instance.post = validated_data.get('post', instance.post)
+        instance.postId = validated_data.get('post', instance.postId)
         instance.save()
         return instance
     

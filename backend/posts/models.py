@@ -13,7 +13,7 @@ class Post(models.Model):
     contentType = models.CharField(max_length=20, default='text/plain')
     categories = models.ForeignKey('Category', on_delete=models.CASCADE, default=None, null=True)
     count = models.IntegerField(default=0) # number of comments
-    comments = models.CharField(max_length=100, null=True)
+    comments = models.ForeignKey('Comment', on_delete=models.CASCADE, default=None, null=True)
     visibility = models.CharField(max_length=100, default='PUBLIC')
     unlisted = models.BooleanField()
 
@@ -24,7 +24,7 @@ class Comment(models.Model):
     comment = models.CharField(max_length=100)
     contentType = models.CharField(max_length=100, default='text/plain')
     published = models.DateTimeField(auto_now_add=True)
-    post = models.ForeignKey(Post, on_delete=models.CASCADE, db_index=True)
+    postId = models.ForeignKey(Post, on_delete=models.CASCADE, db_index=True)
 
 
 class Category(models.Model):
