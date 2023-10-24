@@ -10,6 +10,7 @@ import FormControl from '@mui/material/FormControl';
 export default function MakePost() {
     const [post, setPost] = useState([]);
     const [title, setTitle] = useState("");
+    // const [content, setContent] = useState("");
     const [contentType, setContentType] = useState("text/plain");
     const [visibility, setVisibility] = useState("Public");
 	const [imagePreview, setImagePreview] = useState(null)
@@ -25,7 +26,7 @@ export default function MakePost() {
             alert("Please fill out all fields");
             return;
         }
-        createPost(title, content, contentType, visibility, description);
+        createPost(title, contentType, visibility, description);
         navigate("/home");
     };
 
@@ -33,14 +34,14 @@ export default function MakePost() {
         return '_' + Math.random().toString(36).substring(2, 9);
     };
 
-    const createPost = (title, content, contentType, visibility, description) => {
+    const createPost = (title, contentType, visibility, description) => {
 		const postObject = {
 			id: generateID(),
 			type: "post",
 			title: title,
 			contentType: contentType,
 			description: description,
-			content: contentType.startsWith('image/') ? image : content,
+			content: contentType.startsWith('image/') ? image : "",
 			author: null,
 			date: getCurrentDateTime(),
 			likes: null,
