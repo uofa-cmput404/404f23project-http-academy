@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Post from "../components/Post";
 import "../css/Home.css"
 import { useNavigate } from "react-router-dom";
+import axiosInstance from "../axiosInstance";
 
 export default function Home() {
 
@@ -13,6 +14,16 @@ export default function Home() {
         {title: "Test", body: "Body"},
     ];
     const [posts, setPosts] = useState(defaultPosts);
+
+    // on page load, fetch posts from backend
+    useEffect(() => {
+        axiosInstance.get('posts/').then(response => {
+            console.log(response);
+            setPosts(response.data);
+        }).catch(error => {
+            console.log(error);
+        }
+        )}, []);
 
     let navigate = useNavigate();
     const createPost = () => {

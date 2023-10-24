@@ -1,6 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import "../css/MakePost.css"
+import axiosInstance from "../axiosInstance";
 
 export default function MakePost() {
 
@@ -12,6 +13,18 @@ export default function MakePost() {
 			return;
 		}
 		console.log(title, body);
+		// TODO: add author details, etc. here
+		axiosInstance.post('posts/', {
+			author: 1,
+			title: title,
+			content: body,
+			visibility: "PUBLIC",
+			unlisted: false,
+		}).then(response => {
+			console.log(response);
+		}).catch(error => {
+			console.log(error);
+		});
 		navigate("/home");
 	}
 
