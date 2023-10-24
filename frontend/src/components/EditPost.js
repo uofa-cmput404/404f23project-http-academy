@@ -1,7 +1,6 @@
 // Import necessary functions and components
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import axios from "axios";
 import postService from "../services/posts";
 
 // Define the EditPost component
