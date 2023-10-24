@@ -1,11 +1,20 @@
 from rest_framework import serializers
-from .models import Post
+from .models import Post, Comment
 
 class PostSerializer(serializers.ModelSerializer):
     # create a serializer for the Post model
     class Meta:
         model = Post
         fields = ['id', 'author', 'published', 'title', 'content', 'contentType', 'categories', 'count', 'comments', 'visibility', 'unlisted']
+
+    # when a GET request is made, use the comments field and the CommentSerializer to return the comments
+    def to_representation(self, instance):
+        if instance.comments is None:
+            instance.comments = []
+            return super().to_representation(instance)
+        representation = super().to_representation(instance)
+        representation['comments'] = CommentSerializer(instance.comments.all(), many=True).data
+        return representation
 
     def create(self, validated_data):
         return Post.objects.create(**validated_data)
@@ -21,6 +30,29 @@ class PostSerializer(serializers.ModelSerializer):
         instance.comments = validated_data.get('comments', instance.comments)
         instance.visibility = validated_data.get('visibility', instance.visibility)
         instance.unlisted = validated_data.get('unlisted', instance.unlisted)
+        instance.save()
+        return instance
+    
+    def delete(self, instance):
+        instance.delete()
+        return instance
+    
+
+class CommentSerializer(serializers.ModelSerializer):
+    # create a serializer for the Comment model
+    class Meta:
+        model = Comment
+        fields = ['id', 'author', 'comment', 'contentType', 'published', 'post']
+
+    def create(self, validated_data):
+        return Comment.objects.create(**validated_data)
+    
+    def update(self, instance, validated_data):
+        instance.user = validated_data.get('author', instance.user)
+        instance.comment = validated_data.get('comment', instance.comment)
+        instance.contentType = validated_data.get('contentType', instance.contentType)
+        instance.published = validated_data.get('published', instance.published)
+        instance.post = validated_data.get('post', instance.post)
         instance.save()
         return instance
     

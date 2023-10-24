@@ -6,7 +6,7 @@ from django.contrib.postgres.fields import ArrayField
 
 class Post(models.Model):
     id = models.AutoField(primary_key=True)
-    author = models.ForeignKey(User, on_delete=models.CASCADE)
+    author = models.ForeignKey(User, on_delete=models.CASCADE, db_index=True)
     published = models.DateTimeField(auto_now_add=True)
     title = models.CharField(max_length=100)
     content = models.TextField(max_length=500)
@@ -20,11 +20,11 @@ class Post(models.Model):
 
 class Comment(models.Model):
     id = models.AutoField(primary_key=True)
-    author = models.ForeignKey(User, on_delete=models.CASCADE)
+    author = models.ForeignKey(User, on_delete=models.CASCADE, db_index=True)
     comment = models.CharField(max_length=100)
     contentType = models.CharField(max_length=100, default='text/plain')
     published = models.DateTimeField(auto_now_add=True)
-    post = models.ForeignKey(Post, on_delete=models.CASCADE)
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, db_index=True)
 
 
 class Category(models.Model):
