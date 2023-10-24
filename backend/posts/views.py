@@ -36,6 +36,9 @@ def post_detail(request, pk):
     elif request.method == 'PATCH':
         # if we want to update a post, update it and return a success message if it exists
         try:
+            # if we try to update any fields not updateable, return an error
+            if request.data.get('id') or request.data.get('author') or request.data.get('published') or request.data.get('count') or request.data.get('likes'):
+                return Response('Cannot update id, author, published, count, or likes')
             serializer.update(post, request.data)
             return Response('Post updated successfully')
         except:
@@ -75,6 +78,9 @@ def comment_detail(request, pk):
     elif request.method == 'PATCH':
         # if we want to update a comment, update it and return a success message if it exists
         try:
+            # if we try to update any fields not updateable, return an error
+            if request.data.get('id') or request.data.get('author') or request.data.get('published') or request.data.get('postId'):
+                return Response('Cannot update id, author, published, or postId')
             serializer.update(comment, request.data)
             return Response('Comment updated successfully')
         except:
