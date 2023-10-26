@@ -5,6 +5,7 @@ import Comment from './Comment';
 // TODO: Add CSS 
 
 export default function CommentSection() {
+  // TODO: Move logic out
   const defaultComments = [
     { id: 1, author: 1, comment: "A comment" },
     { id: 2, author: 1, comment: "Another comment" },

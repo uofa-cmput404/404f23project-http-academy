@@ -3,6 +3,7 @@ import axiosInstance from '../axiosInstance';
 import { useNavigate } from "react-router-dom";
 
 export default function DeleteButton({ id }) {
+  // TODO: Add CSS 
   let navigate = useNavigate();
   const handleDelete = () => {
     axiosInstance.delete(`posts/${id}`).then(response => {

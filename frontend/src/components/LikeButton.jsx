@@ -4,6 +4,7 @@ import axiosInstance from "../axiosInstance";
 export default function LikeButton({ id }) {
   const [likeCount, setLikeCount] = useState(0);
 
+  // TODO: Move logic out
   useEffect(() => {
     axiosInstance.get(`posts/${id}/like/`).then(response => {
       // console.log(response);
