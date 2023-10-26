@@ -16,7 +16,7 @@ export default function Detail() {
     }).catch(error => {
       console.log(error);
     });
-  }, []);
+  }, [id]);
 
   return (
     <div>
