@@ -18,7 +18,7 @@ export default function CommentSection() {
   const { id } = useParams();
 
   const addComment = (commentText) => {
-    axiosInstance.post('posts/${id}/comments/', {
+    axiosInstance.post(`posts/${id}/comments/`, {
       postId: id,
       author: 1,
       comment: commentText
@@ -39,7 +39,7 @@ export default function CommentSection() {
     }).catch(error => {
       console.log(error);
     });
-  }, []);
+  }, [id]);
 
   return (
     <div className='commentsection-container'>
