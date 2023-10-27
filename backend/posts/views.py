@@ -1,10 +1,9 @@
 from django.shortcuts import render
-from .models import Post, Comment, Category
-from .serializers import PostSerializer, CommentSerializer, CategorySerializer
+from .models import Post, Comment
+from .serializers import PostSerializer, CommentSerializer
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
-# TODO: Add better error handling; can't tell wtf is going on
 # Create your views here.
 @api_view(['GET', 'POST'])
 def posts_list(request):
@@ -42,8 +41,8 @@ def post_detail(request, pk):
                 return Response('Cannot update id, author, published, count, or likes')
             serializer.update(post, request.data)
             return Response('Post updated successfully')
-        except Exception as e:
-            return Response(e)
+        except:
+            return Response('Post does not exist')
     else:
         # if we want to get a post, use the serializer to return the post
         return Response(serializer.data)
@@ -114,50 +113,3 @@ def like_post(request, pk):
         # if we want to get the number of likes for a post, return the number of likes
         likes = post.likes
         return Response(likes)
-    
-@api_view(['GET', 'POST'])
-def categories_list(request, pk):
-
-    if request.method == 'POST':
-        # if we want to create a new category for the post, use the serializer and save if valid
-        serializer = CategorySerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response('Category created successfully')
-        else:
-            return Response(serializer.errors)
-    else:
-        # if we want to get all categories for a post, use the serializer to return all categories as a list of category names
-        categories = Category.objects.filter(postId=pk)
-        serializer = CategorySerializer(categories, many=True)
-        categories = []
-        for category in serializer.data:
-            categories.append(category['category'])
-        return Response(categories)
-    
-@api_view(['GET', 'DELETE', 'PATCH'])
-def category_detail(request, pk):
-    # get the category with the specified ID
-    category = Category.objects.get(id=pk)
-    serializer = CategorySerializer(category, many=False)
-
-    if request.method == 'DELETE':
-        # if we want to delete a category, delete it and return a success message if it exists
-        try:
-            category.delete()
-            return Response('Category deleted successfully')
-        except:
-            return Response('Category does not exist')
-    elif request.method == 'PATCH':
-        # if we want to update a category, update it and return a success message if it exists
-        try:
-            # if we try to update any fields not updateable, return an error
-            if request.data.get('id') or request.data.get('postId'):
-                return Response('Cannot update id or postId')
-            serializer.update(category, request.data)
-            return Response('Category updated successfully')
-        except:
-            return Response('Category does not exist')
-    else:
-        # if we want to get a category, use the serializer to return the category
-        return Response(serializer.data)

@@ -30,5 +30,5 @@ class Comment(models.Model):
 
 class Category(models.Model):
     id = models.AutoField(primary_key=True)
-    category = models.CharField(max_length=100, db_index=True)
-    postId = models.ForeignKey(Post, on_delete=models.CASCADE, db_index=True)
+    category = models.CharField(max_length=100)
+    linkedPost = models.ForeignKey(Post, on_delete=models.CASCADE)
