@@ -13,12 +13,14 @@ export default function MakePost() {
 			alert("Please fill out all fields");
 			return;
 		}
+
+		
 		console.log(title, body);
 		// TODO: add author details, etc. here
 		axiosInstance.post('posts/', {
 			author: 1,
 			title: title,
-			image: image,
+			image: image ? image : null,
 			caption: body,
 			visibility: "PUBLIC",
 			unlisted: false,

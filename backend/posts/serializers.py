@@ -3,6 +3,7 @@ from .models import Post, Comment
 
 class PostSerializer(serializers.ModelSerializer):
     # create a serializer for the Post model
+   
     class Meta:
         model = Post
         fields = '__all__'
