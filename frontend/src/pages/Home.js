@@ -6,14 +6,7 @@ import axiosInstance from "../axiosInstance";
 
 export default function Home() {
 
-    // TODO: fetch posts from backend
-    const defaultPosts = [
-        {title: "Test", body: "Body"},
-        {title: "Test", body: "Body"},
-        {title: "Test", body: "Body"},
-        {title: "Test", body: "Body"},
-    ];
-    const [posts, setPosts] = useState(defaultPosts);
+    const [posts, setPosts] = useState([]);
 
     // on page load, fetch posts from backend
     useEffect(() => {
