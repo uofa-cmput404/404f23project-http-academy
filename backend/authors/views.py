@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from .models import authors
+from .models import author
 from .serializers import AuthorSerializer
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -19,7 +19,7 @@ def authors_list(request):
 
 @api_view(['GET', 'DELETE'])
 def authors_detail(request, pk):
-    post = authors.objects.get(id=pk)
+    post = author.objects.get(id=pk)
     serializer = AuthorSerializer(post, many=False)
 
     if request.method == 'DELETE':

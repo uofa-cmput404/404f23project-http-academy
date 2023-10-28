@@ -4,7 +4,7 @@ from django.contrib.postgres.fields import ArrayField
 
 
 # Create your models here.
-class authors(models.Model):
+class author(models.Model):
     id = models.AutoField(primary_key=True)
     url = models.CharField(max_length=100)
     host = models.CharField(max_length=100)

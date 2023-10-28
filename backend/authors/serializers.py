@@ -1,13 +1,13 @@
 from rest_framework import serializers
-from .models import authors
+from .models import author
 
 class AuthorSerializer(serializers.ModelSerializer):
     class Meta:
-        model = authors
+        model = author
         fields = "__all__"
 
     def create(self, validated_data):
-        return authors.objects.create(**validated_data)
+        return author.objects.create(**validated_data)
 
 
     def update(self, instance, validated_data):
