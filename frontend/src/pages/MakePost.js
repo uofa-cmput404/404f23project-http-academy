@@ -18,7 +18,7 @@ export default function MakePost() {
 		axiosInstance.post('posts/', {
 			author: 1,
 			title: title,
-			image: image,
+			image: image ? image : null,
 			caption: body,
 			visibility: "PUBLIC",
 			unlisted: false,
