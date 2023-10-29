@@ -25,7 +25,7 @@ class PostSerializer(serializers.ModelSerializer):
     def update(self, instance, validated_data):
         # Update and return an existing `Post` instance, given the validated data
         instance.title = validated_data.get('title', instance.title)
-        instance.caption = validated_data.get('caption', instance.caption)
+        instance.content = validated_data.get('caption', instance.caption)
         instance.image = validated_data.get('image', instance.image)
         instance.categories = validated_data.get('categories', instance.categories)
         instance.comments = validated_data.get('comments', instance.comments)

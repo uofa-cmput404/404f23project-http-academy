@@ -9,19 +9,17 @@ export default function MakePost() {
 
 	const addPost = (title, body) => {
 		// TODO: add POST to backend here
-		if (title === "" || body === "") {
-			alert("Please fill out all fields");
+		if (title === "") {
+			alert("Please add a title to your post ");
 			return;
 		}
-
-		
-		console.log(title, body);
+		// console.log(title, body);
 		// TODO: add author details, etc. here
 		axiosInstance.post('posts/', {
 			author: 1,
 			title: title,
 			image: image ? image : null,
-			caption: body,
+			content: body ? body : null,
 			visibility: "PUBLIC",
 			unlisted: false,
 		}).then(response => {

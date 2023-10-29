@@ -9,7 +9,7 @@ export default function DetailedPost({ post, id, image }) {
     <div className="post">
       <div className="post-card">
         <h1 className="post-title">{post.title}</h1>
-        <img src={`${image}`} alt="Base64 Image" />
+        <img src={`${image}`} alt="Base64" />
         <p className="post-text">{post.caption}</p>
         <LikeButton id={id} />
         {/* <DeleteButton id={id} /> */}
