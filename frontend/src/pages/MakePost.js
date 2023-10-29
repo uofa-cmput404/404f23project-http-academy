@@ -19,7 +19,7 @@ export default function MakePost() {
 			author: 1,
 			title: title,
 			image: image ? image : null,
-			caption: body,
+			content: body,
 			visibility: "PUBLIC",
 			unlisted: false,
 		}).then(response => {
