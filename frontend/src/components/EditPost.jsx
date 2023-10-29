@@ -15,7 +15,6 @@ export default function EditPost() {
   const navigate = useNavigate();
   const { id } = useParams();
 
- 
   useEffect(() => {
     axiosInstance
       .get(`posts/${id}`)

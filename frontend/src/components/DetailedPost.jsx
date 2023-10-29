@@ -12,7 +12,7 @@ export default function DetailedPost({ post, id, image }) {
         <img src={`${image}`} alt="Base64 Image" />
         <p className="post-text">{post.caption}</p>
         <LikeButton id={id} />
-        <DeleteButton id={id} />
+        {/* <DeleteButton id={id} /> */}
         <CommentSection comments={post.comments} />
       </div>
     </div>
