@@ -10,7 +10,7 @@ export default function MakePost() {
 	const addPost = (title, body) => {
 		// TODO: add POST to backend here
 		if (title === "") {
-			alert("Please fill out all fields");
+			alert("Please add a title to your post ");
 			return;
 		}
 		// console.log(title, body);
