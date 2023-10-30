@@ -4,8 +4,8 @@ from .models import author
 class AuthorSerializer(serializers.ModelSerializer):
     class Meta:
         model = author
-        fields = "__all__"
-
+        field = '__all__' 
+    
     def create(self, validated_data):
         return author.objects.create(**validated_data)
     
@@ -22,4 +22,6 @@ class AuthorSerializer(serializers.ModelSerializer):
     def delete(self, instance):
         instance.delete()
         return instance
+    
+    
     
