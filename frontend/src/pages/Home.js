@@ -3,9 +3,11 @@ import Post from "../components/Post";
 import "../css/Home.css"
 import { useNavigate } from "react-router-dom";
 import axiosInstance from "../axiosInstance";
-
+import { useAuth } from "../context/AuthContext";
 export default function Home() {
 
+    const { isAuthenticated } = useAuth();
+    
     // TODO: fetch posts from backend
     const defaultPosts = [
         {title: "Test", body: "Body"},
@@ -15,11 +17,26 @@ export default function Home() {
     ];
     const [posts, setPosts] = useState(defaultPosts);
 
+    const { currentUser } = useAuth();
+
+
+    console.log(currentUser)
+    
+    useEffect(() => {
+
+        const storedUser = JSON.parse(localStorage.getItem('user'));
+        console.log(storedUser)
+        if (!isAuthenticated) {
+            navigate('/login'); // Redirect to login if not authenticated
+        }
+    }, [isAuthenticated]);
+
     // on page load, fetch posts from backend
     useEffect(() => {
         axiosInstance.get('posts/').then(response => {
-            console.log(response);
+           
             setPosts(response.data);
+            
         }).catch(error => {
             console.log(error);
         }
@@ -43,8 +60,12 @@ export default function Home() {
     }, []);
 
     return (
+
+    
         <div className="posts-container">
             <h1>Home</h1>
+            <h2>Welcome {currentUser}</h2>
+            {currentUser && <div>Welcome, {currentUser.username}!</div>}
             {postsChunks.map((chunk, chunkIndex) => (
                 <div key={chunkIndex} className="posts-row">
                     {chunk.map((post, postIndex) => (

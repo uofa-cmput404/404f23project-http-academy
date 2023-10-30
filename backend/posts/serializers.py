@@ -19,6 +19,7 @@ class PostSerializer(serializers.ModelSerializer):
         return representation
 
     def create(self, validated_data):
+        print(validated_data)
         # Create and return a new `Post` instance, given the validated data
         return Post.objects.create(**validated_data)
     
