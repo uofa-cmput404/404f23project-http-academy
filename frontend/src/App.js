@@ -5,7 +5,6 @@ import MakePost from './pages/MakePost';
 import Navbar from './components/Navbar';
 import Detail from './pages/Detail';
 import Image from './pages/Image';
-import Detail from './pages/Detail'
 import EditPost from './components/EditPost';
 
 const App = () => {
