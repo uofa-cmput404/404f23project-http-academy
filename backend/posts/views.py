@@ -20,12 +20,15 @@ def posts_list(request):
         serializer = PostSerializer(posts, many=True)
     return Response(serializer.data)
 
+
+
 @api_view(['GET', 'DELETE', 'PATCH'])
 def post_detail(request, pk):
     # get the post with the specified ID
     post = Post.objects.get(id=pk)
+    print("this is a new post", request.data)
     serializer = PostSerializer(post, many=False)
-
+    # print('this is the post from front end', post.title, post.caption, post.image)
     if request.method == 'DELETE':
         # if we want to delete a post, delete it and return a success message if it exists
         try:
@@ -36,12 +39,15 @@ def post_detail(request, pk):
     elif request.method == 'PATCH':
         # if we want to update a post, update it and return a success message if it exists
         try:
+            
             # if we try to update any fields not updateable, return an error
             if request.data.get('id') or request.data.get('author') or request.data.get('published') or request.data.get('count') or request.data.get('likes'):
                 return Response('Cannot update id, author, published, count, or likes')
+            
             serializer.update(post, request.data)
             return Response('Post updated successfully')
         except:
+            print('this is the post that also doesnt exxist', post)
             return Response('Post does not exist')
     else:
         # if we want to get a post, use the serializer to return the post

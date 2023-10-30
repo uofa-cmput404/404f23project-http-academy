@@ -5,6 +5,8 @@ import MakePost from './pages/MakePost';
 import Navbar from './components/Navbar';
 import Detail from './pages/Detail';
 import Image from './pages/Image';
+import Detail from './pages/Detail'
+import EditPost from './components/EditPost';
 
 const App = () => {
 	return (
@@ -16,6 +18,7 @@ const App = () => {
 					<Route path="/" element={<h1>Main Page</h1>} />
 					<Route path="/home" element={<Home />} />
 					<Route path="/post/create" element={<MakePost />} />
+					<Route path="/post/edit/:id" element={<EditPost />} />
 					<Route path="/post/:id" element={<Detail />} />
 					<Route path="/post/:id/image" element={<Image />} />
 				</Routes>
