@@ -7,6 +7,9 @@ export default function MakePost() {
 
 	let navigate = useNavigate();
 
+	const storedUser = JSON.parse(localStorage.getItem('user'));
+
+	
 	const addPost = (title, body) => {
 		// TODO: add POST to backend here
 		if (title === "") {
@@ -16,14 +19,14 @@ export default function MakePost() {
 		// console.log(title, body);
 		// TODO: add author details, etc. here
 		axiosInstance.post('posts/', {
-			author: 1,
+			author: storedUser.id,
 			title: title,
 			image: image ? image : null,
 			content: body ? body : null,
 			visibility: "PUBLIC",
 			unlisted: false,
 		}).then(response => {
-			console.log(response);
+			console.log('post created', response);
 		}).catch(error => {
 			console.log(error);
 		});

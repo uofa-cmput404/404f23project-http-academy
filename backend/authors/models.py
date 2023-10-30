@@ -1,3 +1,21 @@
+# from django.db import models
+# from django.contrib.postgres.fields import ArrayField
+# from django.contrib.auth.models import User
+# import uuid
+# # Create your models here.
+
+# class Author(models.Model):
+    
+
+#     user = models.OneToOneField(User, on_delete=models.CASCADE, blank = True, null = True)
+#     type = models.CharField(max_length=6, blank = True, null = True)
+#     author_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False, blank = True)
+#     id = models.URLField(max_length=2048, null = True)
+#     displayName = models.CharField(max_length = 140, null = True)
+#     github = models.URLField(blank = True, null = True)
+#     profileImage = models.URLField(blank = True, null = True)
+    
+
 from django.db import models
 from django.contrib.auth.base_user import BaseUserManager
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
@@ -23,13 +41,25 @@ class AppUserManager(BaseUserManager):
 		user.save()
 		return user
 
+from django.contrib.auth.models import Group, Permission
 
 class AppUser(AbstractBaseUser, PermissionsMixin):
-	user_id = models.AutoField(primary_key=True)
-	email = models.EmailField(max_length=50, unique=True)
-	username = models.CharField(max_length=50)
-	USERNAME_FIELD = 'email'
-	REQUIRED_FIELDS = ['username']
-	objects = AppUserManager()
-	def __str__(self):
-		return self.username
+    user_id = models.AutoField(primary_key=True)
+    email = models.EmailField(max_length=50, unique=True)
+    username = models.CharField(max_length=50)
+    groups = models.ManyToManyField(
+        Group,
+        related_name='app_users',
+        blank=True,
+    )
+    user_permissions = models.ManyToManyField(
+        Permission,
+        related_name='app_users',
+        blank=True,
+    )
+    USERNAME_FIELD = 'email'
+   
+    objects = AppUserManager()
+
+    def __str__(self):
+        return self.username

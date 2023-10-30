@@ -31,6 +31,7 @@ class UserRegisterSerializer(serializers.ModelSerializer):
 		user_obj.username = clean_data['username']
 		user_obj.save()
 		return user_obj
+		
 
 class UserLoginSerializer(serializers.Serializer):
 	email = serializers.EmailField()
@@ -38,6 +39,7 @@ class UserLoginSerializer(serializers.Serializer):
 	##
 	def check_user(self, clean_data):
 		user = authenticate(username=clean_data['email'], password=clean_data['password'])
+		# print(user.user_id)
 		if not user:
 			raise ValidationError('user not found')
 		return user
@@ -45,4 +47,4 @@ class UserLoginSerializer(serializers.Serializer):
 class UserSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = UserModel
-		fields = ('email', 'username')
+		fields = ('user_id', 'email', 'username')

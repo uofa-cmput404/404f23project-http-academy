@@ -37,6 +37,10 @@ class UserRegister(APIView):
 		if serializer.is_valid(raise_exception=True):
 			user = serializer.create(clean_data)
 			if user:
+				user_data = {
+				"id": user.user_id,
+				"email": user.email
+				}
 				return Response(serializer.data, status=status.HTTP_201_CREATED)
 		return Response(status=status.HTTP_400_BAD_REQUEST)
 
@@ -53,7 +57,12 @@ class UserLogin(APIView):
 		if serializer.is_valid(raise_exception=True):
 			user = serializer.check_user(data)
 			login(request, user)
-			return Response(serializer.data, status=status.HTTP_200_OK)
+			print('this is the returned response to client', user.user_id, user.email, user.password)
+			user_data = {
+				"id": user.user_id,
+				"email": user.email
+			}
+			return Response(user_data, status=status.HTTP_200_OK)
 
 
 class UserLogout(APIView):

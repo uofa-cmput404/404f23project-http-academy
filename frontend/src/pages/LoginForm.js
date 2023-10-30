@@ -84,6 +84,7 @@ const LoginForm = () => {
       ).then(function(res) {
         localStorage.setItem('user', JSON.stringify(res.data));
         setCurrentUser(true);
+        console.log('User ID:', res.data.user_id);
       });
     }
   

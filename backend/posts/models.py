@@ -1,12 +1,12 @@
 from django.db import models
 from django.conf import settings
 from django.contrib.postgres.fields import ArrayField
-
+from authors.models import AppUser
 # Create your models here.
 
 class Post(models.Model):
     id = models.AutoField(primary_key=True)
-    author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, db_index=True)
+    author = models.ForeignKey(AppUser, on_delete=models.CASCADE, db_index=True)
     published = models.DateTimeField(auto_now_add=True)
     title = models.CharField(max_length=100)
     content = models.TextField(max_length=150, null=True)

@@ -15,6 +15,9 @@ export default function EditPost() {
   const navigate = useNavigate();
   const { id } = useParams();
 
+
+
+
   useEffect(() => {
     axiosInstance
       .get(`posts/${id}`)
@@ -65,8 +68,8 @@ export default function EditPost() {
     if (post.title !== updatedTitle){
         post.title = updatedTitle; 
     }
-    if (post.caption !== updatedBody) {
-        post.caption = updatedBody; 
+    if (post.content !== updatedBody) {
+        post.content = updatedBody; 
     }
    
     if (post.image !== updatedImage){
@@ -75,7 +78,7 @@ export default function EditPost() {
  
     const updatedPost = {
         title: post.title,
-        caption: post.caption,
+        content: post.content,
         image: post.image
     }
 
@@ -132,7 +135,7 @@ export default function EditPost() {
           name="body"
           rows="4"
           cols="50"
-          defaultValue={post.caption}
+          defaultValue={post.content}
         ></textarea>
         <h2>Image</h2>
         {imagePreview && <img src={imagePreview} alt="Post" style={{ maxWidth: '100px', maxHeight: '100px' }} />} 
