@@ -25,12 +25,8 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "test": "jest --passWithNoTests",
+    "test": "react-scripts test",
     "eject": "react-scripts eject"
-  },
-  "jest": {
-    "testEnvironment": "jsdom"
-    
   },
   "eslintConfig": {
     "extends": [
