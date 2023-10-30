@@ -113,3 +113,9 @@ def like_post(request, pk):
         # if we want to get the number of likes for a post, return the number of likes
         likes = post.likes
         return Response(likes)
+
+@api_view(['GET'])
+def get_post_image(request, pk):
+    post = Post.objects.get(id=pk)
+    serializer = PostSerializer(post, many=False)
+    return Response(serializer.data["image"])

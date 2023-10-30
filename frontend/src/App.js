@@ -3,7 +3,8 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Home from './pages/Home';
 import MakePost from './pages/MakePost';
 import Navbar from './components/Navbar';
-import Detail from './pages/Detail'
+import Detail from './pages/Detail';
+import Image from './pages/Image';
 
 const App = () => {
 	return (
@@ -16,10 +17,11 @@ const App = () => {
 					<Route path="/home" element={<Home />} />
 					<Route path="/post/create" element={<MakePost />} />
 					<Route path="/post/:id" element={<Detail />} />
+					<Route path="/post/:id/image" element={<Image />} />
 				</Routes>
 			</div>
 		</Router>
 	);
-}
+};
 
 export default App;
