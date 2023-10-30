@@ -14,6 +14,7 @@ export default function Navbar() {
             <button className="navButton" onClick={goToPage("/")}>Main</button>
             <button className="navButton" onClick={goToPage("/home")}>Home</button>
             <button className="navButton" onClick={goToPage("/post/create")}>Create a Post</button>
+            <button className="navButton" onClick={goToPage("/Signup+and+Login")}>Signup or Login</button>
         </nav>
     );
 }

@@ -8,9 +8,9 @@ class AuthorSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         return author.objects.create(**validated_data)
-
-
+    
     def update(self, instance, validated_data):
+        instance.id = validated_data.get('id', instance.id)
         instance.url = validated_data.get('url', instance.url)
         instance.host = validated_data.get('host', instance.host)
         instance.displayName = validated_data.get('displayName', instance.displayName)
@@ -22,3 +22,4 @@ class AuthorSerializer(serializers.ModelSerializer):
     def delete(self, instance):
         instance.delete()
         return instance
+    

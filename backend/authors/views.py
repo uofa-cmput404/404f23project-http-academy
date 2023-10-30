@@ -19,7 +19,7 @@ def authors_list(request):
 
 @api_view(['GET', 'DELETE'])
 def authors_detail(request, pk):
-    post = author.objects.get(id=pk)
+    post = author.objects.get(user_id=pk)
     serializer = AuthorSerializer(post, many=False)
 
     if request.method == 'DELETE':
