@@ -1,7 +1,6 @@
 import React from "react";
 import "../css/DetailedPost.css";
 import LikeButton from "../components/LikeButton";
-import DeleteButton from "../components/DeleteButton";
 import CommentSection from "./CommentSection";
 
 export default function DetailedPost({ post, id, image }) {
@@ -12,7 +11,7 @@ export default function DetailedPost({ post, id, image }) {
         <img src={`${image}`} alt="Base64" />
         <p className="post-text">{post.caption}</p>
         <LikeButton id={id} />
-        <DeleteButton id={id} />
+        {/* <DeleteButton id={id} /> */}
         <CommentSection comments={post.comments} />
       </div>
     </div>
