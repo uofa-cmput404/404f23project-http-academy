@@ -3,7 +3,8 @@ import axiosInstance from "../axiosInstance";
 
 export default function LikeButton({ id }) {
   const [likeCount, setLikeCount] = useState(0);
-
+  const storedUser = JSON.parse(localStorage.getItem('user'));
+  
   // TODO: Move logic out
   useEffect(() => {
     axiosInstance.get(`posts/${id}/like/`).then(response => {
@@ -30,3 +31,11 @@ export default function LikeButton({ id }) {
     </div>
   );
 }
+
+//user can like post once
+
+/*
+1. get current user and post and if user alread yhas a liek on the post then show it
+. if not then like should be 0, 
+
+*/

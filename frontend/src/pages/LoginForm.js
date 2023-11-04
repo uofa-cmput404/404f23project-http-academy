@@ -67,6 +67,7 @@ const LoginForm = () => {
             password: password
           }
         ).then(function(res) {
+          console.log('log endpoint', res.data)
             localStorage.setItem('user', JSON.stringify(res.data));
           setCurrentUser(true);
         });

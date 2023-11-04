@@ -76,8 +76,11 @@ export default function Home() {
 
     
         <div className="posts-container">
-            <h1>Home</h1>
-            <h2>Welcome {currentUser}</h2>
+            <div>
+            <h1>Explore</h1>
+            </div>
+            
+           
             {/* {currentUser && <div>Welcome, {currentUser.username}!</div>} */}
             {postsChunks.map((chunk, chunkIndex) => (
                 <div key={chunkIndex} className="posts-row">
@@ -87,10 +90,9 @@ export default function Home() {
                     ))}
                 </div>
             ))}
-            <button onClick={() => createPost()}>Add Post</button>
+            {/* <button onClick={() => createPost()}>Add Post</button> */}
             <div className="square">
             </div>
         </div>
     );
 }
-

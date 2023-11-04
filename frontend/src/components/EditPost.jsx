@@ -5,15 +5,17 @@ import axiosInstance from "../axiosInstance";
 import DeleteButton from "./DeleteButton";
 
 // Define the EditPost component
-export default function EditPost() {
+export default function EditPost({onClose, posts}) {
   // Define state variables
   const [post, setPost] = useState(null);
   const [image, setImage] = useState("");
   const [imagePreview, setImagePreview] = useState(null);
-
+  const [visibility, setVisibility] = useState("PUBLIC")
   
   const navigate = useNavigate();
-  const { id } = useParams();
+  const  id  = posts;
+
+  console.log('modal post', posts)
 
 
 
@@ -96,6 +98,7 @@ export default function EditPost() {
       .catch((error) => {
         console.log("Error updating post", error);
       });
+      onClose();
   };
 
   // Handle the image upload
@@ -120,28 +123,30 @@ export default function EditPost() {
     return <div>Loading...</div>;
   } else {
     return (
-      <div>
-        <h1>Edit Post</h1>
-        <h2>Title</h2>
-        <input
-          type="text"
-          id="title"
-          name="title"
-          defaultValue={post.title}
-        />
-        <h2>Body</h2>
-        <textarea
-          id="body"
-          name="body"
-          rows="4"
-          cols="50"
-          defaultValue={post.content}
-        ></textarea>
-        <h2>Image</h2>
-        {imagePreview && <img src={imagePreview} alt="Post" style={{ maxWidth: '100px', maxHeight: '100px' }} />} 
-        <input type="file" onChange={handleImageUpload} />
-        <br />
-        <button
+      <div className="Create-postContainer">
+			<div className="leftContainer">
+				<div className="post-header">
+				<h1>Edit a <br></br> Post.</h1>
+				<button className="close-button" onClick={onClose} aria-label="Close">X</button>
+					</div>
+				
+				<h2 className="visibility">Visibility</h2>
+				<div className="visibility-section">
+					<button onClick={() => setVisibility("PUBLIC")}>Public</button>
+					<button onClick={() => setVisibility("FRIENDS_ONLY")}>Friends-Only</button>
+					<button onClick={() => setVisibility("PRIVATE")}>Private</button>
+					<button onClick={() => setVisibility("UNLISTED")}>Unlisted</button>
+				</div>
+				<h2>Title</h2>
+					<input type="text" id="title" name="title" class="single-line-input" defaultValue={post.title}/>
+					<h2>Body</h2>
+					<textarea id="body" name="body" rows="4" cols="50" defaultValue={post.content} class="single-line-input"></textarea>
+					
+
+				<br />
+				<div className="postfooter-container">
+				<input type="file" accept="image/*" onChange={handleImageUpload} />
+				<button
           onClick={() =>
             editPost(
               document.getElementById("title").value,
@@ -152,9 +157,45 @@ export default function EditPost() {
         >
           Save Changes
         </button>
-        <DeleteButton id = {id}/>
-        <button onClick={returnHome}>Back</button>
-      </div>
+
+        <DeleteButton id = {id} onClose = {onClose} />
+				</div>
+				
+				{/* <button onClick={onClose}>Back</button> */}
+			</div>
+			<div className="rightContainer">
+				
+      <h2>Preview</h2>
+<div className="preview-image" style={{ 
+  backgroundImage: imagePreview ? `url(${imagePreview})` : (image ? `url(${image})` : ''),
+  backgroundSize: 'cover', 
+  backgroundPosition: 'center center',
+  display: imagePreview || image ? 'block' : 'none' // Hide the div if no image is available
+}}>
+  {(!image && !imagePreview) && <div className="no-image">No image uploaded</div>}
+</div>
+
+
+
+
+				
+			</div>
+		</div>
     );
   }
 }
+
+
+{/* <button
+          onClick={() =>
+            editPost(
+              document.getElementById("title").value,
+              document.getElementById("body").value,
+              image
+            )
+          }
+        >
+          Save Changes
+        </button>
+
+<DeleteButton id = {id}/> */}

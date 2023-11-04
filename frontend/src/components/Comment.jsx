@@ -1,9 +1,11 @@
 import React from 'react';
 
-export default function Comment({ comment }) {
+export default function Comment({ comment, userid }) {
+  console.log(comment)
   return (
     <div>
-      <p>{comment}</p>
+      
+      <p> {userid} {comment}</p>
     </div>
   );
 }
