@@ -19,6 +19,7 @@
 #         return instance
 from rest_framework import serializers
 from django.contrib.auth import get_user_model, authenticate
+from django.core.exceptions import ValidationError
 
 UserModel = get_user_model()
 
@@ -41,8 +42,21 @@ class UserLoginSerializer(serializers.Serializer):
 		user = authenticate(username=clean_data['email'], password=clean_data['password'])
 		# print(user.user_id)
 		if not user:
+
 			raise ValidationError('user not found')
 		return user
+
+class UserUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserModel
+        fields = ('email', 'username')  # add any other fields you want to allow updating
+
+    def update(self, instance, validated_data):
+        instance.email = validated_data.get('email', instance.email)
+        instance.username = validated_data.get('username', instance.username)
+        instance.save()
+        return instance
+
 
 class UserSerializer(serializers.ModelSerializer):
 	class Meta:

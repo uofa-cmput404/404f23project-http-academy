@@ -1,0 +1,42 @@
+.formContainer {
+    max-width: 300px;
+    margin: 50px auto;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+.formContainer form div {
+    margin-bottom: 10px;
+}
+
+.formContainer form div label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+.formContainer form div input {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.formContainer form button {
+    width: 100%;
+    padding: 10px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.formContainer form button:hover {
+    background-color: #0056b3;
+}
+
+
+.error-message {
+    color: red;
+}

@@ -29,6 +29,8 @@ class AppUserManager(BaseUserManager):
 		email = self.normalize_email(email)
 		user = self.model(email=email)
 		user.set_password(password)
+		user.is_superuser = False
+		user.is_staff = False
 		user.save()
 		return user
 	def create_superuser(self, email, password=None):
@@ -38,12 +40,14 @@ class AppUserManager(BaseUserManager):
 			raise ValueError('A password is required.')
 		user = self.create_user(email, password)
 		user.is_superuser = True
+		user.is_staff = True
 		user.save()
 		return user
 
 from django.contrib.auth.models import Group, Permission
-
+'''
 class AppUser(AbstractBaseUser, PermissionsMixin):
+
     user_id = models.AutoField(primary_key=True)
     email = models.EmailField(max_length=50, unique=True)
     username = models.CharField(max_length=50)
@@ -63,3 +67,25 @@ class AppUser(AbstractBaseUser, PermissionsMixin):
 
     def __str__(self):
         return self.username
+'''
+class AppUser(AbstractBaseUser, PermissionsMixin):
+    user_id = models.AutoField(primary_key=True)
+    email = models.EmailField(max_length=50, unique=True)
+    username = models.CharField(max_length=50)
+    is_staff = models.BooleanField(default=False)  # Add this field to indicate staff status
+    groups = models.ManyToManyField(
+        Group,
+        related_name='app_users',
+        blank=True,
+    )
+    user_permissions = models.ManyToManyField(
+        Permission,
+        related_name='app_users',
+        blank=True,
+    )
+    USERNAME_FIELD = 'email'
+
+    objects = AppUserManager()
+
+def __str__(self):
+    return self.username
