@@ -16,6 +16,7 @@ export default function Post({ post, canEdit }) {
     let navigate = useNavigate();
     
 
+    
     const handleEdit = () => {
         // Your like functionality here
         console.log('Edit button clicked');
@@ -81,7 +82,10 @@ export default function Post({ post, canEdit }) {
           </Link>
           <div className="footer-container">
             <div className="userNamePost">
-            {storedUser.username} 
+                {/* need to include the actual user name of the user who made the post
+                the below is wrong - this is the current logged in user 
+                */}
+            {/* {storedUser.username}  */} 
             </div>
            
             <div className="card-footer">

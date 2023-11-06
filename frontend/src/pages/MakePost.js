@@ -71,7 +71,7 @@ export default function MakePost({onClose}) {
 					<button onClick={() => setVisibility("UNLISTED")}>Unlisted</button>
 				</div>
 				<h2>Title</h2>
-					<input type="text" id="title" name="title" class="single-line-input" />
+					<input type="text" id="title" name="title" class="single-line-input" maxLength={80} />
 					<h2>Body</h2>
 					<textarea id="body" name="body" rows="4" cols="50" class="single-line-input"></textarea>
 					

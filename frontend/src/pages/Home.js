@@ -40,7 +40,7 @@ export default function Home() {
            
 
             setPosts(response.data);
-            
+            console.log('checkig who made post', response.data)
             
         }).catch(error => {
             console.log(error);
