@@ -10,7 +10,7 @@ export default function EditPost({onClose, posts}) {
   const [post, setPost] = useState(null);
   const [image, setImage] = useState("");
   const [imagePreview, setImagePreview] = useState(null);
-  const [visibility, setVisibility] = useState("PUBLIC")
+  const [visibility, setVisibility] = useState("")
   
   const navigate = useNavigate();
   const  id  = posts;
@@ -26,6 +26,7 @@ export default function EditPost({onClose, posts}) {
       .then((retrievedPost) => {
         console.log("Post fetched for editing", retrievedPost);
         setPost(retrievedPost.data);
+        setVisibility(retrievedPost.data.visibility)
        
         // if (retrievedPost.contentType.startsWith('image/')) {
         //   setImagePreview(`data:${retrievedPost.contentType};base64,${retrievedPost.content}`);
@@ -34,12 +35,15 @@ export default function EditPost({onClose, posts}) {
             setImage(retrievedPost.data.image)
             setImagePreview(retrievedPost.data.image)
             
+            
         }
         
       })
       .catch((error) => {
         console.log("Error fetching post for editing", error);
       });
+
+      
   }, [id]);
 
   const returnHome = () => {
@@ -77,11 +81,16 @@ export default function EditPost({onClose, posts}) {
     if (post.image !== updatedImage){
         post.image = updatedImage
     }
+
+    if (post.visibility !== visibility){
+      post.visibility = visibility;
+    }
  
     const updatedPost = {
         title: post.title,
         content: post.content,
-        image: post.image
+        image: post.image,
+        visibility: visibility
     }
 
     
@@ -132,10 +141,11 @@ export default function EditPost({onClose, posts}) {
 				
 				<h2 className="visibility">Visibility</h2>
 				<div className="visibility-section">
-					<button onClick={() => setVisibility("PUBLIC")}>Public</button>
-					<button onClick={() => setVisibility("FRIENDS_ONLY")}>Friends-Only</button>
-					<button onClick={() => setVisibility("PRIVATE")}>Private</button>
-					<button onClick={() => setVisibility("UNLISTED")}>Unlisted</button>
+        <button className={visibility === "PUBLIC" ? "selected" : ""} onClick={() => setVisibility("PUBLIC")}>Public</button>
+        <button className={visibility === "FRIENDS_ONLY" ? "selected" : ""} onClick={() => setVisibility("FRIENDS_ONLY")}>Friends-Only</button>
+        <button className={visibility === "PRIVATE" ? "selected" : ""} onClick={() => setVisibility("PRIVATE")}>Private</button>
+        <button className={visibility === "UNLISTED" ? "selected" : ""} onClick={() => setVisibility("UNLISTED")}>Unlisted</button>
+
 				</div>
 				<h2>Title</h2>
 					<input type="text" id="title" name="title" class="single-line-input" defaultValue={post.title}/>

@@ -23,7 +23,7 @@ export default function MakePost({onClose}) {
 			title: title,
 			image: image ? image : null,
 			content: body ? body : null,
-			visibility: "PUBLIC",
+			visibility: visibility,
 			unlisted: false,
 		}).then(response => {
 			console.log('post created', response);
@@ -65,10 +65,11 @@ export default function MakePost({onClose}) {
 				
 				<h2 className="visibility">Visibility</h2>
 				<div className="visibility-section">
-					<button onClick={() => setVisibility("PUBLIC")}>Public</button>
-					<button onClick={() => setVisibility("FRIENDS_ONLY")}>Friends-Only</button>
-					<button onClick={() => setVisibility("PRIVATE")}>Private</button>
-					<button onClick={() => setVisibility("UNLISTED")}>Unlisted</button>
+				<button className={visibility === "PUBLIC" ? "selected" : ""} onClick={() => setVisibility("PUBLIC")}>Public</button>
+				<button className={visibility === "FRIENDS_ONLY" ? "selected" : ""} onClick={() => setVisibility("FRIENDS_ONLY")}>Friends-Only</button>
+				<button className={visibility === "PRIVATE" ? "selected" : ""} onClick={() => setVisibility("PRIVATE")}>Private</button>
+				<button className={visibility === "UNLISTED" ? "selected" : ""} onClick={() => setVisibility("UNLISTED")}>Unlisted</button>
+
 				</div>
 				<h2>Title</h2>
 					<input type="text" id="title" name="title" class="single-line-input" maxLength={80} />

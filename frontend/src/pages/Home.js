@@ -38,8 +38,9 @@ export default function Home() {
         
         axiosInstance.get('posts/').then(response => {
            
-
-            setPosts(response.data);
+            const retrievePost = response.data
+            const publicPosts = retrievePost.filter(p => p.visibility === "PUBLIC")
+            setPosts(publicPosts);
             console.log('checkig who made post', response.data)
             
         }).catch(error => {

@@ -7,6 +7,8 @@ import likeIcon from '../assets/images/heart.png'
 import commentIcon from '../assets/images/chat.png'
 import Modal from "../components/Modal";
 import EditPost from "../components/EditPost"
+import shareIcon from '../assets/images/share.png'
+
 
 export default function Post({ post, canEdit }) {
 
@@ -65,6 +67,10 @@ export default function Post({ post, canEdit }) {
         setOpenModal(true);
     };
 
+    const handleShare = () => {
+        console.log('share icon clicked')
+    }
+
     return (
         <div className="card">
             <div className="Editpost">
@@ -95,6 +101,9 @@ export default function Post({ post, canEdit }) {
                 <button onClick={handleComment} className="edit-button">
                     <img src={commentIcon} alt="Like" />
                 </button>
+                {<button onClick={handleShare} className="edit-button">
+                    <img src={shareIcon} alt="Like" />
+                </button>}
                 
             </div>
 

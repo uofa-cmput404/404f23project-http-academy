@@ -7,7 +7,6 @@
     "@babel/plugin-transform-private-property-in-object": "^7.16.7",
     "@emotion/react": "^11.10.6",
     "@emotion/styled": "^11.10.6",
-    "@mui/icons-material": "^5.14.16",
     "@popperjs/core": "^2.11.6",
     "@testing-library/user-event": "^13.5.0",
     "axios": "^1.5.1",
@@ -16,10 +15,10 @@
     "history": "^5.3.0",
     "jwt-decode": "^3.1.2",
     "react": "^18.2.0",
-    "react-bootstrap": "^2.9.1",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.10.0",
     "react-scripts": "^5.0.1",
+    "react-test-renderer": "^18.2.0",
     "react-toastify": "^9.1.1",
     "serve": "^14.2.0",
     "web-vitals": "^2.1.4"
@@ -27,15 +26,13 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "test": "jest --passWithNoTests",
+    "test": "react-scripts test --coverage --watchAll=false",
     "eject": "react-scripts eject"
-  },
-  "jest": {
-    "testEnvironment": "jsdom"
   },
   "eslintConfig": {
     "extends": [
-      "react-app"
+      "react-app",
+      "react-app/jest"
     ]
   },
   "browserslist": {
@@ -54,8 +51,8 @@
     "@babel/plugin-proposal-private-property-in-object": "^7.16.7",
     "@babel/preset-env": "^7.23.2",
     "@babel/preset-react": "^7.22.15",
+    "@testing-library/jest-dom": "^6.1.4",
     "@testing-library/react": "^14.0.0",
-    "jest": "^27.5.1",
     "jest-environment-jsdom": "^29.7.0"
   }
 }

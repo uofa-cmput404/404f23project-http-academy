@@ -49,6 +49,11 @@ h2 {
     background-color: #FF5F1F;
   }
 
+
+  
+  .selected {
+    background-color: #FF5F1F;
+  }
   .single-line-input {
     border: none; 
     border-bottom: 1px solid rgba(32, 32, 37, 0.12);
