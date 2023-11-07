@@ -10,6 +10,10 @@ def posts_list(request):
     if request.method == 'POST':
         # if we want to create a new post, use the serializer and save if valid
         serializer = PostSerializer(data=request.data)
+      
+        print('serializer data', serializer)
+        print('request data', request.data)
+        print('is valid', serializer.is_valid())
         if serializer.is_valid():
             serializer.save()
         else:

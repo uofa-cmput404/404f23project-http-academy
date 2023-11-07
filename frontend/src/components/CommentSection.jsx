@@ -12,6 +12,7 @@ export default function CommentSection() {
     { id: 3, author: 1, comment: "One more comment" },
   ];
   const [comments, setComments] = useState(defaultComments);
+  const storedUser = JSON.parse(localStorage.getItem('user'));
 
   // Manage state of the textarea to clear it after an author posts a comment
   const [commentText, setCommentText] = useState('');
@@ -21,11 +22,11 @@ export default function CommentSection() {
   const addComment = (commentText) => {
     axiosInstance.post(`posts/${id}/comments/`, {
       postId: id,
-      author: 1,
+      author: storedUser.id,
       comment: commentText
     }).then(response => {
       console.log(response);
-      setComments([...comments, { id: response.data.id, author: 1, comment: commentText }]);
+      setComments([...comments, { id: response.data.id, author: storedUser.id, comment: commentText }]);
       setCommentText('');
     }).catch(error => {
       console.log(error);
@@ -35,7 +36,7 @@ export default function CommentSection() {
   // Grab comments from the database
   useEffect(() => {
     axiosInstance.get(`posts/${id}/comments/`).then(response => {
-      // console.log(response);
+      console.log(response);
       setComments(response.data);
     }).catch(error => {
       console.log(error);
@@ -46,7 +47,7 @@ export default function CommentSection() {
     <div className='commentsection-container'>
       <h2>Comments</h2>
       {comments.map((comment) => (
-        <Comment key={comment.id} comment={comment.comment} />
+        <Comment key={comment.id} comment={comment.comment} userid = {comment.author}/>
       ))}
       <textarea id="comment" name="comment" rows="2" cols="35" value={commentText} onChange={(e) => setCommentText(e.target.value)}></textarea>
       <button onClick={() => addComment(document.getElementById("comment").value)}>Post Comment</button>

@@ -1,0 +1,130 @@
+
+.error-message {
+    color: red;
+}
+
+
+
+body{
+    background-color: rgba(161, 184, 191, 0.1);
+    ;
+}
+
+
+.outer-container {
+    display: flex;
+    height: 100%;
+    flex-direction: column;   
+  }
+  
+  .logos {
+    display: flex;
+    align-items: center;
+    flex: 1;
+  }
+
+  .logos-image {
+    width: 60px;
+    height: 60px;
+    margin-right: 40px;
+  }
+  
+  .logos h2{
+    font-weight: 600;
+    font-size: 35px;
+  }
+
+  .header-content h1{
+    font-size: 60px;
+    margin-bottom: 0;
+    margin-top: 100px;
+  }
+
+
+
+  .outer-login-signup-container{
+    display: flex;
+    /* background-color: bisque; */
+    justify-content: space-between;
+    height: 38.375em;
+    width: 60%;
+    padding-left: 50px;
+    padding-right: 50px;
+    background-color: white;
+    border-radius: 25px;
+    margin-top: 50px;
+}
+
+  .button-design{
+    padding: 10px;
+    text-decoration: none; 
+    cursor: pointer;
+    border: none; 
+    background-color: #202025;
+    text-align: center; 
+    width: 100%; 
+    font-size: 22px; 
+    outline: none; 
+    border-radius: 10px;
+    color: white;
+    letter-spacing: 2px;
+    height: 69px;
+  }
+
+  .button-design:hover{
+    background-color: #202025;
+  }
+
+  .single-line-input {
+    border: none; 
+    border-bottom: 1px solid rgba(32, 32, 37, 0.12);; 
+    width: 100%; 
+    padding: 10px 0; 
+    box-sizing: border-box; 
+    font-size: 20px;
+  }
+  
+  .single-line-input:focus {
+    outline: none;
+  }
+  
+  .login-form{
+
+    margin-top: 70px;
+    width: 35%;
+  }
+
+  .login-form h2{
+    margin-bottom: 50px;
+  }
+
+  .login-form input{
+    margin-bottom: 40px;
+    width: 100%;
+    
+  }
+
+  .login-form button{
+    margin-top: 30px;
+  }
+  
+  .signup-redirect{
+    background-color: rgba(161, 184, 191, 0.1);
+    /* height: 80%; */
+    display: flex;
+    flex-direction: column;
+    margin-top: 70px;
+    padding: 30px 30px 20px 30px;
+    border-radius: 25px;
+    width: 35%;
+    height: 65%;
+  }
+
+  .signup-redirect h1{
+    margin-bottom: 40px;
+  }
+
+  .signup-redirect h4{
+    color: rgba(0, 0, 0, 0.43);
+    margin-bottom: 80px;
+  }
