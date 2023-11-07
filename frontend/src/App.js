@@ -5,6 +5,7 @@ import MakePost from './pages/MakePost';
 import Navbar from '../src/components/Navbar';
 import EditPost from './components/EditPost';
 import Login from '../src/pages/Login';
+import Detail from '../src/pages/Detail';
 import SignUp from '../src/pages/Signup';
 import Profile from '../src/pages/profile';
 import { AuthProvider, useAuth } from './context/AuthContext';
