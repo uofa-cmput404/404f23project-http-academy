@@ -24,10 +24,10 @@ export default function Post({ post, canEdit }) {
 
 
 
-    // const handleLike = () => {
-    //     // Your like functionality here
-    //     console.log('Like button clicked');
-    // };
+    const handleLike = () => {
+        // Your like functionality here
+        console.log('Like button clicked');
+    };
 
 
 
