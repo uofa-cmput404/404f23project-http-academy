@@ -47,7 +47,7 @@ export default function Home() {
             console.log(error);
         }
         );
-    }, []);
+    }, [isAuthenticated]);
 
     let navigate = useNavigate();
 

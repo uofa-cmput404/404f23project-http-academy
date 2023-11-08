@@ -5,7 +5,6 @@ import axiosInstance from "../axiosInstance";
 
 export default function MakePost({ onClose }) {
 
-	let navigate = useNavigate();
 	const [visibility, setVisibility] = useState("PUBLIC");
 	const storedUser = JSON.parse(localStorage.getItem('user'));
 

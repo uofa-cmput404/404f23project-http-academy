@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import "../css/Post.css";
 import { Link } from 'react-router-dom';
-import { useNavigate } from "react-router-dom";
 import editIcon from '../assets/images/ellipsis.png';
 import likeIcon from '../assets/images/heart.png';
 import commentIcon from '../assets/images/chat.png';
@@ -47,7 +46,7 @@ export default function Post({ post, canEdit }) {
     //if the post is made by the current logged in user then display edit button 
     //else dont 
 
-    const storedUser = JSON.parse(localStorage.getItem('user'));
+    // const storedUser = JSON.parse(localStorage.getItem('user'));
 
     //   console.log(storedUser)
     // const editPost = () => {
