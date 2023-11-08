@@ -7,6 +7,7 @@ import { useAuth } from "../context/AuthContext";
 export default function Home() {
 
     const { isAuthenticated } = useAuth();
+    let navigate = useNavigate();
 
     // TODO: fetch posts from backend
     const defaultPosts = [
@@ -19,19 +20,14 @@ export default function Home() {
 
     // const { currentUser } = useAuth();
 
-
     const storedUser = JSON.parse(localStorage.getItem('user'));
-    console.log(storedUser);
     useEffect(() => {
 
-
-        console.log('this is the stored user', storedUser);
-        console.log('this is the stored post', posts);
         if (!isAuthenticated) {
             navigate('/login'); // Redirect to login if not authenticated
         }
 
-    }, [isAuthenticated]);
+    }, [isAuthenticated, navigate]);
 
     // on page load, fetch posts from backend
     useEffect(() => {
@@ -49,7 +45,6 @@ export default function Home() {
         );
     }, [isAuthenticated]);
 
-    let navigate = useNavigate();
 
     // useEffect(()=>{
     //     const storedUser = JSON.parse(localStorage.getItem('user'));
@@ -58,9 +53,9 @@ export default function Home() {
     //     }
     // })
 
-    const createPost = () => {
-        navigate("/post/create");
-    };
+    // const createPost = () => {
+    //     navigate("/post/create");
+    // };
 
     const postsChunks = posts.reduce((resultArray, item, index) => {
         const chunkIndex = Math.floor(index / 3);
