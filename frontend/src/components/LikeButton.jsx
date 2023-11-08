@@ -3,8 +3,8 @@ import axiosInstance from "../axiosInstance";
 
 export default function LikeButton({ id }) {
   const [likeCount, setLikeCount] = useState(0);
-  const storedUser = JSON.parse(localStorage.getItem('user'));
-  
+  // const storedUser = JSON.parse(localStorage.getItem('user'));
+
   // TODO: Move logic out
   useEffect(() => {
     axiosInstance.get(`posts/${id}/like/`).then(response => {

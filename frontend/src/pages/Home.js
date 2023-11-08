@@ -1,52 +1,53 @@
 import React, { useEffect, useState } from "react";
 import Post from "../components/Post";
-import "../css/Home.css"
+import "../css/Home.css";
 import { useNavigate } from "react-router-dom";
 import axiosInstance from "../axiosInstance";
 import { useAuth } from "../context/AuthContext";
 export default function Home() {
 
     const { isAuthenticated } = useAuth();
-    
+
     // TODO: fetch posts from backend
     const defaultPosts = [
-        {title: "Test", body: "Body"},
-        {title: "Test", body: "Body"},
-        {title: "Test", body: "Body"},
-        {title: "Test", body: "Body"},
+        { title: "Test", body: "Body" },
+        { title: "Test", body: "Body" },
+        { title: "Test", body: "Body" },
+        { title: "Test", body: "Body" },
     ];
     const [posts, setPosts] = useState(defaultPosts);
 
-    const { currentUser } = useAuth();
+    // const { currentUser } = useAuth();
 
-   
-     const storedUser = JSON.parse(localStorage.getItem('user'));
-     console.log(storedUser)
+
+    const storedUser = JSON.parse(localStorage.getItem('user'));
+    console.log(storedUser);
     useEffect(() => {
 
-       
-        console.log('this is the stored user', storedUser)
-        console.log('this is the stored post', posts)
+
+        console.log('this is the stored user', storedUser);
+        console.log('this is the stored post', posts);
         if (!isAuthenticated) {
             navigate('/login'); // Redirect to login if not authenticated
         }
-      
+
     }, [isAuthenticated]);
 
     // on page load, fetch posts from backend
     useEffect(() => {
-        
+
         axiosInstance.get('posts/').then(response => {
-           
-            const retrievePost = response.data
-            const publicPosts = retrievePost.filter(p => p.visibility === "PUBLIC")
+
+            const retrievePost = response.data;
+            const publicPosts = retrievePost.filter(p => p.visibility === "PUBLIC");
             setPosts(publicPosts);
-            console.log('checkig who made post', response.data)
-            
+            console.log('checkig who made post', response.data);
+
         }).catch(error => {
             console.log(error);
         }
-        )}, []);
+        );
+    }, []);
 
     let navigate = useNavigate();
 
@@ -56,10 +57,10 @@ export default function Home() {
     //         setcanEdit(true)
     //     }
     // })
-  
+
     const createPost = () => {
         navigate("/post/create");
-    }
+    };
 
     const postsChunks = posts.reduce((resultArray, item, index) => {
         const chunkIndex = Math.floor(index / 3);
@@ -75,19 +76,19 @@ export default function Home() {
 
     return (
 
-    
+
         <div className="posts-container">
             <div>
-            <h1>Explore</h1>
+                <h1>Explore</h1>
             </div>
-            
-           
+
+
             {/* {currentUser && <div>Welcome, {currentUser.username}!</div>} */}
             {postsChunks.map((chunk, chunkIndex) => (
                 <div key={chunkIndex} className="posts-row">
                     {chunk.map((post, postIndex) => (
-                        
-                        <Post key={postIndex} post={post} canEdit={storedUser.id === post.author}/>
+
+                        <Post key={postIndex} post={post} canEdit={storedUser.id === post.author} />
                     ))}
                 </div>
             ))}

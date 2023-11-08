@@ -1,8 +1,8 @@
 
 import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom'; 
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import '../css/SignUp.css'
+import '../css/SignUp.css';
 import logoImage from '../assets/images/logo.png';
 
 const SignUp = () => {
@@ -27,77 +27,77 @@ const SignUp = () => {
         }
     };
 
-    const redirect = () =>{
-        navigate('/login')
-    }
-    
+    const redirect = () => {
+        navigate('/login');
+    };
+
 
     return (
         <div className="outer-container">
-        <div className="logos">
-            <img src={logoImage} alt="SDIST Logo" className="logo-image" />
-            <h2>SDIST</h2>
-        </div>
-        <div className='header-content'>
-            <h1>Welcome Back</h1>
-            <h3>We’ve missed you! Ready to sell more of your data!</h3>
-        </div>
-        <div className='outer-login-signup-container'>
-            <div className='login-form'>
-                <h2>Sign up</h2>
-                <div classname="form-container">
-                    <form onSubmit={handleSubmit}>
-                        <div>
-                           
-                            <input 
-                                type="email" 
-                                placeholder="Email" 
-                                value={email} 
-                                onChange={e => setEmail(e.target.value)} 
-                                class="single-line-input" 
-                            />
-                        </div>
-                        <div>
-                       
-                        <input 
-                            type="text" 
-                            placeholder="Enter username" 
-                            value={username} 
-                            class="single-line-input" 
-                            onChange={e => setUsername(e.target.value)} 
-                        />
-                        </div>
-                        <div>
-                            
-                            <input 
-                                type="password" 
-                                placeholder="Password" 
-                                value={password} 
-                                onChange={e => setPassword(e.target.value)} 
-                                class="single-line-input" 
-                            />
-                        </div>
-                        <button type="submit" className = "button-design">Sign up</button>
-                        {error && <p className="error-message">{error}</p>}
-                        
-                        
-                        
-                        
-                    </form>
-                </div>
+            <div className="logos">
+                <img src={logoImage} alt="SDIST Logo" className="logo-image" />
+                <h2>SDIST</h2>
             </div>
-            <div className='Login-redirect'>
-                <div>
-                    <h1>Welcome</h1>
-                    <h3>Have an account?</h3>
-                    <h4>Join us by logging in and you can sell us ur data !!</h4>
-                </div>
-                <button className = "button-design" onClick= {redirect}>Log in</button>
+            <div className='header-content'>
+                <h1>Welcome Back</h1>
+                <h3>We’ve missed you! Ready to sell more of your data!</h3>
             </div>
-        </div>
+            <div className='outer-login-signup-container'>
+                <div className='login-form'>
+                    <h2>Sign up</h2>
+                    <div classname="form-container">
+                        <form onSubmit={handleSubmit}>
+                            <div>
 
-       
-         </div>
+                                <input
+                                    type="email"
+                                    placeholder="Email"
+                                    value={email}
+                                    onChange={e => setEmail(e.target.value)}
+                                    class="single-line-input"
+                                />
+                            </div>
+                            <div>
+
+                                <input
+                                    type="text"
+                                    placeholder="Enter username"
+                                    value={username}
+                                    class="single-line-input"
+                                    onChange={e => setUsername(e.target.value)}
+                                />
+                            </div>
+                            <div>
+
+                                <input
+                                    type="password"
+                                    placeholder="Password"
+                                    value={password}
+                                    onChange={e => setPassword(e.target.value)}
+                                    class="single-line-input"
+                                />
+                            </div>
+                            <button type="submit" className="button-design">Sign up</button>
+                            {error && <p className="error-message">{error}</p>}
+
+
+
+
+                        </form>
+                    </div>
+                </div>
+                <div className='Login-redirect'>
+                    <div>
+                        <h1>Welcome</h1>
+                        <h3>Have an account?</h3>
+                        <h4>Join us by logging in and you can sell us ur data !!</h4>
+                    </div>
+                    <button className="button-design" onClick={redirect}>Log in</button>
+                </div>
+            </div>
+
+
+        </div>
     );
 };
 

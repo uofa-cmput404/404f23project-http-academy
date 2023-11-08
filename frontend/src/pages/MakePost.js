@@ -3,13 +3,13 @@ import { useNavigate } from "react-router-dom";
 import "../css/MakePost.css";
 import axiosInstance from "../axiosInstance";
 
-export default function MakePost({onClose}) {
+export default function MakePost({ onClose }) {
 
 	let navigate = useNavigate();
-	const [visibility, setVisibility] = useState("PUBLIC")
+	const [visibility, setVisibility] = useState("PUBLIC");
 	const storedUser = JSON.parse(localStorage.getItem('user'));
 
-	
+
 	const addPost = (title, body) => {
 		// TODO: add POST to backend here
 		if (title === "") {
@@ -34,9 +34,9 @@ export default function MakePost({onClose}) {
 		onClose(); //we close the model after we succesful make a post
 	};
 
-	const returnHome = () => {
-		navigate("/home");
-	};
+	// const returnHome = () => {
+	// 	navigate("/home");
+	// };
 
 	// Image handling
 	const [image, setImage] = useState('');
@@ -59,45 +59,45 @@ export default function MakePost({onClose}) {
 		<div className="Create-postContainer">
 			<div className="leftContainer">
 				<div className="post-header">
-				<h1>Create a <br></br> Post.</h1>
-				<button className="close-button" onClick={onClose} aria-label="Close">X</button>
-					</div>
-				
+					<h1>Create a <br></br> Post.</h1>
+					<button className="close-button" onClick={onClose} aria-label="Close">X</button>
+				</div>
+
 				<h2 className="visibility">Visibility</h2>
 				<div className="visibility-section">
-				<button className={visibility === "PUBLIC" ? "selected" : ""} onClick={() => setVisibility("PUBLIC")}>Public</button>
-				<button className={visibility === "FRIENDS_ONLY" ? "selected" : ""} onClick={() => setVisibility("FRIENDS_ONLY")}>Friends-Only</button>
-				<button className={visibility === "PRIVATE" ? "selected" : ""} onClick={() => setVisibility("PRIVATE")}>Private</button>
-				<button className={visibility === "UNLISTED" ? "selected" : ""} onClick={() => setVisibility("UNLISTED")}>Unlisted</button>
+					<button className={visibility === "PUBLIC" ? "selected" : ""} onClick={() => setVisibility("PUBLIC")}>Public</button>
+					<button className={visibility === "FRIENDS_ONLY" ? "selected" : ""} onClick={() => setVisibility("FRIENDS_ONLY")}>Friends-Only</button>
+					<button className={visibility === "PRIVATE" ? "selected" : ""} onClick={() => setVisibility("PRIVATE")}>Private</button>
+					<button className={visibility === "UNLISTED" ? "selected" : ""} onClick={() => setVisibility("UNLISTED")}>Unlisted</button>
 
 				</div>
 				<h2>Title</h2>
-					<input type="text" id="title" name="title" class="single-line-input" maxLength={80} />
-					<h2>Body</h2>
-					<textarea id="body" name="body" rows="4" cols="50" class="single-line-input"></textarea>
-					
+				<input type="text" id="title" name="title" class="single-line-input" maxLength={80} />
+				<h2>Body</h2>
+				<textarea id="body" name="body" rows="4" cols="50" class="single-line-input"></textarea>
+
 
 				<br />
 				<div className="postfooter-container">
-				<input type="file" accept="image/*" onChange={handleImageUpload} />
-				<button onClick={() => addPost(document.getElementById("title").value, document.getElementById("body").value)}>Post</button>
+					<input type="file" accept="image/*" onChange={handleImageUpload} />
+					<button onClick={() => addPost(document.getElementById("title").value, document.getElementById("body").value)}>Post</button>
 				</div>
-				
+
 				{/* <button onClick={onClose}>Back</button> */}
 			</div>
 			<div className="rightContainer">
-				
+
 				<h2>Preview</h2>
-				<div className="preview-image" style={{ 
-				backgroundImage: image ? `url(${image})` : '', 
-				backgroundSize: 'cover', 
-				backgroundPosition: 'center center'
+				<div className="preview-image" style={{
+					backgroundImage: image ? `url(${image})` : '',
+					backgroundSize: 'cover',
+					backgroundPosition: 'center center'
 				}}>
-				{!image && <div className="no-image">No image uploaded</div>}
+					{!image && <div className="no-image">No image uploaded</div>}
 				</div>
 
 
-				
+
 			</div>
 		</div>
 	);
