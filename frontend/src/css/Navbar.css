@@ -1,27 +1,86 @@
-nav {
-    background-color: beige;
-    border-bottom: 1px solid #eee;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
-    display: flex;
-    flex-direction: row;
-    justify-content: left;
+
+body{
+    color: #202025;
+}
+
+.navbar {
     position: fixed;
-    margin-bottom: 100px;
     top: 0;
-    width: 100%;
-    z-index: 1;
+    left: 0;
+    flex: 0.2;
+    display: flex;
+    flex-direction: column;
+    background-color: rgba(217, 217, 217, 0.08);
+    padding: 2em 1em;
+    border-right: 2px solid #E0E0E0;
+    height: 100vh; 
+    
+    width: 250px;
+    
+}
+
+.navbar .logo {
+    font-size: 1.6em;
+    margin-bottom: 5em;
+    margin-top: 1em; 
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.logo-image{
+    width: 40px;
+    height: 40px;
+    margin-right: 25px;
+}
+
+.nav-items {
+  
+    display: flex;
+    flex-direction: column;
+    
 }
 
 .navButton {
-    background-color: beige;
-    width: fit-content;
-    height: fit-content;
-    border: none;
-    color: black;
-    padding: 10px 20px;
+    display: block;
+    padding: 10px;
+    text-decoration: none; 
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    color: inherit; 
+    border: none; 
+    background: transparent;
+    text-align: center; 
+    width: 100%; 
+    box-sizing: border-box; 
+    font-size: 1.45em; 
+    outline: none; 
+    margin-bottom: 2em; 
+    overflow-y: hidden;
 }
 
-.navButton:hover {
-    cursor: pointer;
-    background-color: aquamarine;
+/* .navButton:hover {
+    background-color: #E0E0E0;
+} */
+
+.logout-section {
+    
+    margin-top: auto;   
+}
+
+
+.navButton.active {
+    position: relative;
+}
+
+.navButton.active:after {
+    content: '';
+    position: absolute;
+    width: 3px;
+    height: calc(1em + 20px);  
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: #202025; 
 }

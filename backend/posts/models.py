@@ -1,15 +1,16 @@
 from django.db import models
-from django.contrib.auth.models import User
+from django.conf import settings
 from django.contrib.postgres.fields import ArrayField
-
+from authors.models import AppUser
 # Create your models here.
 
 class Post(models.Model):
     id = models.AutoField(primary_key=True)
-    author = models.ForeignKey(User, on_delete=models.CASCADE, db_index=True)
+    author = models.ForeignKey(AppUser, on_delete=models.CASCADE, db_index=True)
     published = models.DateTimeField(auto_now_add=True)
     title = models.CharField(max_length=100)
-    content = models.TextField(max_length=500)
+    content = models.TextField(max_length=150, null=True)
+    image = models.TextField(null=True)
     contentType = models.CharField(max_length=20, default='text/plain')
     categories = models.ForeignKey('Category', on_delete=models.CASCADE, default=None, null=True)
     count = models.IntegerField(default=0)
@@ -21,7 +22,7 @@ class Post(models.Model):
 
 class Comment(models.Model):
     id = models.AutoField(primary_key=True)
-    author = models.ForeignKey(User, on_delete=models.CASCADE, db_index=True)
+    author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, db_index=True)
     comment = models.CharField(max_length=100)
     contentType = models.CharField(max_length=100, default='text/plain')
     published = models.DateTimeField(auto_now_add=True)

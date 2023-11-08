@@ -1,24 +1,73 @@
 .card {
-    width: fit-content;
+    width: 300px;
     flex: 0.33;
-    margin: 2px;
+    margin: 2.5px;
+    margin-right: 1.35em;
+   margin-bottom: 2em
+
 }
 
+.edit-container{
+    display: flex;
+    justify-content: flex-end;
+}
 .card-body {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    background-color: aliceblue;
+    background-color: rgba(217, 217, 217, 0.45);
     max-height: 300px;
+    min-height: 250px;
+    
+    border-radius: 1.2em;
 }
 
 .card-body:hover {
     cursor: pointer;
-    background-color: antiquewhite;
+    background-color: rgba(255, 95, 31, 0.25);
+
 }
 
 .card-title, .card-text {
     text-align: center;
     width: fit-content;
 }
+
+.invisible {
+    visibility: hidden;
+  }
+  
+
+.edit-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+.edit-button img {
+    width: 30px; 
+    height: auto;
+}
+
+
+.Editpost{
+  
+    display: flex;
+    justify-content: end;
+}
+
+.footer-container{
+    display: flex;
+    justify-content: space-between;
+}
+
+.footer-container .userNamePost{
+    font-size: 1.5em;
+    color: #000;
+    font-weight: 500;
+    font-size: 1.6em;
+
+}
+
+  

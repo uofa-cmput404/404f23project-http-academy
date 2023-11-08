@@ -7,8 +7,9 @@ app_name = 'posts'
 # TODO: update these routes as per project requirements
 urlpatterns = [
     path('', views.posts_list), # GET all posts, POST a new post
-    path('<str:pk>', views.post_detail), # GET a specific post, DELETE a post
+    path('<str:pk>', views.post_detail, name = 'post_detail'), # GET a specific post, DELETE a post
     path('<str:pk>/comments/', views.comments_list), # GET all comments for a post, POST a new comment
     path('comments/<str:pk>', views.comment_detail), # GET a specific comment, DELETE a comment
     path('<str:pk>/like/', views.like_post), # GET all likes for a post, POST a like, DELETE a like
+    path('shareable_link/<str:pk>/', views.get_shareable_link, name = 'shareable_link')
 ]

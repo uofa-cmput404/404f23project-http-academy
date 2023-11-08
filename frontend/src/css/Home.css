@@ -12,4 +12,11 @@
 
 html, body {
     height: 100%;
+    font-family: 'Inter', sans-serif;
+}
+
+.posts-container h1{
+  
+    display: flex;
+    font-size: 4em;
 }

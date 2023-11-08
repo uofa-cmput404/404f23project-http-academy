@@ -2,7 +2,7 @@ import React from 'react';
 import axiosInstance from '../axiosInstance';
 import { useNavigate } from "react-router-dom";
 
-export default function DeleteButton({ id }) {
+export default function DeleteButton({ id, onClose }) {
   // TODO: Add CSS 
   let navigate = useNavigate();
   const handleDelete = () => {
@@ -12,6 +12,7 @@ export default function DeleteButton({ id }) {
     }).catch(error => {
       console.log(error);
     });
+    onClose();
   };
 
   return (

@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from .models import Post, Comment
+from django.urls import reverse 
 from .serializers import PostSerializer, CommentSerializer
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -10,6 +11,10 @@ def posts_list(request):
     if request.method == 'POST':
         # if we want to create a new post, use the serializer and save if valid
         serializer = PostSerializer(data=request.data)
+      
+        print('serializer data', serializer)
+        print('request data', request.data)
+        print('is valid', serializer.is_valid())
         if serializer.is_valid():
             serializer.save()
         else:
@@ -20,12 +25,30 @@ def posts_list(request):
         serializer = PostSerializer(posts, many=True)
     return Response(serializer.data)
 
+@api_view(['GET'])
+def get_shareable_link(request, pk):
+    if request.method == 'GET':
+        try:
+            post = Post.objects.get(id=pk)
+            # serializer = PostSerializer(post, many=False)
+            # Pass the primary key to the reverse function
+            post_path = reverse('posts:post_detail', kwargs={'pk': pk})
+            print(post_path)
+            # Now you can use post_path as needed, for example:
+            full_url = request.build_absolute_uri(post_path)
+            return Response({'url': full_url})
+            
+        except Post.DoesNotExist:
+            return Response('Post does not exist', status=404)
+
+
 @api_view(['GET', 'DELETE', 'PATCH'])
 def post_detail(request, pk):
     # get the post with the specified ID
     post = Post.objects.get(id=pk)
+    print("this is a new post", request.data)
     serializer = PostSerializer(post, many=False)
-
+    # print('this is the post from front end', post.title, post.caption, post.image)
     if request.method == 'DELETE':
         # if we want to delete a post, delete it and return a success message if it exists
         try:
@@ -36,12 +59,15 @@ def post_detail(request, pk):
     elif request.method == 'PATCH':
         # if we want to update a post, update it and return a success message if it exists
         try:
+            
             # if we try to update any fields not updateable, return an error
             if request.data.get('id') or request.data.get('author') or request.data.get('published') or request.data.get('count') or request.data.get('likes'):
                 return Response('Cannot update id, author, published, count, or likes')
+            
             serializer.update(post, request.data)
             return Response('Post updated successfully')
         except:
+            print('this is the post that also doesnt exxist', post)
             return Response('Post does not exist')
     else:
         # if we want to get a post, use the serializer to return the post
