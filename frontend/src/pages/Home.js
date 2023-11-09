@@ -61,7 +61,6 @@ export default function Home() {
         }
         )}, []);
 
-    let navigate = useNavigate();
 
     
     const postsChunks = posts.reduce((resultArray, item, index) => {
