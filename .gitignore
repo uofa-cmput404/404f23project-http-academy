@@ -292,3 +292,6 @@ dist
 
 # VS Code workspace settings
 *.vscode
+
+# npm
+package-lock.json

@@ -1,50 +1,69 @@
-import React, {useEffect, useState} from "react";
-import "../css/Post.css"
-import { Link } from 'react-router-dom'
-import { useNavigate } from "react-router-dom";
-import editIcon from '../assets/images/ellipsis.png'
-import likeIcon from '../assets/images/heart.png'
-import commentIcon from '../assets/images/chat.png'
-import Modal from "../components/Modal";
-import EditPost from "../components/EditPost"
-import shareIcon from '../assets/images/share.png'
+
 import axiosInstance from "../axiosInstance";
+import React, { useState } from "react";
+import "../css/Post.css";
+import { Link } from 'react-router-dom';
+import editIcon from '../assets/images/ellipsis.png';
+import likeIcon from '../assets/images/heart.png';
+import commentIcon from '../assets/images/chat.png';
+import Modal from "../components/Modal";
+import shareIcon from '../assets/images/share.png';
 
 export default function Post({ post, canEdit }) {
 
     const [openModal, setOpenModal] = useState(false);
     const [modalMode, setModalMode] = useState("");
-    console.log('edit prop', canEdit)
-    let navigate = useNavigate();
-    
 
-    
-    const handleEdit = () => {
-        // Your like functionality here
-        console.log('Edit button clicked');
-    };
-    
-  
+    console.log('edit prop', canEdit);
+
+
+
+    // const handleEdit = () => {
+    //     // Your like functionality here
+    //     console.log('Edit button clicked');
+    // };
+
 
     const handleLike = () => {
         // Your like functionality here
         console.log('Like button clicked');
     };
-    
-  
 
     const handleComment = () => {
         // Your like functionality here
         console.log('Comment button clicked');
     };
-    
-  
 
     // Overrides the anchor tag styling caused by the Link component
     const neutral = {
         color: 'black',
         textDecoration: 'none'
-    }
+    };
+
+    //if the post is made by the current logged in user then display edit button 
+    //else dont 
+
+    // const storedUser = JSON.parse(localStorage.getItem('user'));
+
+    //   console.log(storedUser)
+    // const editPost = () => {
+
+    //     console.log('can edit', canEdit)
+    //     navigate(`/post/edit/${post.id}`);
+    // }
+
+
+
+
+    const editPost = () => {
+        // Open the modal and set it to show the EditPost component
+        setModalMode('edit');
+        setOpenModal(true);
+    };
+
+    const handleShare = () => {
+        console.log('share icon clicked');
+    };
 
       //if the post is made by the current logged in user then display edit button 
   //else dont 

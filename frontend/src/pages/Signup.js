@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom'; 
+import { useNavigate} from 'react-router-dom'; 
 import { useAuth } from '../context/AuthContext';
 import '../css/SignUp.css'
 import logoImage from '../assets/images/logo.png';
@@ -102,39 +102,3 @@ const SignUp = () => {
 };
 
 export default SignUp;
-
-
-// <div className="formContainer">
-//             <form onSubmit={handleSubmit}>
-//                 <div>
-//                     <label>Email address</label>
-//                     <input 
-//                         type="email" 
-//                         placeholder="Enter email" 
-//                         value={email} 
-//                         onChange={e => setEmail(e.target.value)} 
-//                     />
-//                 </div>
-//                 <div>
-//                     <label>Username</label>
-//                     <input 
-//                         type="text" 
-//                         placeholder="Enter username" 
-//                         value={username} 
-//                         onChange={e => setUsername(e.target.value)} 
-//                     />
-//                 </div>
-//                 <div>
-//                     <label>Password</label>
-//                     <input 
-//                         type="password" 
-//                         placeholder="Password" 
-//                         value={password} 
-//                         onChange={e => setPassword(e.target.value)} 
-//                     />
-//                 </div>
-//                 {error && <p className="error-message">{error}</p>}
-//                 <p>Have an account? <Link to="/login">Login</Link></p>
-//                 <button type="submit">Register</button>
-//             </form>
-//         </div>

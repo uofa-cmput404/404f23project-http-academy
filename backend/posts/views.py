@@ -25,21 +25,6 @@ def posts_list(request):
         serializer = PostSerializer(posts, many=True)
     return Response(serializer.data)
 
-@api_view(['GET'])
-def get_shareable_link(request, pk):
-    if request.method == 'GET':
-        try:
-            post = Post.objects.get(id=pk)
-            # serializer = PostSerializer(post, many=False)
-            # Pass the primary key to the reverse function
-            post_path = reverse('posts:post_detail', kwargs={'pk': pk})
-            print(post_path)
-            # Now you can use post_path as needed, for example:
-            full_url = request.build_absolute_uri(post_path)
-            return Response({'url': full_url})
-            
-        except Post.DoesNotExist:
-            return Response('Post does not exist', status=404)
 
 
 @api_view(['GET', 'DELETE', 'PATCH'])
@@ -139,3 +124,9 @@ def like_post(request, pk):
         # if we want to get the number of likes for a post, return the number of likes
         likes = post.likes
         return Response(likes)
+
+@api_view(['GET'])
+def get_post_image(request, pk):
+    post = Post.objects.get(id=pk)
+    serializer = PostSerializer(post, many=False)
+    return Response(serializer.data["image"])

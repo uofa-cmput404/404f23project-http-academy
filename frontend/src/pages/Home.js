@@ -17,16 +17,12 @@ export default function Home() {
     ];
     const [posts, setPosts] = useState(defaultPosts);
 
-    const { currentUser } = useAuth();
-
    
      const storedUser = JSON.parse(localStorage.getItem('user'));
      console.log(storedUser)
     useEffect(() => {
 
-       
-        console.log('this is the stored user', storedUser)
-        console.log('this is the stored post', posts)
+    
         if (!isAuthenticated) {
             navigate('/login'); // Redirect to login if not authenticated
         }
@@ -50,17 +46,7 @@ export default function Home() {
 
     let navigate = useNavigate();
 
-    // useEffect(()=>{
-    //     const storedUser = JSON.parse(localStorage.getItem('user'));
-    //     if (storedUser.author === posts.author){
-    //         setcanEdit(true)
-    //     }
-    // })
-  
-    const createPost = () => {
-        navigate("/post/create");
-    }
-
+    
     const postsChunks = posts.reduce((resultArray, item, index) => {
         const chunkIndex = Math.floor(index / 3);
 
@@ -81,8 +67,7 @@ export default function Home() {
             <h1>Explore</h1>
             </div>
             
-           
-            {/* {currentUser && <div>Welcome, {currentUser.username}!</div>} */}
+        
             {postsChunks.map((chunk, chunkIndex) => (
                 <div key={chunkIndex} className="posts-row">
                     {chunk.map((post, postIndex) => (
@@ -91,7 +76,7 @@ export default function Home() {
                     ))}
                 </div>
             ))}
-            {/* <button onClick={() => createPost()}>Add Post</button> */}
+           
             <div className="square">
             </div>
         </div>

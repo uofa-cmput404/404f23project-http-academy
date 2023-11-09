@@ -1,11 +1,9 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import "../css/MakePost.css";
 import axiosInstance from "../axiosInstance";
 
 export default function MakePost({onClose}) {
 
-	let navigate = useNavigate();
 	const [visibility, setVisibility] = useState("PUBLIC")
 	const storedUser = JSON.parse(localStorage.getItem('user'));
 
@@ -34,9 +32,6 @@ export default function MakePost({onClose}) {
 		onClose(); //we close the model after we succesful make a post
 	};
 
-	const returnHome = () => {
-		navigate("/home");
-	};
 
 	// Image handling
 	const [image, setImage] = useState('');
@@ -83,7 +78,7 @@ export default function MakePost({onClose}) {
 				<button onClick={() => addPost(document.getElementById("title").value, document.getElementById("body").value)}>Post</button>
 				</div>
 				
-				{/* <button onClick={onClose}>Back</button> */}
+		
 			</div>
 			<div className="rightContainer">
 				

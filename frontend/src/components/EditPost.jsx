@@ -4,21 +4,18 @@ import { useNavigate, useParams } from "react-router-dom";
 import axiosInstance from "../axiosInstance";
 import DeleteButton from "./DeleteButton";
 import '../css/EditPost.css'
-// Define the EditPost component
-export default function EditPost({onClose, posts}) {
+
+export default function EditPost({ onClose, posts }) {
   // Define state variables
   const [post, setPost] = useState(null);
   const [image, setImage] = useState("");
   const [imagePreview, setImagePreview] = useState(null);
-  const [visibility, setVisibility] = useState("")
-  
+  const [visibility, setVisibility] = useState("");
+
   const navigate = useNavigate();
-  const  id  = posts;
+  const id = posts;
 
-  console.log('modal post', posts)
-
-
-
+  console.log('modal post', posts);
 
   useEffect(() => {
     axiosInstance
@@ -37,13 +34,11 @@ export default function EditPost({onClose, posts}) {
             
             
         }
-        
+
       })
       .catch((error) => {
         console.log("Error fetching post for editing", error);
       });
-
-      
   }, [id]);
 
   const returnHome = () => {
@@ -108,6 +103,47 @@ export default function EditPost({onClose, posts}) {
         console.log("Error updating post", error);
       });
       onClose();
+
+  }, [id]);
+
+  const editPost = (updatedTitle, updatedBody, updatedImage) => {
+
+
+    if (post.title !== updatedTitle) {
+      post.title = updatedTitle;
+    }
+    if (post.content !== updatedBody) {
+      post.content = updatedBody;
+    }
+
+    if (post.image !== updatedImage) {
+      post.image = updatedImage;
+    }
+
+    if (post.visibility !== visibility) {
+      post.visibility = visibility;
+    }
+
+    const updatedPost = {
+      title: post.title,
+      content: post.content,
+      image: post.image,
+      visibility: visibility
+    };
+
+    console.log('this is sedning to backend', post);
+    axiosInstance
+      .patch(`posts/${id}`, updatedPost)
+      .then((response) => {
+        console.log('server response', response);
+        navigate("/home");
+
+      })
+
+      .catch((error) => {
+        console.log("Error updating post", error);
+      });
+    onClose();
   };
 
   // Handle the image upload
@@ -125,7 +161,6 @@ export default function EditPost({onClose, posts}) {
         reader.readAsDataURL(file);
     }
 };
-  
 
 
   if (post === null) {

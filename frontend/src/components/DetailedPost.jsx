@@ -1,7 +1,6 @@
 import React from "react";
 import "../css/DetailedPost.css";
 import LikeButton from "../components/LikeButton";
-import DeleteButton from "../components/DeleteButton";
 import CommentSection from "./CommentSection";
 
 export default function DetailedPost({ post, id, image }) {
