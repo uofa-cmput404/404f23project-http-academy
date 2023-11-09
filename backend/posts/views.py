@@ -1,7 +1,7 @@
 from django.shortcuts import render
-from .models import Post, Comment
+from .models import Post, Comment, Like
 from django.urls import reverse 
-from .serializers import PostSerializer, CommentSerializer
+from .serializers import PostSerializer, CommentSerializer, PostLikeSerializer
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
@@ -100,8 +100,30 @@ def comment_detail(request, pk):
         # if we want to get a comment, use the serializer to return the comment
         return Response(serializer.data)
     
-@api_view(['GET', 'POST', 'DELETE'])
+@api_view(['GET', 'POST'])
 def like_post(request, pk):
+    
+    likes = Like.objects.filter(postId=pk)
+    print("these are the likes:  ")
+    print(likes)
+    already_liked = len(likes.filter(author=request.data.get('author'))) > 0
+    print(already_liked)
+    if request.method == 'POST':
+        # if we want to create a new like, use the serializer and save if valid
+        serializer = PostLikeSerializer(data=request.data)
+        print("is valid: " + str(serializer.is_valid()))
+        if serializer.is_valid() and not already_liked:
+            serializer.save()
+        else:
+            return Response(serializer.errors)
+    else:
+        # if we want to get all likes for a post, use the serializer to return all likes
+        serializer = PostLikeSerializer(likes, many=True)
+        likes = Like.objects.filter(postId=pk)
+    return Response(serializer.data)
+    
+
+'''
     # get the post with the specified ID
     post = Post.objects.get(id=pk)
     if request.method == 'POST':
@@ -124,6 +146,26 @@ def like_post(request, pk):
         # if we want to get the number of likes for a post, return the number of likes
         likes = post.likes
         return Response(likes)
+'''
+
+@api_view(['GET', 'DELETE'])
+def like_detail(request, pk, pkLike):
+    # get the like with the specified ID
+    like = Like.objects.get(postId=pk , id = pkLike)
+    serializer = PostLikeSerializer(like, many=False)
+
+    if request.method == 'DELETE':
+        # if we want to delete a like, delete it and return a success message if it exists
+        try:
+            like.delete()
+            return Response('Like deleted successfully')
+        except:
+            return Response('Like does not exist')
+    else:
+        # if we want to get a like, use the serializer to return the like
+        return Response(serializer.data)
+
+
 
 @api_view(['GET'])
 def get_post_image(request, pk):
