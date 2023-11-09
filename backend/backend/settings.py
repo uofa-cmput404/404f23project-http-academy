@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'posts',
     'authors',
     'node',
+    'inbox',
 ]
 
 MIDDLEWARE = [
