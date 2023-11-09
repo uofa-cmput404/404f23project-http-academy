@@ -9,7 +9,6 @@ export default function EditPost({ onClose, posts }) {
   // Define state variables
   const [post, setPost] = useState(null);
   const [image, setImage] = useState("");
-  const [imagePreview, setImagePreview] = useState(null);
   const [visibility, setVisibility] = useState("");
 
   const navigate = useNavigate();
@@ -25,12 +24,10 @@ export default function EditPost({ onClose, posts }) {
         setPost(retrievedPost.data);
         setVisibility(retrievedPost.data.visibility);
 
-        // if (retrievedPost.contentType.startsWith('image/')) {
-        //   setImagePreview(`data:${retrievedPost.contentType};base64,${retrievedPost.content}`);
-        // }
+     
         if (retrievedPost.data.image) {
           setImage(retrievedPost.data.image);
-          setImagePreview(retrievedPost.data.image);
+       
 
 
         }
@@ -92,7 +89,7 @@ export default function EditPost({ onClose, posts }) {
       reader.onload = (e) => {
         console.log(e.target.result);
         setImage(e.target.result);
-        setImagePreview(e.target.result);
+
       };
 
       reader.readAsDataURL(file);
