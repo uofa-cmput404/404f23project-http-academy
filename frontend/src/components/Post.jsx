@@ -61,9 +61,6 @@ export default function Post({ post, canEdit }) {
         setOpenModal(true);
     };
 
-    const handleShare = () => {
-        console.log('share icon clicked');
-    };
 
       //if the post is made by the current logged in user then display edit button 
   //else dont 
