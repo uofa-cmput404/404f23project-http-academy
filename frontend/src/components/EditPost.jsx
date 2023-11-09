@@ -9,13 +9,15 @@ export default function EditPost({ onClose, posts }) {
    // Define state variables
   const [post, setPost] = useState(null);
   const [image, setImage] = useState("");
-  const [imagePreview, setImagePreview] = useState(null);
-  const [visibility, setVisibility] = useState("");
-
+  const [visibility, setVisibility] = useState("")
+  
   const navigate = useNavigate();
-  const id = posts;
+  const  id  = posts;
 
-  console.log('modal post', posts);
+  console.log('modal post', posts)
+
+
+
 
   useEffect(() => {
     axiosInstance
@@ -23,81 +25,86 @@ export default function EditPost({ onClose, posts }) {
       .then((retrievedPost) => {
         console.log("Post fetched for editing", retrievedPost);
         setPost(retrievedPost.data);
-        setVisibility(retrievedPost.data.visibility);
-
-        // if (retrievedPost.contentType.startsWith('image/')) {
-        //   setImagePreview(`data:${retrievedPost.contentType};base64,${retrievedPost.content}`);
-        // }
-        if (retrievedPost.data.image) {
-          setImage(retrievedPost.data.image);
-          setImagePreview(retrievedPost.data.image);
-
-
+        setVisibility(retrievedPost.data.visibility)
+      
+        if (retrievedPost.data.image){
+            setImage(retrievedPost.data.image)
+         
+            
+            
         }
-
+        
       })
       .catch((error) => {
         console.log("Error fetching post for editing", error);
       });
 
-
+      
   }, [id]);
 
+  const returnHome = () => {
+    navigate("/home");
+  };
+
+
   const editPost = (updatedTitle, updatedBody, updatedImage) => {
-
-
-    if (post.title !== updatedTitle) {
-      post.title = updatedTitle;
+   
+   
+    if (post.title !== updatedTitle){
+        post.title = updatedTitle; 
     }
     if (post.content !== updatedBody) {
-      post.content = updatedBody;
+        post.content = updatedBody; 
+    }
+   
+    if (post.image !== updatedImage){
+        post.image = updatedImage
     }
 
-    if (post.image !== updatedImage) {
-      post.image = updatedImage;
-    }
-
-    if (post.visibility !== visibility) {
+    if (post.visibility !== visibility){
       post.visibility = visibility;
     }
-
+ 
     const updatedPost = {
-      title: post.title,
-      content: post.content,
-      image: post.image,
-      visibility: visibility
-    };
+        title: post.title,
+        content: post.content,
+        image: post.image,
+        visibility: visibility
+    }
 
-    console.log('this is sedning to backend', post);
+    
+ 
+    console.log('this is sedning to backend', post)
     axiosInstance
       .patch(`posts/${id}`, updatedPost)
       .then((response) => {
-        console.log('server response', response);
+        console.log('server response', response)
         navigate("/home");
-
+        
       })
-
+      
       .catch((error) => {
         console.log("Error updating post", error);
       });
-    onClose();
+      onClose();
   };
 
   // Handle the image upload
   const handleImageUpload = (event) => {
     const file = event.target.files[0];
     if (file) {
-      const reader = new FileReader();
+        const reader = new FileReader();
 
-      reader.onload = (e) => {
-        console.log(e.target.result);
-        setImage(e.target.result);
-        setImagePreview(e.target.result);
-      };
+        reader.onload = (e) => {
+            console.log(e.target.result);
+            setImage(e.target.result);
+          
+        };
 
-      reader.readAsDataURL(file);
+        reader.readAsDataURL(file);
     }
-  };
+};
+  
 
 
   if (post === null) {
