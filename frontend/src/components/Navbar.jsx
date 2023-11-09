@@ -9,7 +9,7 @@ import { useAuth } from '../context/AuthContext';
 
 export default function Navbar() {
     const [openModal, setOpenModal] = useState(false);
-    const { currentUser, logout } = useAuth();
+    const { logout } = useAuth();
     const navigate = useNavigate();
     const location = useLocation();
     
