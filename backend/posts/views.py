@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from .models import Post, Comment
+from django.urls import reverse 
 from .serializers import PostSerializer, CommentSerializer
 from rest_framework.decorators import api_view
 from rest_framework.response import Response

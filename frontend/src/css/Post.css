@@ -3,9 +3,14 @@
     flex: 0.33;
     margin: 2.5px;
     margin-right: 1.35em;
-  
+   margin-bottom: 2em
+
 }
 
+.edit-container{
+    display: flex;
+    justify-content: flex-end;
+}
 .card-body {
     display: flex;
     flex-direction: column;
@@ -29,6 +34,11 @@
     width: fit-content;
 }
 
+.invisible {
+    visibility: hidden;
+  }
+  
+
 .edit-button {
     background: none;
     border: none;
@@ -42,6 +52,7 @@
 
 
 .Editpost{
+  
     display: flex;
     justify-content: flex-end;
 }

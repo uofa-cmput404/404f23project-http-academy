@@ -1,36 +1,12 @@
-/* nav {
-    background-color: beige;
-    border-bottom: 1px solid #eee;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
-    display: flex;
-    flex-direction: row;
-    justify-content: left;
-    position: fixed;
-    margin-bottom: 100px;
-    top: 0;
-    width: 100%;
-    z-index: 1;
-}
-
-.navButton {
-    background-color: beige;
-    width: fit-content;
-    height: fit-content;
-    border: none;
-    color: black;
-    padding: 10px 20px;
-}
-
-.navButton:hover {
-    cursor: pointer;
-    background-color: aquamarine;
-} */
 
 body{
     color: #202025;
 }
 
 .navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
     flex: 0.2;
     display: flex;
     flex-direction: column;
@@ -39,11 +15,13 @@ body{
     border-right: 2px solid #E0E0E0;
     height: 100vh; 
     
+    width: 250px;
+    
 }
 
 .navbar .logo {
-    font-size: 1.7em;
-    margin-bottom: 10em;
+    font-size: 1.6em;
+    margin-bottom: 5em;
     margin-top: 1em; 
     text-align: center;
     display: flex;
@@ -61,6 +39,7 @@ body{
   
     display: flex;
     flex-direction: column;
+    
 }
 
 .navButton {
@@ -75,7 +54,7 @@ body{
     text-align: center; 
     width: 100%; 
     box-sizing: border-box; 
-    font-size: 1.7em; 
+    font-size: 1.45em; 
     outline: none; 
     margin-bottom: 2em; 
     overflow-y: hidden;
@@ -86,11 +65,8 @@ body{
 } */
 
 .logout-section {
-  
-    margin-top: auto;
-    padding-top: 1em;
     
-   
+    margin-top: auto;   
 }
 
 
