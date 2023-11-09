@@ -70,22 +70,7 @@ export default function Post({ post, canEdit }) {
   
   const storedUser = JSON.parse(localStorage.getItem('user'));
     const id = storedUser.id
-    
-//   console.log(storedUser)
-    // const editPost = () => {
-        
-    //     console.log('can edit', canEdit)
-    //     navigate(`/post/edit/${post.id}`);
-    // }
-    
 
-   
-
-    const editPost = () => {
-        // Open the modal and set it to show the EditPost component
-        setModalMode('edit');
-        setOpenModal(true);
-    };
 
     const handleShare = () => {
         console.log('Share icon clicked', `localhost`);
