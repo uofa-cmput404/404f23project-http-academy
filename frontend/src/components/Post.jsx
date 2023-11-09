@@ -65,7 +65,6 @@ export default function Post({ post, canEdit }) {
       //if the post is made by the current logged in user then display edit button 
   //else dont 
   
-  const storedUser = JSON.parse(localStorage.getItem('user'));
 
 
     const handleShare = () => {
