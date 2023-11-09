@@ -1,33 +1,50 @@
 import React, { useEffect, useState } from "react";
 import Post from "../components/Post";
-import "../css/Home.css"
+import "../css/Home.css";
 import { useNavigate } from "react-router-dom";
 import axiosInstance from "../axiosInstance";
 import { useAuth } from "../context/AuthContext";
 export default function Home() {
 
     const { isAuthenticated } = useAuth();
-    
+    let navigate = useNavigate();
+
     // TODO: fetch posts from backend
     const defaultPosts = [
-        {title: "Test", body: "Body"},
-        {title: "Test", body: "Body"},
-        {title: "Test", body: "Body"},
-        {title: "Test", body: "Body"},
+        { title: "Test", body: "Body" },
+        { title: "Test", body: "Body" },
+        { title: "Test", body: "Body" },
+        { title: "Test", body: "Body" },
     ];
     const [posts, setPosts] = useState(defaultPosts);
 
-   
-     const storedUser = JSON.parse(localStorage.getItem('user'));
-     console.log(storedUser)
+    // const { currentUser } = useAuth();
+
+    const storedUser = JSON.parse(localStorage.getItem('user'));
     useEffect(() => {
 
-    
         if (!isAuthenticated) {
             navigate('/login'); // Redirect to login if not authenticated
         }
-      
+
+    }, [isAuthenticated, navigate]);
+
+    // on page load, fetch posts from backend
+    useEffect(() => {
+
+        axiosInstance.get('posts/').then(response => {
+
+            const retrievePost = response.data;
+            const publicPosts = retrievePost.filter(p => p.visibility === "PUBLIC");
+            setPosts(publicPosts);
+            console.log('checkig who made post', response.data);
+
+        }).catch(error => {
+            console.log(error);
+        }
+        );
     }, [isAuthenticated]);
+
 
     // on page load, fetch posts from backend
     useEffect(() => {
