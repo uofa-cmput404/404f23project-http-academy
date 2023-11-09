@@ -6,7 +6,7 @@ import DeleteButton from "./DeleteButton";
 import '../css/EditPost.css'
 
 export default function EditPost({ onClose, posts }) {
-  // Define state variables
+   // Define state variables
   const [post, setPost] = useState(null);
   const [image, setImage] = useState("");
   const [imagePreview, setImagePreview] = useState(null);
@@ -23,86 +23,23 @@ export default function EditPost({ onClose, posts }) {
       .then((retrievedPost) => {
         console.log("Post fetched for editing", retrievedPost);
         setPost(retrievedPost.data);
-        setVisibility(retrievedPost.data.visibility)
-       
+        setVisibility(retrievedPost.data.visibility);
+
         // if (retrievedPost.contentType.startsWith('image/')) {
         //   setImagePreview(`data:${retrievedPost.contentType};base64,${retrievedPost.content}`);
         // }
-        if (retrievedPost.data.image){
-            setImage(retrievedPost.data.image)
-            setImagePreview(retrievedPost.data.image)
-            
-            
+        if (retrievedPost.data.image) {
+          setImage(retrievedPost.data.image);
+          setImagePreview(retrievedPost.data.image);
+
+
         }
 
       })
       .catch((error) => {
         console.log("Error fetching post for editing", error);
       });
-  }, [id]);
 
-  const returnHome = () => {
-    navigate("/home");
-  };
-
-
-//   const deletePost = () => {
-//     const confirmDelete = window.confirm(
-//       "Are you sure you want to delete this post?"
-//     );
-//     if (confirmDelete) {
-//       postService
-//         .remove(id)
-//         .then(() => {
-//           navigate("/home");
-//         })
-//         .catch((error) => {
-//           console.log("Error deleting post", error);
-//         });
-//     }
-//   };
-
-
-  const editPost = (updatedTitle, updatedBody, updatedImage) => {
-   
-   
-    if (post.title !== updatedTitle){
-        post.title = updatedTitle; 
-    }
-    if (post.content !== updatedBody) {
-        post.content = updatedBody; 
-    }
-   
-    if (post.image !== updatedImage){
-        post.image = updatedImage
-    }
-
-    if (post.visibility !== visibility){
-      post.visibility = visibility;
-    }
- 
-    const updatedPost = {
-        title: post.title,
-        content: post.content,
-        image: post.image,
-        visibility: visibility
-    }
-
-    
- 
-    console.log('this is sedning to backend', post)
-    axiosInstance
-      .patch(`posts/${id}`, updatedPost)
-      .then((response) => {
-        console.log('server response', response)
-        navigate("/home");
-        
-      })
-      
-      .catch((error) => {
-        console.log("Error updating post", error);
-      });
-      onClose();
 
   }, [id]);
 
@@ -150,17 +87,17 @@ export default function EditPost({ onClose, posts }) {
   const handleImageUpload = (event) => {
     const file = event.target.files[0];
     if (file) {
-        const reader = new FileReader();
+      const reader = new FileReader();
 
-        reader.onload = (e) => {
-            console.log(e.target.result);
-            setImage(e.target.result);
-            setImagePreview(e.target.result)
-        };
+      reader.onload = (e) => {
+        console.log(e.target.result);
+        setImage(e.target.result);
+        setImagePreview(e.target.result);
+      };
 
-        reader.readAsDataURL(file);
+      reader.readAsDataURL(file);
     }
-};
+  };
 
 
   if (post === null) {
