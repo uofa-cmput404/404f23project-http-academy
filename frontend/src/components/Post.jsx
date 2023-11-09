@@ -66,7 +66,6 @@ export default function Post({ post, canEdit }) {
   //else dont 
   
   const storedUser = JSON.parse(localStorage.getItem('user'));
-    const id = storedUser.id
 
 
     const handleShare = () => {
