@@ -19,6 +19,7 @@
 from django.db import models
 from django.contrib.auth.base_user import BaseUserManager
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
+from django.urls import reverse
 
 class AppUserManager(BaseUserManager):
 	def create_user(self, email, password=None):
@@ -33,6 +34,7 @@ class AppUserManager(BaseUserManager):
 		user.is_staff = False
 		user.save()
 		return user
+	
 	def create_superuser(self, email, password=None):
 		if not email:
 			raise ValueError('An email is required.')
@@ -69,9 +71,18 @@ class AppUser(AbstractBaseUser, PermissionsMixin):
         return self.username
 '''
 class AppUser(AbstractBaseUser, PermissionsMixin):
+    
+    type = models.CharField(max_length=6, blank = True, null = True)
     user_id = models.AutoField(primary_key=True)
-    email = models.EmailField(max_length=50, unique=True)
-    username = models.CharField(max_length=50)
+	
+
+    username = models.CharField(max_length=140, null = True)
+    email = models.EmailField(max_length=50, unique=True) # remove this later
+    
+    github = models.URLField(blank = True, null = True)
+    profileImage = models.URLField(blank = True, null = True)
+    
+	
     is_staff = models.BooleanField(default=False)  # Add this field to indicate staff status
     groups = models.ManyToManyField(
         Group,
@@ -86,6 +97,11 @@ class AppUser(AbstractBaseUser, PermissionsMixin):
     USERNAME_FIELD = 'email'
 
     objects = AppUserManager()
+
+
+    def get_absolute_url(self):
+        # Assuming you have a URL pattern named 'author-detail' in your urls.py
+        return reverse('user-detail', args=[str(self.pk)])
 
 def __str__(self):
     return self.username

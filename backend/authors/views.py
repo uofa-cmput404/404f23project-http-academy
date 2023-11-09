@@ -102,9 +102,44 @@ class UserUpdate(APIView):
 class UserView(APIView):
 	permission_classes = (permissions.IsAuthenticated,)
 	authentication_classes = (SessionAuthentication,)
-	##
+	
 	def get(self, request):
-		serializer = UserSerializer(request.user)
-		return Response({'user': serializer.data}, status=status.HTTP_200_OK)
+		serializer = UserSerializer(AppUser.objects.all(), many=True)
+		authors = AppUser.objects.all()
+		authors_data = []
+		
+		for author in authors:
+			author_data = {
+				"type": "author",
+				"id": request.build_absolute_uri(author.get_absolute_url()),  # Assuming you have implemented get_absolute_url method in the Author model
+				"url": request.build_absolute_uri(author.get_absolute_url()),
+				"host": request.build_absolute_uri('/'),
+				"displayName": author.username,
+				"github": author.github,
+				"profileImage": author.profileImage
+			}
+			authors_data.append(author_data)
+
+		response = {
+			'type' : 'authors', #harcoded, needs to change
+			'items': authors_data,
+		}
+		
+		return Response(response, status=status.HTTP_200_OK)
+		# customize it beofre sending
 
 
+		
+
+class UserDetails(APIView):
+	permission_classes = (permissions.IsAuthenticated,)
+	authentication_classes = (SessionAuthentication,)
+	
+	def get(self, request, pk):
+		try:
+			author = AppUser.objects.get(pk=pk)
+		except AppUser.DoesNotExist:
+			return Response({"status": 1,
+						"message": "Part not found"}, status=HTTP_404_NOT_FOUND)
+		serializer = UserSerializer(author)
+		return Response(serializer.data, status=status.HTTP_200_OK)
