@@ -43,7 +43,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'corsheaders', # Allow CORS requests
     'posts',
-    'authors'
+    'authors',
+    'node',
 ]
 
 MIDDLEWARE = [
