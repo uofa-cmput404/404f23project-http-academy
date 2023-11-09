@@ -13,30 +13,31 @@ h2 {
     flex-direction: row;
     justify-content: center;
     align-content: center;
+   
  
 }
 
 .leftContainer{
     width: 62%; 
     padding-left: 7em;
-    margin-top: 2.5em;
+    margin-top: 1em;
 }
 
 .leftContainer h1 {
     font-weight: bolder;
-    font-size: 6em;
+    font-size: 3.8em;
     margin-top: 0;
 }
 
 .visibility{
     color: rgba(0, 0, 0, 0.43);
-    font-size: 3.2em;
+    font-size: 2.2em;
 }
 
 .visibility-section button {
     margin-right: 2em;
-    margin-bottom: 2em;
-    padding: 1.2em 2em;
+    margin-bottom: 1em;
+    padding: 1em 1em;
     border-radius: 6em;
     color: #202025;
     border: none;
@@ -48,6 +49,8 @@ h2 {
   .visibility-section button:hover{
     background-color: #FF5F1F;
   }
+
+
 
   .selected{
     background-color: #FF5F1F;
@@ -83,8 +86,8 @@ h2 {
     background: #FFF;
     border: 2px solid rgba(0, 0, 0, 0.26);
     border-radius: 50%;
-    width: 90px;
-    height: 90px;
+    width: 80px;
+    height: 80px;
     margin-left: auto;
     margin-right: 1em;
     display: flex;
@@ -102,15 +105,18 @@ h2 {
   .postfooter-container button{
     margin-right: 2em;
     margin-bottom: 2em;
-    padding: 12px 18px;
+    margin-top: 25px;
+    
     background-color: #202025;
     color: white;
+    border-radius: 0.3em;
     border: none;
     text-align: center;
     cursor: pointer;
     display: inline-block;
-    width: 250px;
-    height: 90px;
+
+    width: 200px;
+    height: 60px;
     font-size: 30px;
   }
 
@@ -129,7 +135,7 @@ h2 {
 
 .rightContainer h2{
     font-weight: bolder;
-    font-size: 3.5em;
+    font-size: 2.1em;
     padding-left: 1.6em;
     color: rgba(0, 0, 0, 0.43);
     
@@ -137,8 +143,8 @@ h2 {
 
 .preview-image {
  
-    width: 30em;
-    height: 20em;
+    width: 20em;
+    height: 15em;
     margin: 0 auto; 
     display: flex; 
     align-items: center; 
@@ -154,7 +160,7 @@ h2 {
     align-items: center;
     justify-content: center;
     color: #707070; 
-    font-size: 1.5em;
+    font-size: 1.2em;
     background-color: #D9D9D9; 
   }
   

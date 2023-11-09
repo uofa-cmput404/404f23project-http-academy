@@ -46,17 +46,23 @@ export default function Home() {
     }, [isAuthenticated]);
 
 
-    // useEffect(()=>{
-    //     const storedUser = JSON.parse(localStorage.getItem('user'));
-    //     if (storedUser.author === posts.author){
-    //         setcanEdit(true)
-    //     }
-    // })
+    // on page load, fetch posts from backend
+    useEffect(() => {
+        
+        axiosInstance.get('posts/').then(response => {
+           
+            const retrievePost = response.data
+            const publicPosts = retrievePost.filter(p => p.visibility === "PUBLIC")
+            setPosts(publicPosts);
+            console.log('checkig who made post', response.data)
+            
+        }).catch(error => {
+            console.log(error);
+        }
+        )}, []);
 
-    // const createPost = () => {
-    //     navigate("/post/create");
-    // };
 
+    
     const postsChunks = posts.reduce((resultArray, item, index) => {
         const chunkIndex = Math.floor(index / 3);
 
@@ -71,23 +77,22 @@ export default function Home() {
 
     return (
 
-
+    
         <div className="posts-container">
             <div>
-                <h1>Explore</h1>
+            <h1>Explore</h1>
             </div>
-
-
-            {/* {currentUser && <div>Welcome, {currentUser.username}!</div>} */}
+            
+        
             {postsChunks.map((chunk, chunkIndex) => (
                 <div key={chunkIndex} className="posts-row">
                     {chunk.map((post, postIndex) => (
-
-                        <Post key={postIndex} post={post} canEdit={storedUser.id === post.author} />
+                        
+                        <Post key={postIndex} post={post} canEdit={storedUser.id === post.author}/>
                     ))}
                 </div>
             ))}
-            {/* <button onClick={() => createPost()}>Add Post</button> */}
+           
             <div className="square">
             </div>
         </div>
