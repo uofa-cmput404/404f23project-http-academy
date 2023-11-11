@@ -6,4 +6,8 @@ from posts.models import Post
 class Inbox(models.Model):
 
     authorId = models.OneToOneField(AppUser, on_delete=models.CASCADE)
-    postId = models.ManyToManyField(Post)
+    
+    type = models.CharField(max_length=100)
+    
+
+    

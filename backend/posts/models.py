@@ -15,7 +15,7 @@ class Post(models.Model):
     categories = models.ForeignKey('Category', on_delete=models.CASCADE, default=None, null=True)
     count = models.IntegerField(default=0)
     comments = models.ForeignKey('Comment', on_delete=models.CASCADE, default=None, null=True)
-    likes = models.IntegerField(default=0)
+    likes = models.ForeignKey('Like', on_delete=models.CASCADE, default=None, null=True)
     visibility = models.CharField(max_length=100, default='PUBLIC')
     unlisted = models.BooleanField()
 
@@ -28,6 +28,13 @@ class Comment(models.Model):
     published = models.DateTimeField(auto_now_add=True)
     postId = models.ForeignKey(Post, on_delete=models.CASCADE, db_index=True)
 
+
+class Like(models.Model):
+    id = models.AutoField(primary_key=True)
+    author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, db_index=True)
+    postId = models.ForeignKey(Post, on_delete=models.CASCADE, db_index=True, null=True)
+    commentId = models.ForeignKey(Comment, on_delete=models.CASCADE, db_index=True, null=True)
+    like = models.IntegerField(default=0)
 
 class Category(models.Model):
     id = models.AutoField(primary_key=True)

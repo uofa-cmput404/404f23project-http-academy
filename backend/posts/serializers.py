@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Post, Comment
+from .models import Post, Comment, Like
 
 class PostSerializer(serializers.ModelSerializer):
     # create a serializer for the Post model
@@ -10,13 +10,14 @@ class PostSerializer(serializers.ModelSerializer):
 
     # when a GET request is made, use the comments field and the CommentSerializer to return the comments
     def to_representation(self, instance):
-        representation = super().to_representation(instance)
+        commentRepresentation = super().to_representation(instance)
         comments = Comment.objects.filter(postId=instance.id).all()
         if comments is not None:
             # get all comments with postId = instance.id and the number of comments returned (count)
-            representation['comments'] = CommentSerializer(comments, many=True).data
-            representation['count'] = len(comments)
-        return representation
+            commentRepresentation['comments'] = CommentSerializer(comments, many=True).data
+            commentRepresentation['count'] = len(comments)
+
+        return commentRepresentation
 
     def create(self, validated_data):
         print('validated data', validated_data)
@@ -30,6 +31,7 @@ class PostSerializer(serializers.ModelSerializer):
         instance.image = validated_data.get('image', instance.image)
         instance.categories = validated_data.get('categories', instance.categories)
         instance.comments = validated_data.get('comments', instance.comments)
+        instance.likes = validated_data.get('likes', instance.likes)
         instance.visibility = validated_data.get('visibility', instance.visibility)
         instance.unlisted = validated_data.get('unlisted', instance.unlisted)
         instance.save()
@@ -61,3 +63,16 @@ class CommentSerializer(serializers.ModelSerializer):
         # delete a specific comment
         instance.delete()
         return instance
+    
+
+class PostLikeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Like
+        fields = ['id', 'author', 'postId', 'like']
+
+
+# for liking comments later on
+class CommentLikeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Like
+        fields = ['id', 'author', 'commentId', 'like']
