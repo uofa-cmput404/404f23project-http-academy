@@ -25,5 +25,6 @@ Authors:
 * Glory Omosomwan
 * Jefferson Fong 
 * Matheus Duncan
+* Toufic Saadeh
 
 Generally everything is LICENSE'D under the  Apache 2 license by Abram Hindle.
