@@ -32,6 +32,7 @@ class PostSerializer(serializers.ModelSerializer):
         instance.comments = validated_data.get('comments', instance.comments)
         instance.visibility = validated_data.get('visibility', instance.visibility)
         instance.unlisted = validated_data.get('unlisted', instance.unlisted)
+        instance.contentType = validated_data.get('contentType', instance.contentType)
         instance.save()
         return instance
     

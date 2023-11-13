@@ -165,4 +165,17 @@ h2 {
   background-color: #D9D9D9; 
 }
 
+.text-select{
+ 
+  padding: 1em 1em;
+    border-radius: 6em;
+    color: #202025;
+    border: 1px solid #ccc;
+    text-align: center;
+}
+
+.text-select option {
+  padding-right: 10px;
+
+}
 

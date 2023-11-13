@@ -13,12 +13,10 @@ export default function DetailedPost({ post, id, image }) {
       <div className="post-card">
         <h1 className="post-title">{post.title}</h1>
         <img src={`${image}`} alt="Base64" />
-        <p className="post-text">{post.caption}</p>
+        {post.contentType === "markdown" ? <Markdown>{markdown}</Markdown> : <p className="post-text">{post.content}</p>}
         <LikeButton id={id} />
         {/* <DeleteButton id={id} /> */}
         <CommentSection comments={post.comments} />
-
-        <Markdown>{markdown}</Markdown>
       </div>
     </div>
   );
