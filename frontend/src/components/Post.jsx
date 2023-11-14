@@ -4,16 +4,21 @@ import React, { useState } from "react";
 import "../css/Post.css";
 import { Link } from 'react-router-dom';
 import editIcon from '../assets/images/ellipsis.png';
-import likeIcon from '../assets/images/heart.png';
+// import likeIcon from '../assets/images/heart.png';
 import commentIcon from '../assets/images/chat.png';
 import Modal from "../components/Modal";
 import shareIcon from '../assets/images/share.png';
+import FavoriteBorderOutlinedIcon from '@mui/icons-material/FavoriteBorderOutlined';
+import FavoriteIcon from '@mui/icons-material/Favorite';
+import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
+import ShareOutlinedIcon from '@mui/icons-material/ShareOutlined';
+import ModeOutlinedIcon from '@mui/icons-material/ModeOutlined';
 
 export default function Post({ post, canEdit }) {
 
     const [openModal, setOpenModal] = useState(false);
     const [modalMode, setModalMode] = useState("");
-
+    const [liked, setLiked] = useState(false)
     console.log('edit prop', canEdit);
 
 
@@ -27,6 +32,7 @@ export default function Post({ post, canEdit }) {
     const handleLike = () => {
         // Your like functionality here
         console.log('Like button clicked');
+        setLiked(!liked)
     };
 
     const handleComment = () => {
@@ -91,6 +97,7 @@ export default function Post({ post, canEdit }) {
     return (
         <div className="card">
             <div className="edit-container">
+                
             <button onClick={editPost} className={`edit-button ${canEdit ? "" : "invisible"}`}>
                 <img src={editIcon} alt="Edit" />
             </button>
@@ -113,15 +120,15 @@ export default function Post({ post, canEdit }) {
             </div>
            
             <div className="card-footer">
-                <button onClick={handleLike} className="edit-button">
-                    <img src={likeIcon} alt="Like" />
-                </button>
-                <button onClick={handleComment} className="edit-button">
-                    <img src={commentIcon} alt="Like" />
-                </button>
-                {<button onClick={handleShare} className="edit-button">
-                    <img src={shareIcon} alt="Like" />
-                </button>}
+            {liked ? (
+                <FavoriteIcon onClick={handleLike} style={{ fontSize: '40px', color: 'red', cursor: 'pointer', marginRight: '10px' }} />
+            ) : (
+                <FavoriteBorderOutlinedIcon onClick={handleLike} style={{ fontSize: '40px', cursor: 'pointer', marginRight: '10px' }} />
+            )}
+
+            <ChatBubbleOutlineIcon onClick={handleComment} style={{ fontSize: '40px', cursor: 'pointer' , marginRight: '10px'}} />
+            <ShareOutlinedIcon onClick={handleShare} style={{ fontSize: '40px', cursor: 'pointer' }} />
+                
                 
             </div>
 

@@ -8,6 +8,7 @@ import Login from '../src/pages/Login';
 import Detail from '../src/pages/Detail';
 import SignUp from '../src/pages/Signup';
 import Profile from '../src/pages/profile';
+import Inbox from '../src/pages/inbox'
 import { AuthProvider, useAuth } from './context/AuthContext';
 import './css/App.css';
 
@@ -23,6 +24,7 @@ const App = () => {
 						<Routes>
 							<Route path="/" element={<Navigate replace to="/login" />} />
 							<Route path="/home" element={<ProtectedRoute><Home /></ProtectedRoute>} />
+							<Route path="/inbox" element={<ProtectedRoute><Inbox /></ProtectedRoute>} />
 							<Route path="/login" element={<GuestRoute><Login /></GuestRoute>} />
 							<Route path="/signup" element={<GuestRoute><SignUp /></GuestRoute>} />
 							<Route path="/post/create" element={<ProtectedRoute><MakePost /></ProtectedRoute>} />

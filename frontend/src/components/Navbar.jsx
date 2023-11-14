@@ -40,6 +40,12 @@ export default function Navbar() {
                     >
                         Home
                     </NavLink>
+                    <NavLink
+                        to="/inbox"
+                        className={({ isActive }) => isActive ? "navButton active" : "navButton"}
+                    >
+                        Inbox
+                    </NavLink>
                
                 
                     <button className="navButton" onClick={() => setOpenModal(true)}>Create a Post</button>

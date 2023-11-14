@@ -5,8 +5,10 @@
   "dependencies": {
     "@babel/plugin-proposal-private-property-in-object": "^7.16.7",
     "@babel/plugin-transform-private-property-in-object": "^7.16.7",
-    "@emotion/react": "^11.10.6",
-    "@emotion/styled": "^11.10.6",
+    "@emotion/react": "^11.11.1",
+    "@emotion/styled": "^11.11.0",
+    "@mui/icons-material": "^5.14.16",
+    "@mui/material": "^5.14.17",
     "@popperjs/core": "^2.11.6",
     "@testing-library/user-event": "^13.5.0",
     "axios": "^1.5.1",
@@ -57,6 +59,8 @@
   },
   "test": "react-scripts test --transformIgnorePatterns \"node_modules/(?!axios)/\"",
   "jest": {
-    "transformIgnorePatterns": ["node_modules\/(?!axios)"]
+    "transformIgnorePatterns": [
+      "node_modules/(?!axios)"
+    ]
   }
 }

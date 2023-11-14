@@ -1,0 +1,21 @@
+.inbox-header{
+    display: flex;
+    justify-content: flex-start;
+
+}
+
+.item1{
+    margin-right: 30px;
+    font-weight: 400;
+    cursor: pointer;
+}
+.item2{
+    font-weight: 400;
+    cursor: pointer;
+}
+
+
+.active2 {
+    font-weight: bold;
+    color: black;
+}
