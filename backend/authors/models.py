@@ -1,20 +1,4 @@
-# from django.db import models
-# from django.contrib.postgres.fields import ArrayField
-# from django.contrib.auth.models import User
-# import uuid
-# # Create your models here.
 
-# class Author(models.Model):
-    
-
-#     user = models.OneToOneField(User, on_delete=models.CASCADE, blank = True, null = True)
-#     type = models.CharField(max_length=6, blank = True, null = True)
-#     author_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False, blank = True)
-#     id = models.URLField(max_length=2048, null = True)
-#     displayName = models.CharField(max_length = 140, null = True)
-#     github = models.URLField(blank = True, null = True)
-#     profileImage = models.URLField(blank = True, null = True)
-    
 
 from django.db import models
 from django.contrib.auth.base_user import BaseUserManager
@@ -22,25 +6,25 @@ from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.urls import reverse
 
 class AppUserManager(BaseUserManager):
-	def create_user(self, email, password=None):
+	def create_user(self, email, password=None, **extra_fields):
 		if not email:
 			raise ValueError('An email is required.')
 		if not password:
 			raise ValueError('A password is required.')
 		email = self.normalize_email(email)
-		user = self.model(email=email)
+		user = self.model(email=email, **extra_fields)
 		user.set_password(password)
 		user.is_superuser = False
 		user.is_staff = False
 		user.save()
 		return user
 	
-	def create_superuser(self, email, password=None):
+	def create_superuser(self, email, password=None, **extra_fields):
 		if not email:
 			raise ValueError('An email is required.')
 		if not password:
 			raise ValueError('A password is required.')
-		user = self.create_user(email, password)
+		user = self.create_user(email, password, **extra_fields)
 		user.is_superuser = True
 		user.is_staff = True
 		user.save()
@@ -81,6 +65,13 @@ class AppUser(AbstractBaseUser, PermissionsMixin):
     
     github = models.URLField(blank = True, null = True)
     profileImage = models.URLField(blank = True, null = True)
+    
+    followers = models.ManyToManyField(
+        'self',
+        symmetrical=False,
+        related_name='following',
+        blank=True
+    )
     
 	
     is_staff = models.BooleanField(default=False)  # Add this field to indicate staff status

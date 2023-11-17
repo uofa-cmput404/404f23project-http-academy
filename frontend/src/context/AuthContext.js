@@ -25,9 +25,22 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
-    const registerUser = async (email, username, password, callback) => {
+    const registerUser = async (email, 
+        username, 
+        password, 
+        github, 
+        profileImage, callback) => {
+            console.log('data sent', email, 
+            username, 
+            password, 
+            github, 
+            profileImage )
         try {
-            await axiosInstance.post("/authors/register", { email, username, password });
+            await axiosInstance.post("/authors/register", {email, 
+                username, 
+                password, 
+                github, 
+                profileImage });
             // Log in the user after registration
             await loginUser(email, password);
             if (callback) callback(); 

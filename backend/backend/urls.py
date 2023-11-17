@@ -33,4 +33,5 @@ urlpatterns = [
     ), name='openapi-schema'),
     path('posts/', include('posts.urls')),
     path('authors/', include('authors.urls')),
+    
 ]

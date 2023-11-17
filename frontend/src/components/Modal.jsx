@@ -3,8 +3,8 @@ import React from "react";
 import "../css/Modal.css";
 import MakePost from "../pages/MakePost";
 import EditPost from "../components/EditPost";
-
-const Modal = ({ isOpen, onClose, mode, post }) => {
+import SharePost from '../components/SharePost'
+const Modal = ({ isOpen, onClose, mode, post, users}) => {
   
   const getContent = () => {
     switch (mode) {
@@ -13,6 +13,10 @@ const Modal = ({ isOpen, onClose, mode, post }) => {
       case "edit":
        
         return <EditPost onClose={onClose} posts={post.id} />;
+
+      case "Share":
+        console.log('post in modal', post)
+        return <SharePost onClose={onClose} posts={post} users = {users}/>
       default:
         return null;
     }

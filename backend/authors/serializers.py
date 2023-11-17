@@ -24,16 +24,21 @@ from django.core.exceptions import ValidationError
 UserModel = get_user_model()
 
 class UserRegisterSerializer(serializers.ModelSerializer):
-	class Meta:
-		model = UserModel
-		fields = '__all__'
-	def create(self, clean_data):
-		user_obj = UserModel.objects.create_user(email=clean_data['email'], password=clean_data['password'])
-		user_obj.username = clean_data['username']
-		user_obj.save()
-		return user_obj
-		
+    class Meta:
+        model = UserModel
+        fields = ('email', 'username', 'password', 'github', 'profileImage')
+        extra_kwargs = {'password': {'write_only': True}}
 
+    def create(self, validated_data):
+        user_obj = UserModel.objects.create_user(
+            email=validated_data['email'],
+            username=validated_data.get('username', ''),
+            password=validated_data['password'],
+            github=validated_data.get('github', ''),
+            profileImage=validated_data.get('profileImage', '')
+        )
+        return user_obj
+		
 class UserLoginSerializer(serializers.Serializer):
 	email = serializers.EmailField()
 	password = serializers.CharField()

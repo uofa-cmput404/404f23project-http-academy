@@ -1,109 +1,98 @@
 import React, { useEffect, useState } from "react";
 import "../css/Profile.css";
 import axiosInstance from "../axiosInstance";
+import { useLocation } from "react-router-dom";
 
 const Profile = () => {
-  const [email, setEmail] = useState("");
   const [username, setUsername] = useState("");
   const [editMode, setEditMode] = useState(false);
   const [error, setError] = useState("");
+  const [hasSentRequest, setHasSentRequest] = useState(false);
+  const location = useLocation();
+  const [author, setAuthor] = useState(null); 
+  const currentUserId = JSON.parse(localStorage.getItem('user')).id.toString();
+  const userObject = JSON.parse(localStorage.getItem('user'));
 
-  // const storedUser = JSON.parse(localStorage.getItem('user'));
-  const [userid, setUserID] = useState(0);
   useEffect(() => {
-    const handleStorageChange = () => {
-      const storedUser = JSON.parse(localStorage.getItem('user'));
-      console.log(storedUser);
-      if (storedUser) {
-        setEmail(storedUser.email);
-        setUsername(storedUser.username);
-        setUserID(storedUser.id);
-      }
-    };
-
-    window.addEventListener('storage', handleStorageChange);
-
-    // Call the function to make sure the user is updated when the component mounts
-    handleStorageChange();
-
-    return () => {
-      // Remove the event listener when the component unmounts
-      window.removeEventListener('storage', handleStorageChange);
-    };
-  }, []);
-
-  const handleUpdate = async () => {
-    if (!email || !username) {
-      setError("Please fill out all fields.");
-      return;
+    if (location.state && location.state.author) {
+      setUsername(location.state.author.displayName);
+      setAuthor(location.state.author);
+      checkFriendRequest(location.state.author.numericId);
     }
+  }, [location.state]); 
 
-    axiosInstance
-      .patch(`authors/${userid}/update/`, {
-        username,
-        email,
-      })
-      .then((response) => {
-        console.log('server response', response);
-        localStorage.setItem('user', JSON.stringify(response.data));
-        setEditMode(false);
-        setError("");
-      })
-      .catch((error) => {
-        console.log('Error updating profile', error);
-        setError("An error occurred while updating your profile.");
-      });
+  // const checkFriendRequest = async (authorId) => {
+  //   try {
+  //     const response = await axiosInstance.get(`authors/${currentUserId}/followers/friendrequests/`);
+  //     const requestExists = response.data.items.some(request => 
+  //       request.actor.user_id === currentUserId && request.object.user_id === authorId
+  //     );
+  //     setHasSentRequest(requestExists);
+  //   } catch (error) {
+  //     console.error('Error checking friend request', error);
+  //   }
+  // };
 
+
+  const checkFriendRequest = async () => {
+    try {
+     
+      const response = await axiosInstance.get(`authors/${currentUserId}/followers/sentFriendRequests/`);
+      const targetAuthorId = parseInt(location.state.author.id.split("/").pop(), 10);
+  
+      const requestExists = response.data.some(request => 
+        request.object.user_id === targetAuthorId
+      );
+      setHasSentRequest(requestExists);
+    } catch (error) {
+      console.error('Error checking sent friend requests', error);
+    }
   };
 
-  return (
-    <div className="profile-container">
-      <div className="profile-card">
-        {editMode ? (
-          <div>
-            <div className="profile-header">Edit Profile</div>
-            <label className="profile-label">
-              Username:
-              <input
-                className="profile-input"
-                type="text"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-              />
-            </label>
-            <br />
-            <label className="profile-label">
-              Email:
-              <input
-                className="profile-input"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-              />
-            </label>
-            <br />
-            <button className="profile-button" onClick={handleUpdate}>
-              Update
-            </button>
-            <button className="profile-button profile-button-cancel" onClick={() => setEditMode(false)}>
-              Cancel
-            </button>
-          </div>
-        ) : (
-          <div>
-            <div className="profile-header">Profile</div>
-            USERNAME: <h2>{username}</h2>
-            Email: <h2>{email}</h2>
-            <button className="profile-button" onClick={() => setEditMode(true)}>
-              Edit
-            </button>
-          </div>
-        )}
-        {error && <p className="profile-error">{error}</p>}
-      </div>
-    </div>
+  
+  const followUser = async () => {
+    if (!author || hasSentRequest) return;
 
+    const type = "follow";
+    const authorId = parseInt(location.state.author.id.split("/").pop(), 10);
+    // console.log('am hete', location.state.author)
+    const postData = {
+      type: "Follow",
+      summary: userObject.username + " sent you a friend request.",
+      object: {
+        type: type,
+        id: authorId,
+        host: location.state.author.host,
+        displayName: username,
+        url: location.state.author.url,
+        github: location.state.github,
+        profileImage: location.state.profileImage
+      },
+      actor: userObject,
+    };
+
+    const requestUrl = `authors/${authorId}/inbox/`;
+    try {
+      const response = await axiosInstance.post(requestUrl, postData);
+      console.log('Friend request was sent', response.data);
+      setHasSentRequest(true); // Update state to reflect the new friend request
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+
+  return (
+    <div>
+      {username}
+      {author && currentUserId.toString() !== author.numericId && (
+        <button onClick={followUser} disabled={hasSentRequest}>
+          {hasSentRequest ? 'Request Sent' : 'Follow'}
+        </button>
+      )}
+    </div>
   );
+  
 };
 
 export default Profile;

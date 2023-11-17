@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "../css/MakePost.css";
 import axiosInstance from "../axiosInstance";
 
@@ -6,7 +6,6 @@ export default function MakePost({onClose}) {
 
 	const [visibility, setVisibility] = useState("PUBLIC")
 	const storedUser = JSON.parse(localStorage.getItem('user'));
-
 	
 	const addPost = (title, body) => {
 		// TODO: add POST to backend here
@@ -16,6 +15,8 @@ export default function MakePost({onClose}) {
 		}
 		// console.log(title, body);
 		// TODO: add author details, etc. here
+		
+		
 		axiosInstance.post('posts/', {
 			author: storedUser.id,
 			title: title,

@@ -8,6 +8,7 @@ class Post(models.Model):
     id = models.AutoField(primary_key=True)
     author = models.ForeignKey(AppUser, on_delete=models.CASCADE, db_index=True)
     published = models.DateTimeField(auto_now_add=True)
+    type = models.CharField(default="post",max_length=4, editable=False)
     title = models.CharField(max_length=100)
     content = models.TextField(max_length=150, null=True)
     image = models.TextField(null=True)

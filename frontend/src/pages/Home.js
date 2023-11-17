@@ -4,97 +4,83 @@ import "../css/Home.css";
 import { useNavigate } from "react-router-dom";
 import axiosInstance from "../axiosInstance";
 import { useAuth } from "../context/AuthContext";
-export default function Home() {
 
+export default function Home() {
     const { isAuthenticated } = useAuth();
     let navigate = useNavigate();
-
-    // TODO: fetch posts from backend
-    const defaultPosts = [
-        { title: "Test", body: "Body" },
-        { title: "Test", body: "Body" },
-        { title: "Test", body: "Body" },
-        { title: "Test", body: "Body" },
-    ];
-    const [posts, setPosts] = useState(defaultPosts);
-
-    // const { currentUser } = useAuth();
-
+    const [posts, setPosts] = useState([]);
+    const [allUsers, setAllUsers] = useState([]);
     const storedUser = JSON.parse(localStorage.getItem('user'));
-    useEffect(() => {
 
+    useEffect(() => {
         if (!isAuthenticated) {
             navigate('/login'); // Redirect to login if not authenticated
         }
-
     }, [isAuthenticated, navigate]);
 
-    // on page load, fetch posts from backend
     useEffect(() => {
-
-        axiosInstance.get('posts/').then(response => {
-
-            const retrievePost = response.data;
-            const publicPosts = retrievePost.filter(p => p.visibility === "PUBLIC");
-            setPosts(publicPosts);
-            console.log('checkig who made post', response.data);
-
-        }).catch(error => {
-            console.log(error);
-        }
-        );
-    }, [isAuthenticated]);
-
-
-    // on page load, fetch posts from backend
-    useEffect(() => {
-        
-        axiosInstance.get('posts/').then(response => {
-           
-            const retrievePost = response.data
-            const publicPosts = retrievePost.filter(p => p.visibility === "PUBLIC")
-            setPosts(publicPosts);
-            console.log('checkig who made post', response.data)
+        axiosInstance.get('authors/user').then(response => {
+            const usersWithProcessedIds = response.data.items.map(user => ({
+                ...user,
+                numericId: extractIdFromUrl(user.id)
+            }));
+            setAllUsers(usersWithProcessedIds);
+            console.log('goot it working', response.data.items)
             
         }).catch(error => {
             console.log(error);
-        }
-        )}, []);
+        });
+    }, []); // Fetch all users
 
+    useEffect(() => {
+        axiosInstance.get('posts/').then(response => {
+            const publicPosts = response.data.filter(p => p.visibility === "PUBLIC");
+            const postsWithAuthors = publicPosts.map(post => ({
+                ...post,
+                authorDetails: findAuthorForPost(post)
+            }));
+            
+            setPosts(postsWithAuthors);
+            
+        
+        }).catch(error => {
+            console.log(error);
+        });
+    }, [allUsers]); // Fetch posts after users are loaded
 
     
+
+    const extractIdFromUrl = (url) => {
+        const segments = url.split('/');
+        return segments[segments.length - 1];
+    }
+
+    const findAuthorForPost = (post) => {
+        return allUsers.find(user => user.numericId === post.author.toString());
+    }
+
     const postsChunks = posts.reduce((resultArray, item, index) => {
+        console.log('postng works', posts)
         const chunkIndex = Math.floor(index / 3);
 
         if (!resultArray[chunkIndex]) {
-            resultArray[chunkIndex] = [];
+            resultArray[chunkIndex] = []; // Initialize a new chunk
         }
 
         resultArray[chunkIndex].push(item);
-
         return resultArray;
     }, []);
 
     return (
-
-    
         <div className="posts-container">
-            <div>
             <h1>Explore</h1>
-            </div>
-            
-        
             {postsChunks.map((chunk, chunkIndex) => (
                 <div key={chunkIndex} className="posts-row">
                     {chunk.map((post, postIndex) => (
-                        
-                        <Post key={postIndex} post={post} canEdit={storedUser.id === post.author}/>
+                        <Post key={postIndex} post={post} canEdit={storedUser.id === post.author} authorDetails={post.authorDetails} />
                     ))}
                 </div>
             ))}
-           
-            <div className="square">
-            </div>
         </div>
     );
 }

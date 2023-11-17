@@ -18,5 +18,8 @@ urlpatterns = [
 	path('user', views.UserView.as_view(), name='user'),
 	path('<str:pk>/update/', views.UserUpdate.as_view(), name='user-update'),
 	path('<int:pk>', views.UserDetails.as_view(), name='user-detail'),
-
+	# path('<int:pk>/inbox/', include('inbox.urls')),
+	# path('<int:pk>/inbox/', views.test_work.as_view(), name="inbox")
+	path('<int:author_id>/inbox/', include('inbox.urls')),
+	path('<int:user_id>/followers/', include('followers.urls'), name="followers")
 ]
