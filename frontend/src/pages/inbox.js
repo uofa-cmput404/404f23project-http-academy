@@ -240,7 +240,7 @@ const Inbox = () => {
     };
 
     const renderPosts = () => (
-        <div>
+        <div className='post-contain'>
             {posts.map((post, index) => (
                 <Post key={index} post={post} canEdit={currentUserId === post.author} authorDetails={post.authorDetails} />
             ))}

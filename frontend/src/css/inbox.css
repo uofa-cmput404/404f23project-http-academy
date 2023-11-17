@@ -86,3 +86,7 @@
 .sharedPost-container p{
     margin-left: 40px;
 }
+
+.post-contain{
+    display: flex;
+}
