@@ -5,6 +5,7 @@ from rest_framework import routers
 
 # TODO: update these routes as per project requirements
 urlpatterns = [
+    path("", views.UserView.as_view(), name=""),
 	path('register', views.UserRegister.as_view(), name='register'),
 	path('login', views.UserLogin.as_view(), name='login'),
 	path('logout', views.UserLogout.as_view(), name='logout'),

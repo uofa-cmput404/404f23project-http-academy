@@ -123,10 +123,9 @@ class FollowerList(APIView):
 	def get(self, request, pk):
 		# get all followers of a given author id
 		items =[]
-		followers = Follower.objects.get(author=pk)
-		for follower in followers:
+		for follower in Follower.objects.filter(author=pk):
 			try:
-				author = AppUser.objects.get(pk=follower)
+				author = AppUser.objects.get(pk=follower.following.user_id)
 			except AppUser.DoesNotExist:
 				continue
 			author_data = {
@@ -143,3 +142,5 @@ class FollowerList(APIView):
 			"type": "followers",
 			"items": items,
 		}
+
+		return Response(response, status=status.HTTP_200_OK)
