@@ -29,6 +29,7 @@ def authRemoteNode(request, host):
         auth_header = request.META['HTTP_AUTHORIZATION']
         username, password = base64.b64decode(auth_header[6:]).split(":")
 
+        # add optional approval on the front end - this already handles approve. if deny just do nothing 
         # check credentials to make sure they are able to connect
         if username == credentialForConnect["username"] and password == credentialForConnect["password"]:
             
@@ -157,4 +158,18 @@ def getRemoteAuthors(request):
         "type": "authors",
         "items":allAuthors
     }
+    return Response(response, status=status.HTTP_200_OK)
+
+@api_view(['DELETE'])
+def deleteNode(request, host):
+    """
+    Deletes a given node and its associated data (posts/comments).
+    """
+
+    # find the node with the provided host
+    nodeToDelete = Node.objects.filter(host=host)[0]
+    
+    nodeToDelete.delete()
+    # send back an empty json object
+    response = {"message": "Node successfully deleted."}
     return Response(response, status=status.HTTP_200_OK)
