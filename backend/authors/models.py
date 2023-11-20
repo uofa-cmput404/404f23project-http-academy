@@ -68,12 +68,12 @@ class AppUser(AbstractBaseUser, PermissionsMixin):
 	
 
 class Follower(models.Model):
-    author = models.ForeignKey(AppUser, related_name='following', on_delete=models.CASCADE)
-    following = models.ForeignKey(AppUser, related_name='followers', on_delete=models.CASCADE)
+    author = models.ForeignKey(AppUser, related_name='following', on_delete=models.CASCADE, db_index=True)
+    follower = models.ForeignKey(AppUser, related_name='followers', on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        unique_together = ('author', 'following')
+        unique_together = ('author', 'follower')
 
     def __str__(self):
-        return f"{self.author} follows {self.following}"
+        return f"{self.follower} follows {self.author}"

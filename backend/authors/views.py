@@ -117,15 +117,13 @@ class UserDetails(APIView):
 	
 
 class FollowerList(APIView):
-	permission_classes = (permissions.IsAuthenticated,)
-	authentication_classes = (SessionAuthentication,)
 
 	def get(self, request, pk):
 		# get all followers of a given author id
 		items =[]
 		for follower in Follower.objects.filter(author=pk):
 			try:
-				author = AppUser.objects.get(pk=follower.following.user_id)
+				author = AppUser.objects.get(pk=follower.follower.user_id)
 			except AppUser.DoesNotExist:
 				continue
 			author_data = {
@@ -144,3 +142,56 @@ class FollowerList(APIView):
 		}
 
 		return Response(response, status=status.HTTP_200_OK)
+
+
+class FollowerDetail(APIView):
+	permission_classes = (permissions.IsAuthenticated,)
+	authentication_classes = (SessionAuthentication,)
+
+	def get(self, pk, follower_id):
+		is_following = False
+		# check if the user with follower_id is following the user with pk
+		if Follower.objects.filter(author=pk, follower=follower_id).exists():
+			is_following = True
+		response = {
+			"type": "followers",
+			"is_following": is_following,
+		}
+
+		return Response(response, status=status.HTTP_200_OK)
+	
+	def put(self, pk, follower_id):
+		# check if the user with follower_id is following the user with pk
+		if Follower.objects.filter(author=pk, follower=follower_id).exists():
+			return Response({
+				"type": "followers",
+				"message": "following"}, status=status.HTTP_400_BAD_REQUEST)
+		
+		# add the user with follower_id to the followers of the user with pk
+		try:
+			follower = AppUser.objects.get(pk=follower_id)
+			author = AppUser.objects.get(pk=pk)
+			follower_obj = Follower.objects.create(author=author, follower=follower)
+			follower_obj.save()
+		except AppUser.DoesNotExist:
+			# if either userID specified is not found, return 404
+			return Response({
+				"type": "followers",
+				"message": "follower not found"}, status=status.HTTP_404_NOT_FOUND)
+		
+		return Response({
+			"type": "followers",
+			"message": "follower added"}, status=status.HTTP_200_OK)
+	
+	def delete(self, pk, follower_id):
+		# check if the user with follower_id is following the user with pk
+		if Follower.objects.filter(author=pk, follower=follower_id).exists():
+			# delete the user with follower_id from the followers of the user with pk
+			Follower.objects.filter(author=pk, follower=follower_id).delete()
+			return Response({
+				"type": "followers",
+				"message": "follower deleted"}, status=status.HTTP_200_OK)
+		else:
+			return Response({
+				"type": "followers",
+				"message": "follower not found"}, status=status.HTTP_404_NOT_FOUND)
