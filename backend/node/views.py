@@ -44,12 +44,12 @@ def authRemoteNode(request, host):
 
         # otherwise error for bad basic auth credentials
         response = {"message":"Incorrect Credentials"}        
-        return Response(response, status.HTTP_401_UNAUTHORIZED)
+        return Response(response, status.HTTP_400_BAD_REQUEST)
 
     else:
         # otherwise bad connection
         response = {"message":"Invalid Basic Auth"}        
-        return Response(response, status.HTTP_401_UNAUTHORIZED)
+        return Response(response, status.HTTP_400_BAD_REQUEST)
     
 
 @api_view(['GET'])
