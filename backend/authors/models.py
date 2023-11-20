@@ -64,11 +64,13 @@ class AppUser(AbstractBaseUser, PermissionsMixin):
         return reverse('user-detail', args=[str(self.pk)])
 
     def __str__(self):
+        if self.username is None:
+            return self.email
         return self.username
 	
 
 class Follower(models.Model):
-    author = models.ForeignKey(AppUser, related_name='following', on_delete=models.CASCADE, db_index=True)
+    author = models.ForeignKey(AppUser, related_name='author', on_delete=models.CASCADE, db_index=True)
     follower = models.ForeignKey(AppUser, related_name='followers', on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
 
@@ -77,3 +79,15 @@ class Follower(models.Model):
 
     def __str__(self):
         return f"{self.follower} follows {self.author}"
+	
+
+class FollowRequest(models.Model):
+    object = models.ForeignKey(AppUser, related_name='author_request', on_delete=models.CASCADE, db_index=True)
+    actor = models.ForeignKey(AppUser, related_name='follow_requests', on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('object', 'actor')
+
+    def __str__(self):
+        return f"{self.actor} requested to follow {self.object}"

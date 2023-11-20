@@ -47,3 +47,9 @@ class FollowerSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = UserModel
 		fields = ('user_id', 'email', 'username', 'github', 'profileImage')
+
+
+class FollowRequestSerializer(serializers.ModelSerializer):
+	class Meta:
+		model = UserModel
+		fields = ('user_id', 'email', 'username', 'github', 'profileImage')

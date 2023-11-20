@@ -6,7 +6,7 @@ from .serializers import UserRegisterSerializer, UserLoginSerializer, UserSerial
 from rest_framework import permissions, status
 from .validations import custom_validation, validate_email, validate_password
 from rest_framework.response import Response
-from .models import AppUser, Follower
+from .models import AppUser, Follower, FollowRequest
 from .serializers import UserUpdateSerializer
 
 
@@ -195,3 +195,84 @@ class FollowerDetail(APIView):
 			return Response({
 				"type": "followers",
 				"message": "follower not found"}, status=status.HTTP_404_NOT_FOUND)
+
+
+class FollowRequestDetail(APIView):
+	permission_classes = (permissions.IsAuthenticated,)
+	authentication_classes = (SessionAuthentication,)
+
+	def get(self, request, pk, object_author):
+		# return follow request from a given author (object_author) to a given author (pk)
+		# TODO: this isn't working; apparently FollowRequest has no attribute 'object'
+		followRequest = FollowRequest.objects.filter(object=object_author, actor=pk)
+		if followRequest is None:
+			return Response({
+				"type": "follow",
+				"message": "follow request not found"}, status=status.HTTP_404_NOT_FOUND)
+
+		try:
+			# get the author objects for both authors in the follow request
+			follower = AppUser.objects.get(pk=pk)
+			author = AppUser.objects.get(pk=object_author)
+		except AppUser.DoesNotExist:
+			return Response({
+				"type": "follow",
+				"message": "author not found"}, status=status.HTTP_404_NOT_FOUND)
+		
+		actor = {
+			"type": "author",
+			"id": request.build_absolute_uri(follower.get_absolute_url()),
+			"url": request.build_absolute_uri(follower.get_absolute_url()),
+			"host": request.build_absolute_uri('/'),
+			"displayName": follower.username,
+			"github": follower.github,
+			"profileImage": follower.profileImage
+		}
+
+		obj = {
+			"type": "author",
+			"id": request.build_absolute_uri(author.get_absolute_url()),
+			"url": request.build_absolute_uri(author.get_absolute_url()),
+			"host": request.build_absolute_uri('/'),
+			"displayName": author.username,
+			"github": author.github,
+			"profileImage": author.profileImage
+		}
+
+		response = {
+			"type": "follow",
+			"summary": "{} wants to follow {}".format(follower.username, author.username),
+			"actor": actor,
+			"object": obj,
+		}
+
+		return Response(response, status=status.HTTP_200_OK)
+	
+	def put(self, request, pk, object_author):
+		# create a follow request from a given author (object_author) to a given author (pk)
+		followRequest = FollowRequest.objects.filter(author=object_author, follower=pk)
+		if followRequest is not None:
+			return Response({
+				"type": "follow",
+				"message": "follow request already exists"}, status=status.HTTP_400_BAD_REQUEST)
+		# check if the user with follower_id is already following the user with pk
+		if Follower.objects.filter(author=object_author, follower=pk) is not None:
+			return Response({
+				"type": "follow",
+				"message": "already following"}, status=status.HTTP_400_BAD_REQUEST)
+		
+		try:
+			# get the author objects for both authors in the follow request
+			follower = AppUser.objects.get(pk=pk)
+			author = AppUser.objects.get(pk=object_author)
+		except AppUser.DoesNotExist:
+			return Response({
+				"type": "follow",
+				"message": "author not found"}, status=status.HTTP_404_NOT_FOUND)
+		
+		follow_request_obj = FollowRequest.objects.create(author=author, follower=follower)
+		follow_request_obj.save()
+
+		return Response({
+			"type": "follow",
+			"message": "follow request created"}, status=status.HTTP_200_OK)
