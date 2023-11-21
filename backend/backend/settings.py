@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'corsheaders', # Allow CORS requests
     'posts',
     'authors',
+    'drf_yasg',
     'node',
     'inbox',
 ]
