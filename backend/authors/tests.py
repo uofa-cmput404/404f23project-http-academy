@@ -29,6 +29,10 @@ class FollowerModelTest(TestCase):
         self.user1.delete()
         self.assertEqual(len(Follower.objects.all()), 0)
 
+    def test_bidirectional_follow(self):
+        Follower.objects.create(author=self.user2, follower=self.user1)
+        self.assertEqual(len(Follower.objects.all()), 2)
+
 
 class FollowRequestModelTest(TestCase):
     def setUp(self):
@@ -56,3 +60,7 @@ class FollowRequestModelTest(TestCase):
     def test_follow_request_delete_object(self):
         self.user1.delete()
         self.assertEqual(len(FollowRequest.objects.all()), 0)
+
+    def test_bidirectional_follow_request(self):
+        FollowRequest.objects.create(object=self.user2, actor=self.user1)
+        self.assertEqual(len(FollowRequest.objects.all()), 2)
