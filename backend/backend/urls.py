@@ -25,9 +25,9 @@ from drf_yasg.views import get_schema_view
 
 schema_view = get_schema_view(
    openapi.Info(
-      title="Snippets API",
+      title="404f23project-http-academy API",
       default_version='v1',
-      description="Test description",
+      description="04f23project-http-academy description",
       terms_of_service="https://www.google.com/policies/terms/",
       contact=openapi.Contact(email="contact@snippets.local"),
       license=openapi.License(name="BSD License"),
