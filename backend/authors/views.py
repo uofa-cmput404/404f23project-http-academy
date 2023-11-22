@@ -148,7 +148,7 @@ class FollowerDetail(APIView):
 	permission_classes = (permissions.IsAuthenticated,)
 	authentication_classes = (SessionAuthentication,)
 
-	def get(self, pk, follower_id):
+	def get(self, request, pk, follower_id):
 		is_following = False
 		# check if the user with follower_id is following the user with pk
 		if Follower.objects.filter(author=pk, follower=follower_id).exists():
@@ -160,7 +160,7 @@ class FollowerDetail(APIView):
 
 		return Response(response, status=status.HTTP_200_OK)
 	
-	def put(self, pk, follower_id):
+	def put(self, request, pk, follower_id):
 		# check if the user with follower_id is following the user with pk
 		if Follower.objects.filter(author=pk, follower=follower_id).exists():
 			return Response({
@@ -183,7 +183,7 @@ class FollowerDetail(APIView):
 			"type": "followers",
 			"message": "follower added"}, status=status.HTTP_200_OK)
 	
-	def delete(self, pk, follower_id):
+	def delete(self, request, pk, follower_id):
 		# check if the user with follower_id is following the user with pk
 		if Follower.objects.filter(author=pk, follower=follower_id).exists():
 			# delete the user with follower_id from the followers of the user with pk
