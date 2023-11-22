@@ -17,7 +17,7 @@ export default function LikeButton({ id }) {
     }).catch(error => {
       console.log(error);
     });
-  }, []);  // Dependency array is empty, so this effect runs only once when the component mounts
+  }, [id]);  // Dependency array is empty, so this effect runs only once when the component mounts
 
   /*
   const handleLike = () => {
