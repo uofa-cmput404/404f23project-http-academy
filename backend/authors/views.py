@@ -117,6 +117,11 @@ class UserDetails(APIView):
 	
 
 class FollowerList(APIView):
+	"""
+	Returns a list of all followers of a given author
+
+	GET: /author/{author_id}/followers
+	"""
 
 	def get(self, request, pk):
 		# get all followers of a given author id
@@ -149,6 +154,10 @@ class FollowerDetail(APIView):
 	authentication_classes = (SessionAuthentication,)
 
 	def get(self, request, pk, follower_id):
+		"""
+		Returns 200 status code if the user with follower_id is following the user with pk.
+		"""
+
 		is_following = False
 		# check if the user with follower_id is following the user with pk
 		if Follower.objects.filter(author=pk, follower=follower_id).exists():
@@ -161,6 +170,10 @@ class FollowerDetail(APIView):
 		return Response(response, status=status.HTTP_200_OK)
 	
 	def put(self, request, pk, follower_id):
+		"""
+		Inserts a new follower into the database. Returns a 200 status code if the follower was added successfully.
+		"""
+
 		# check if the user with follower_id is following the user with pk
 		if Follower.objects.filter(author=pk, follower=follower_id).exists():
 			return Response({
@@ -184,6 +197,10 @@ class FollowerDetail(APIView):
 			"message": "follower added"}, status=status.HTTP_200_OK)
 	
 	def delete(self, request, pk, follower_id):
+		"""
+		Deletes a follower relationship from the database. Returns a 200 status code if the follower was deleted successfully.
+		"""
+
 		# check if the user with follower_id is following the user with pk
 		if Follower.objects.filter(author=pk, follower=follower_id).exists():
 			# delete the user with follower_id from the followers of the user with pk
@@ -202,8 +219,11 @@ class FollowRequestDetail(APIView):
 	authentication_classes = (SessionAuthentication,)
 
 	def get(self, request, pk, object_author):
+		"""
+		Returns 200 status code if the user with follower_id has sent a follow request to the user with pk. Includes both author's details in the response.
+		"""
+
 		# return follow request from a given author (object_author) to a given author (pk)
-		# TODO: this isn't working; apparently FollowRequest has no attribute 'object'
 		followRequest = FollowRequest.objects.filter(object=object_author, actor=pk)
 		if followRequest is None:
 			return Response({
@@ -249,6 +269,10 @@ class FollowRequestDetail(APIView):
 		return Response(response, status=status.HTTP_200_OK)
 	
 	def put(self, request, pk, object_author):
+		"""
+		Inserts a new follow request into the database. Returns a 200 status code if the follow request was added successfully. Returns a 400 status code if the follow request already exists or if the user with follower_id is already following the user with pk.
+		"""
+
 		# create a follow request from a given author (object_author) to a given author (pk)
 		followRequest = FollowRequest.objects.filter(author=object_author, follower=pk)
 		if followRequest is not None:
