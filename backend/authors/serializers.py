@@ -52,4 +52,4 @@ class FollowerSerializer(serializers.ModelSerializer):
 class FollowRequestSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = UserModel
-		fields = ('user_id', 'email', 'username', 'github', 'profileImage')
+		fields = '__all__'

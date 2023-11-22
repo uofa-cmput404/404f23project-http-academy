@@ -214,6 +214,42 @@ class FollowerDetail(APIView):
 				"message": "follower not found"}, status=status.HTTP_404_NOT_FOUND)
 
 
+class FollowRequestList(APIView):
+	permission_classes = (permissions.IsAuthenticated,)
+	authentication_classes = (SessionAuthentication,)
+
+	def get(self, request, pk):
+		"""
+		Returns a list of all follow requests sent to a given author
+
+		GET: /author/{author_id}/followRequests
+		"""
+
+		# get all follow requests sent to a given author
+		items = []
+		for follow_request in FollowRequest.objects.filter(object=pk):
+			try:
+				actor = AppUser.objects.get(pk=follow_request.actor.user_id)
+			except AppUser.DoesNotExist:
+				continue
+			actor_data = {
+				"type": "author",
+				"id": request.build_absolute_uri(actor.get_absolute_url()),
+				"url": request.build_absolute_uri(actor.get_absolute_url()),
+				"host": request.build_absolute_uri('/'),
+				"displayName": actor.username,
+				"github": actor.github,
+				"profileImage": actor.profileImage
+			}
+			items.append(actor_data)
+		response = {
+			"type": "followers",
+			"items": items,
+		}
+
+		return Response(response, status=status.HTTP_200_OK)
+
+
 class FollowRequestDetail(APIView):
 	permission_classes = (permissions.IsAuthenticated,)
 	authentication_classes = (SessionAuthentication,)
@@ -274,7 +310,7 @@ class FollowRequestDetail(APIView):
 		"""
 
 		# create a follow request from a given author (object_author) to a given author (pk)
-		followRequest = FollowRequest.objects.filter(author=object_author, follower=pk)
+		followRequest = FollowRequest.objects.filter(object=object_author, actor=pk)
 		if followRequest is not None:
 			return Response({
 				"type": "follow",
@@ -294,9 +330,26 @@ class FollowRequestDetail(APIView):
 				"type": "follow",
 				"message": "author not found"}, status=status.HTTP_404_NOT_FOUND)
 		
-		follow_request_obj = FollowRequest.objects.create(author=author, follower=follower)
+		follow_request_obj = FollowRequest.objects.create(object=author, actor=follower)
 		follow_request_obj.save()
 
 		return Response({
 			"type": "follow",
 			"message": "follow request created"}, status=status.HTTP_200_OK)
+	
+	def delete(self, request, pk, object_author):
+		"""
+		Deletes a follow request from object_author to pk. Returns a 200 status code if the follow request was deleted successfully.
+		"""
+
+		# check if the user with follower_id is following the user with pk
+		if FollowRequest.objects.filter(object=pk, actor=object_author).exists():
+			# delete the user with follower_id from the followers of the user with pk
+			FollowRequest.objects.filter(object=pk, actor=object_author).delete()
+			return Response({
+				"type": "follow",
+				"message": "follow request deleted"}, status=status.HTTP_200_OK)
+		else:
+			return Response({
+				"type": "follow",
+				"message": "follow request not found"}, status=status.HTTP_404_NOT_FOUND)
