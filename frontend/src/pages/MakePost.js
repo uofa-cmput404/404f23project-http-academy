@@ -2,11 +2,12 @@ import React, { useState, useEffect } from "react";
 import "../css/MakePost.css";
 import axiosInstance from "../axiosInstance";
 
-export default function MakePost({onClose}) {
+export default function MakePost({ onClose }) {
 
 	const [visibility, setVisibility] = useState("PUBLIC")
-	const storedUser = JSON.parse(localStorage.getItem('user'));
-	
+	const storedUser_val = JSON.parse(localStorage.getItem('user'));
+	const storedUser = storedUser_val.user
+	const userId = storedUser.id.split("/").pop()
 	const addPost = (title, body) => {
 		// TODO: add POST to backend here
 		if (title === "") {
@@ -15,16 +16,22 @@ export default function MakePost({onClose}) {
 		}
 		// console.log(title, body);
 		// TODO: add author details, etc. here
-		
-		
-		axiosInstance.post('posts/', {
-			author: storedUser.id,
+
+
+		const url = "authors/" + userId + "/posts/"
+
+		const postSent = {
+			type: "post",
+			author: userId,
 			title: title,
 			image: image ? image : null,
 			content: body ? body : null,
 			visibility: visibility,
 			unlisted: false,
-		}).then(response => {
+		}
+
+		console.log('post dataa', postSent)
+		axiosInstance.post(url, postSent).then(response => {
 			console.log('post created', response);
 		}).catch(error => {
 			console.log(error);
@@ -57,43 +64,43 @@ export default function MakePost({onClose}) {
 				<div className="post-header">
 					<h1>Create a <br></br> Post.</h1>
 					<button className="close-button" onClick={onClose} aria-label="Close">X</button>
-					</div>
-				<div className = "visibility-container">
-				<h2 className="visibility">Visibility</h2>
-				<div className="visibility-section">
-				<button className={visibility === "PUBLIC" ? "selected" : ""} onClick={() => setVisibility("PUBLIC")}>Public</button>
-				<button className={visibility === "FRIENDS_ONLY" ? "selected" : ""} onClick={() => setVisibility("FRIENDS_ONLY")}>Friends-Only</button>
-				<button className={visibility === "PRIVATE" ? "selected" : ""} onClick={() => setVisibility("PRIVATE")}>Private</button>
-				<button className={visibility === "UNLISTED" ? "selected" : ""} onClick={() => setVisibility("UNLISTED")}>Unlisted</button>
 				</div>
+				<div className="visibility-container">
+					<h2 className="visibility">Visibility</h2>
+					<div className="visibility-section">
+						<button className={visibility === "PUBLIC" ? "selected" : ""} onClick={() => setVisibility("PUBLIC")}>Public</button>
+						<button className={visibility === "FRIENDS_ONLY" ? "selected" : ""} onClick={() => setVisibility("FRIENDS_ONLY")}>Friends-Only</button>
+						<button className={visibility === "PRIVATE" ? "selected" : ""} onClick={() => setVisibility("PRIVATE")}>Private</button>
+						<button className={visibility === "UNLISTED" ? "selected" : ""} onClick={() => setVisibility("UNLISTED")}>Unlisted</button>
+					</div>
 				</div>
 				<h2>Title</h2>
-					<input type="text" id="title" name="title" class="single-line-input" maxLength={80} />
-					<h2>Body</h2>
-					<textarea id="body" name="body" rows="4" cols="50" class="single-line-input"></textarea>
-					
+				<input type="text" id="title" name="title" class="single-line-input" maxLength={80} />
+				<h2>Body</h2>
+				<textarea id="body" name="body" rows="4" cols="50" class="single-line-input"></textarea>
+
 
 				<br />
 				<div className="postfooter-container">
-				<input type="file" accept="image/*" onChange={handleImageUpload} />
-				<button onClick={() => addPost(document.getElementById("title").value, document.getElementById("body").value)}>Post</button>
+					<input type="file" accept="image/*" onChange={handleImageUpload} />
+					<button onClick={() => addPost(document.getElementById("title").value, document.getElementById("body").value)}>Post</button>
 				</div>
-				
-		
+
+
 			</div>
 			<div className="rightContainer">
-				
+
 				<h2>Preview</h2>
-				<div className="preview-image" style={{ 
-				backgroundImage: image ? `url(${image})` : '', 
-				backgroundSize: 'cover', 
-				backgroundPosition: 'center center'
+				<div className="preview-image" style={{
+					backgroundImage: image ? `url(${image})` : '',
+					backgroundSize: 'cover',
+					backgroundPosition: 'center center'
 				}}>
-				{!image && <div className="no-image">No image uploaded</div>}
+					{!image && <div className="no-image">No image uploaded</div>}
 				</div>
 
 
-				
+
 			</div>
 		</div>
 	);

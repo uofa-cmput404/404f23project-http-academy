@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from .models import Post, Comment, Like
-
+import uuid
 class PostSerializer(serializers.ModelSerializer):
     # create a serializer for the Post model
    
@@ -11,7 +11,7 @@ class PostSerializer(serializers.ModelSerializer):
     # when a GET request is made, use the comments field and the CommentSerializer to return the comments
     def to_representation(self, instance):
         commentRepresentation = super().to_representation(instance)
-        comments = Comment.objects.filter(postId=instance.id).all()
+        comments = Comment.objects.filter(postId=instance.post_id).all()
         if comments is not None:
             # get all comments with postId = instance.id and the number of comments returned (count)
             commentRepresentation['comments'] = CommentSerializer(comments, many=True).data
@@ -20,9 +20,12 @@ class PostSerializer(serializers.ModelSerializer):
         return commentRepresentation
 
     def create(self, validated_data):
-        print('validated data', validated_data)
-        # Create and return a new `Post` instance, given the validated data
-        return Post.objects.create(**validated_data)
+        post = Post.objects.create(**validated_data)
+        user = validated_data.get('author')
+        post_id = str(post.post_id)  # Use the auto-generated UUID
+        post.url = user.url + "/posts/" + post_id
+        post.save()
+        return post
     
     def update(self, instance, validated_data):
         # Update and return an existing `Post` instance, given the validated data

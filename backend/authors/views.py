@@ -1,4 +1,25 @@
+# from django.shortcuts import render
+# from .models import Author
+# from .serializers import AuthorSerializer
+# from rest_framework.decorators import api_view
+# from rest_framework.response import Response
 
+# # Create your views here.
+# @api_view(['GET', 'POST'])
+# def author_list(request):
+#     if request.method == 'POST':
+#         # if we want to create a new author 
+#         serializer = AuthorSerializer(data=request.data)
+#         if serializer.is_valid():
+#             print('here')
+#             serializer.save()
+#         else:
+#             return Response(serializer.errors)
+#     else:
+#         # get all authors 
+#         authors = Author.objects.all()
+#         serializer = AuthorSerializer(authors, many=True)
+#     return Response(serializer.data)
 from django.contrib.auth import get_user_model, login, logout
 from rest_framework.authentication import SessionAuthentication
 from rest_framework.views import APIView
@@ -10,38 +31,31 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from .models import AppUser
 from .serializers import UserUpdateSerializer
+from inbox.models import Inbox
 # Create your views here.
 
 
 from rest_framework import generics
 class UserRegister(APIView):
-    permission_classes = (permissions.AllowAny,)
-
-    def post(self, request):
-        clean_data = custom_validation(request.data)
-        serializer = UserRegisterSerializer(data=clean_data)
-        if serializer.is_valid(raise_exception=True):
-            user = serializer.save() 
-            user.github = clean_data.get('github', '')
-            user.profileImage = clean_data.get('profileImage', '')
-            user.save() 
-
-            user_data = {
-                "id": user.user_id,
-                "email": user.email,
-                "username": user.username,
-                "profileImage": user.profileImage,
-                "github": user.github
-            }
-            return Response(user_data, status=status.HTTP_201_CREATED)
-        return Response(status=status.HTTP_400_BAD_REQUEST)
+	permission_classes = (permissions.AllowAny,)
+	def post(self, request):
+		clean_data = custom_validation(request.data)
+		serializer = UserRegisterSerializer(data=clean_data)
+		if serializer.is_valid(raise_exception=True):
+			user = serializer.create(clean_data)
+			Inbox.objects.create(authorId=user)
+			print()
+			if user:
+				user_data = {
+				"id": user.user_id,
+				"email": user.email,
+				"username": user.username,
+				"displayName": user.username
+				}
+				return Response(serializer.data, status=status.HTTP_201_CREATED)
+		return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
-class test_work(APIView):
-
-	def get(self, request, pk):
-		print('works got some data', request.data)
-		return Response(request.data)
 class UserLogin(APIView):
 	permission_classes = (permissions.AllowAny,)
 	authentication_classes = (SessionAuthentication,)
@@ -54,16 +68,10 @@ class UserLogin(APIView):
 		if serializer.is_valid(raise_exception=True):
 			user = serializer.check_user(data)
 			login(request, user)
-			print('hererer', user.email, user.profileImage)
-			# print('this is the returned response to client', user.user_id, user.email, user.password, user.github, user.profileImage)
-			user_data = {
-				"id": user.user_id,
-				"email": user.email,
-				"username": user.username,
-				"profileImage": user.profileImage,
-				"github": user.github
-			}
-			return Response(user_data, status=status.HTTP_200_OK)
+			serializer = UserSerializer(user)
+			response = {"user": serializer.data}
+		
+			return Response(response, status=status.HTTP_200_OK)
 
 
 class UserLogout(APIView):

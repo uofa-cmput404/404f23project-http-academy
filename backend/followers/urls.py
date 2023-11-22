@@ -6,9 +6,13 @@ from . import views
 urlpatterns = [
     # URL for listing all followers of a specific user
     path('', views.FollowerList.as_view(), name='followers-list'),
-
+    
+    
     # URL for managing a specific follower of a user (check, add, delete).
-    path('<int:follower_id>/', views.FollowerDetail.as_view(), name='follower-detail'),
+    path('<uuid:follower_id>/', views.FollowerDetail.as_view(), name='follower-detail'),
+    
+    path('acceptFriend/<uuid:requester_id>/', views.AcceptFriendRequest.as_view(), name='accept-follower'),
+    path('removeFriend/<uuid:requester_id>/', views.UnfriendUser.as_view(), name='accept-follower'),
 
 
     # URL for listing all friend requests for a specific user
@@ -21,5 +25,5 @@ urlpatterns = [
     path('friendrequests/<str:requester_id>/', views.FriendRequestDetail.as_view(), name='friendrequest-detail'),
 
     path('acceptFriendRequest/<int:user_id>/<str:requester_id>/', views.AcceptFriendRequest.as_view(), name='accept-friendrequest'),
-    path('establishMutualFriendship/<int:user_id>/<str:friend_id>/', views.EstablishMutualFriendship.as_view(), name='establish-mutual-friendship'),
+    path('establishMutualFriendship/<uuid:friend_id>/', views.EstablishMutualFriendship.as_view(), name='establish-mutual-friendship'),
 ]

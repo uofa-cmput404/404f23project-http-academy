@@ -54,27 +54,28 @@ class InboxView(APIView):
         return Response({"detail": "Unsupported request type"}, status=status.HTTP_400_BAD_REQUEST)
 
     def _add_post_to_inbox(self, post_data, inbox):
-        # Remove 'id', 'author', and 'comments' from post_data
         post_id = post_data.pop('id', None)
         post_data.pop('author', None)
-        post_data.pop('comments', None)  
+        post_data.pop('comments', None)
 
-       
-        author_id = inbox.authorId.user_id
-        post_author = get_object_or_404(AppUser, pk=author_id)
+        # Assuming authorId in Inbox is the post author
+        post_author = inbox.authorId
 
-       
-        post, created = Post.objects.get_or_create(id=post_id, defaults={**post_data, 'author': post_author})
-        if not created:
-            # Update the post if it already exists
+        # Check if a post with this ID already exists
+        existing_post = Post.objects.filter(id=post_id).first()
+        if existing_post:
+            # If the post already exists, update it
             for key, value in post_data.items():
-                setattr(post, key, value)
-            post.save()
+                setattr(existing_post, key, value)
+            existing_post.save()
+            # Add the existing post to the inbox
+            inbox.posts.add(existing_post)
+        else:
+            # If the post does not exist, create a new one
+            new_post = Post.objects.create(id=post_id, **post_data, author=post_author)
+            inbox.posts.add(new_post)
 
-        # Add the post to the inbox
-        inbox.posts.add(post)
-
-        return Response({"detail": "Post added to inbox"}, status=status.HTTP_201_CREATED)
+        return Response({"detail": "Post processed for inbox"}, status=status.HTTP_201_CREATED)
 
     def _add_like_to_inbox(self, like_data, inbox):
         """
@@ -84,14 +85,28 @@ class InboxView(APIView):
         inbox.like.add(like)
         return Response({"detail": "Like added to inbox"}, status=status.HTTP_201_CREATED)
 
+    def _extract_uuid_from_url(self, url):
+        # Split the URL and get the last non-empty segment
+        parts = url.rstrip('/').split('/')
+        return parts[-1]
+
     def _add_follow_request_to_inbox(self, follow_data, inbox):
+        print('heree', follow_data)
+        print('heree inbox', inbox)
+
         actor_data = follow_data.get('actor', {})
         object_data = follow_data.get('object', {})
 
-        actor_id = actor_data.get('id')
-        object_id = object_data.get('id')  
+        # Extract UUIDs from URLs
+        actor_id = self._extract_uuid_from_url(actor_data.get('id'))
+        object_id = self._extract_uuid_from_url(object_data.get('id'))
+
+        print('actor_id,', actor_id)
+        print('object_id,', object_id)
+
         summary = follow_data.get('summary')
 
+        # Use UUIDs to fetch AppUser objects
         actor = get_object_or_404(AppUser, pk=actor_id)
         object = get_object_or_404(AppUser, pk=object_id)
 

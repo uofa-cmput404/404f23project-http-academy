@@ -1,57 +1,50 @@
-.profile-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    background-color: #f8f9fa;
-    font-family: Arial, sans-serif;
-  }
-  
-  .profile-card {
-    background-color: #fff;
-    border: 1px solid #e1e4e8;
-    border-radius: 8px;
-    padding: 20px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    width: 400px;
-    text-align: left;
-  }
-  
-  .profile-header {
-    font-size: 24px;
-    font-weight: bold;
-    margin-bottom: 20px;
-  }
-  
-  .profile-label {
-    font-weight: bold;
-    margin-bottom: 5px;
-  }
-  
-  .profile-input {
-    width: 100%;
-    padding: 10px;
-    font-size: 16px;
-    border: 1px solid #e1e4e8;
-    border-radius: 4px;
-    margin-bottom: 20px;
-  }
-  
-  .profile-button {
-    padding: 10px 20px;
-    font-size: 16px;
-    background-color: #28a745;
-    color: #fff;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-  }
-  
-  .profile-button-cancel {
-    background-color: #dc3545;
-  }
-  
-  .profile-error {
-    color: #dc3545;
-  }
-  
+.profile-contain {
+  display: flex;
+  justify-content: end;
+  margin-bottom: 20px;
+  font-size: 22px;
+  border-bottom: 2px solid #ccc;
+  padding-bottom: 20px;
+  margin-right: 30px;
+}
+
+.profile-inContainer {
+  display: flex;
+  flex-direction: column;
+
+}
+
+.listsContainer {
+  display: flex;
+  /* justify-content: space-around; */
+  width: 100%;
+}
+
+.followersList,
+.followingList {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 10px;
+}
+
+.follower-item,
+.following-item {
+  margin: 5px;
+  text-align: center;
+}
+
+.full-containr {
+  display: flex;
+  justify-content: space-between;
+}
+
+.post-section {
+  /* background-color: aqua; */
+  margin-right: 30px;
+  width: 40%;
+}
+
+.post-heading {
+  /* border-bottom: 2px solid #ccc; */
+}

@@ -4,6 +4,7 @@ import "../css/Home.css";
 import { useNavigate } from "react-router-dom";
 import axiosInstance from "../axiosInstance";
 import { useAuth } from "../context/AuthContext";
+import { all } from "axios";
 
 export default function Home() {
     const { isAuthenticated } = useAuth();
@@ -11,7 +12,8 @@ export default function Home() {
     const [posts, setPosts] = useState([]);
     const [allUsers, setAllUsers] = useState([]);
     const storedUser = JSON.parse(localStorage.getItem('user'));
-
+    const storedUser_str = storedUser.user
+    const userId = storedUser_str.id.split("/").pop()
     useEffect(() => {
         if (!isAuthenticated) {
             navigate('/login'); // Redirect to login if not authenticated
@@ -21,43 +23,52 @@ export default function Home() {
     useEffect(() => {
         axiosInstance.get('authors/user').then(response => {
             const usersWithProcessedIds = response.data.items.map(user => ({
-                ...user,
-                numericId: extractIdFromUrl(user.id)
+                ...user
             }));
             setAllUsers(usersWithProcessedIds);
-            console.log('goot it working', response.data.items)
-            
+            console.log('goot it working', usersWithProcessedIds)
+
         }).catch(error => {
             console.log(error);
         });
     }, []); // Fetch all users
 
     useEffect(() => {
+        const url = "authors/" + userId + "/posts/"
         axiosInstance.get('posts/').then(response => {
-            const publicPosts = response.data.filter(p => p.visibility === "PUBLIC");
+            const publicPosts = response.data.items.filter(p => p.visibility === "PUBLIC");
             const postsWithAuthors = publicPosts.map(post => ({
                 ...post,
                 authorDetails: findAuthorForPost(post)
             }));
-            
+
+            console.log('posts in home', postsWithAuthors)
             setPosts(postsWithAuthors);
-            
-        
+
+
         }).catch(error => {
             console.log(error);
         });
     }, [allUsers]); // Fetch posts after users are loaded
 
-    
 
-    const extractIdFromUrl = (url) => {
-        const segments = url.split('/');
-        return segments[segments.length - 1];
-    }
+
+    // const extractIdFromUrl = (url) => {
+    //     console.log('url sent ', url)
+    //     const segments = url.split('/').pop();
+    //     return segments
+    // }
 
     const findAuthorForPost = (post) => {
-        return allUsers.find(user => user.numericId === post.author.toString());
-    }
+        console.log('all users', allUsers);
+        console.log('post', post);
+        const found = allUsers.find(user => {
+            const userId = user.id.split("/").filter(Boolean).pop();
+            return userId === post.author;
+        });
+        console.log('found a user', found);
+        return found;
+    };
 
     const postsChunks = posts.reduce((resultArray, item, index) => {
         console.log('postng works', posts)
@@ -77,7 +88,7 @@ export default function Home() {
             {postsChunks.map((chunk, chunkIndex) => (
                 <div key={chunkIndex} className="posts-row">
                     {chunk.map((post, postIndex) => (
-                        <Post key={postIndex} post={post} canEdit={storedUser.id === post.author} authorDetails={post.authorDetails} />
+                        <Post key={postIndex} post={post} canEdit={userId === post.author} authorDetails={post.authorDetails} />
                     ))}
                 </div>
             ))}

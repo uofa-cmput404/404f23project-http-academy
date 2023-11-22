@@ -1,0 +1,36 @@
+.outer-container2 {}
+
+.full-contain2 {
+
+    margin-left: 30px;
+
+}
+
+.header {
+    font-size: 50px;
+}
+
+.full-contain2 h4 {
+    color: rgba(0, 0, 0, 0.32)
+}
+
+.list-flex2 {
+    margin-left: 30px;
+
+}
+
+.outer-container2 {
+    position: relative;
+
+}
+
+.button-container {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    width: 150px;
+    color: white;
+    background-color: black;
+    height: 39px;
+    text-align: center;
+}

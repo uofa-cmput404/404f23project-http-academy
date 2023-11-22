@@ -10,24 +10,29 @@ export default function EditPost({ onClose, posts }) {
   const [post, setPost] = useState(null);
   const [image, setImage] = useState("");
   const [visibility, setVisibility] = useState("");
-
+  const storedUser_val = JSON.parse(localStorage.getItem('user'));
+  const storedUser = storedUser_val.user
+  const userId = storedUser.id.split("/").pop()
   const navigate = useNavigate();
-  const id = posts;
+  const postId = posts.post_id;
 
-  console.log('modal post', posts);
+  const url = `authors/${userId}/posts/${postId}/`;
 
   useEffect(() => {
+    console.log('post try editing id', postId)
+    console.log('post try editing post itself', posts)
+    console.log('post try editing post url', url)
     axiosInstance
-      .get(`posts/${id}`)
+      .get(url)
       .then((retrievedPost) => {
         console.log("Post fetched for editing", retrievedPost);
         setPost(retrievedPost.data);
         setVisibility(retrievedPost.data.visibility);
 
-     
+
         if (retrievedPost.data.image) {
           setImage(retrievedPost.data.image);
-       
+
 
 
         }
@@ -38,7 +43,7 @@ export default function EditPost({ onClose, posts }) {
       });
 
 
-  }, [id]);
+  }, [postId]);
 
   const editPost = (updatedTitle, updatedBody, updatedImage) => {
 
@@ -67,7 +72,7 @@ export default function EditPost({ onClose, posts }) {
 
     console.log('this is sedning to backend', post);
     axiosInstance
-      .patch(`posts/${id}`, updatedPost)
+      .patch(url, updatedPost)
       .then((response) => {
         console.log('server response', response);
         navigate("/home");
@@ -102,68 +107,68 @@ export default function EditPost({ onClose, posts }) {
   } else {
     return (
       <div className="Create-postContainer">
-			<div className="leftContainer">
-				<div className="post-header">
-				<h1>Edit a <br></br> Post.</h1>
-				<button className="close-button" onClick={onClose} aria-label="Close">X</button>
-					</div>
-				
-				<h2 className="visibility">Visibility</h2>
-				<div className="visibility-section">
-        <button className={visibility === "PUBLIC" ? "selected" : ""} onClick={() => setVisibility("PUBLIC")}>Public</button>
-        <button className={visibility === "FRIENDS_ONLY" ? "selected" : ""} onClick={() => setVisibility("FRIENDS_ONLY")}>Friends-Only</button>
-        <button className={visibility === "PRIVATE" ? "selected" : ""} onClick={() => setVisibility("PRIVATE")}>Private</button>
-        <button className={visibility === "UNLISTED" ? "selected" : ""} onClick={() => setVisibility("UNLISTED")}>Unlisted</button>
+        <div className="leftContainer">
+          <div className="post-header">
+            <h1>Edit a <br></br> Post.</h1>
+            <button className="close-button" onClick={onClose} aria-label="Close">X</button>
+          </div>
 
-				</div>
-				<h2>Title</h2>
-					<input type="text" id="title" name="title" class="single-line-input" defaultValue={post.title}/>
-					<h2>Body</h2>
-					<textarea id="body" name="body" rows="4" cols="50" defaultValue={post.content} class="single-line-input"></textarea>
-					
+          <h2 className="visibility">Visibility</h2>
+          <div className="visibility-section">
+            <button className={visibility === "PUBLIC" ? "selected" : ""} onClick={() => setVisibility("PUBLIC")}>Public</button>
+            <button className={visibility === "FRIENDS_ONLY" ? "selected" : ""} onClick={() => setVisibility("FRIENDS_ONLY")}>Friends-Only</button>
+            <button className={visibility === "PRIVATE" ? "selected" : ""} onClick={() => setVisibility("PRIVATE")}>Private</button>
+            <button className={visibility === "UNLISTED" ? "selected" : ""} onClick={() => setVisibility("UNLISTED")}>Unlisted</button>
 
-				<br />
-				<div className="postfooter-container">
-				<input type="file" accept="image/*" onChange={handleImageUpload} />
-				<button 
-          onClick={() =>
-            editPost(
-              document.getElementById("title").value,
-              document.getElementById("body").value,
-              image
-            )
-          }
-        >
-          Save Changes
-        </button>
-
-        <DeleteButton id = {id} onClose = {onClose} />
-				</div>
-				
-				{/* <button onClick={onClose}>Back</button> */}
-			</div>
-			<div className="rightContainer">
-				
-    
-				
-				<h2>Preview</h2>
-				<div className="preview-image" style={{ 
-				backgroundImage: image ? `url(${image})` : '', 
-				backgroundSize: 'cover', 
-				backgroundPosition: 'center center'
-				}}>
-				{!image && <div className="no-image">No image uploaded</div>}
-				</div>
+          </div>
+          <h2>Title</h2>
+          <input type="text" id="title" name="title" class="single-line-input" defaultValue={post.title} />
+          <h2>Body</h2>
+          <textarea id="body" name="body" rows="4" cols="50" defaultValue={post.content} class="single-line-input"></textarea>
 
 
-		
+          <br />
+          <div className="postfooter-container">
+            <input type="file" accept="image/*" onChange={handleImageUpload} />
+            <button
+              onClick={() =>
+                editPost(
+                  document.getElementById("title").value,
+                  document.getElementById("body").value,
+                  image
+                )
+              }
+            >
+              Save Changes
+            </button>
+
+            <DeleteButton postId={postId} onClose={onClose} />
+          </div>
+
+          {/* <button onClick={onClose}>Back</button> */}
+        </div>
+        <div className="rightContainer">
+
+
+
+          <h2>Preview</h2>
+          <div className="preview-image" style={{
+            backgroundImage: image ? `url(${image})` : '',
+            backgroundSize: 'cover',
+            backgroundPosition: 'center center'
+          }}>
+            {!image && <div className="no-image">No image uploaded</div>}
+          </div>
 
 
 
 
-				
-			</div>
-		</div>
+
+
+
+
+        </div>
+      </div>
     );
   }
 }

@@ -46,7 +46,8 @@ INSTALLED_APPS = [
     'authors',
     'node',
     'inbox',
-    'followers'
+    'followers',
+    'like'
 ]
 
 MIDDLEWARE = [

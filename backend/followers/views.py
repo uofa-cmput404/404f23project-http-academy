@@ -18,34 +18,82 @@ class FollowerList(APIView):
         return Response({"type": "followers", "items": serializer.data}, status=status.HTTP_200_OK)
 
 
+class UnfriendUser(APIView):
+    def delete(self, request, user_id, requester_id):
+        user = get_object_or_404(AppUser, pk=user_id)
+        other_user = get_object_or_404(AppUser, pk=requester_id)
+
+        # Remove the other user from user's following and followers
+        user.following.remove(other_user)
+        user.followers.remove(other_user)
+
+        # remove user from other user's following and followers
+        other_user.following.remove(user)
+        other_user.followers.remove(user)
+
+        return Response({"detail": "Unfriended successfully"}, status=status.HTTP_200_OK)
+    
 class AcceptFriendRequest(APIView):
-    """Accept a friend request """
+    """Accept a friend request."""
+
 
     def post(self, request, user_id, requester_id, format=None):
         user = get_object_or_404(AppUser, pk=user_id)
         requester = get_object_or_404(AppUser, pk=requester_id)
 
+        print(' iaccepted ur request - THIS IS ME', user)
+        print(' iaccepted ur request - THIS IS YOUU THE REQUESTER', requester)
+        # Check if the friend request exists and is not already accepted
         friend_request = FriendRequest.objects.filter(actor=requester, object=user).first()
-        if not friend_request:
-            return Response({"detail": "Friend request does not exist."}, status=status.HTTP_404_NOT_FOUND)
+        if not friend_request or friend_request.accepted:
+            return Response({"detail": "Friend request does not exist or is already accepted."}, status=status.HTTP_404_NOT_FOUND)
 
-        user.followers.add(requester)  # User follows the requester
-        
+        # User follows the requester (user adds requester to its following list)
+        #here iam addign the requester to my folowing list
+        print('user 1', user)
+        print('REQUESTER USER 2 ', requester)
+        requester.following.add(user)
+        user.followers.add(requester)
+
+        # requester.followers.add(user)
+
+        # print('user following list', user.following.all())
+        # print('user followers list', user.followers.all())
+        # print('requester following list', requester.following.all())
+        # print('requester followers list', requester.followers.all())
+        # Mark the friend request as accepted
         friend_request.accepted = True
         friend_request.save()
 
-
-        # notification for the requester (sender) of the friend request
+        # Create and send notification to the requester
         notification_summary = f"{user.username} accepted your friend request."
         notification = FriendRequest.objects.create(
-            actor=user,  #  the actor is now the acceptor
-            object=requester,  # The original person that sent request
+            actor=user,  # the actor is now the acceptor
+            object=requester,  # the original person that sent request
             summary=notification_summary,
             type="Notification",  # distinguish it from regular friend requests
         )
         requester_inbox, _ = Inbox.objects.get_or_create(authorId=requester)
         requester_inbox.follow_request.add(notification)
-        return Response({"detail": "Friend request accepted. Following the requester."}, status=status.HTTP_200_OK)
+        
+        return Response({"detail": "Friend request accepted and mutual following established."}, status=status.HTTP_200_OK)
+
+    def delete(self, request, user_id, requester_id, format=None):
+        user = get_object_or_404(AppUser, pk=user_id)
+        requester = get_object_or_404(AppUser, pk=requester_id)
+        FriendRequest.objects.filter(actor=requester, object=user).delete()
+        return Response({"type": "friendRequest", "detail": "Friend request deleted."}, status=status.HTTP_200_OK)
+
+
+class FollowingList(APIView):
+    """List all the users that a given user is following."""
+
+    def get(self, request, user_id, format=None):
+        user = get_object_or_404(AppUser, pk=user_id)
+        following_users = user.following.all()
+        serializer = UserSerializer(following_users, many=True)
+        print('followin list', serializer.data)
+        return Response({"type": "following", "items": serializer.data}, status=status.HTTP_200_OK)
 
 
 class EstablishMutualFriendship(APIView):
@@ -57,12 +105,13 @@ class EstablishMutualFriendship(APIView):
         friend_request = FriendRequest.objects.filter(actor=friend_id, object=user, accepted=True).first()
 
         # Check if user is already following the friend
-        print('all user followers', user.followers)
+        print('all user followers', user.followers.all())
         print('all user friend request', friend_request)
         if friend in user.followers.all():
 
-            user.followers.add(friend)  # Establish mutual friendship
-            friend_request.delete()
+            user.following.add(friend)  # Establish mutual friendship
+            friend.followers.add(user) #establish mutual friendship
+            friend_request.delete() #no need to kee pthe requets no more 
             print('user follwoers', user.followers.all())
             return Response({"detail": "Mutual friendship established."}, status=status.HTTP_200_OK)
         else:
@@ -85,8 +134,31 @@ class FollowerDetail(APIView):
     def put(self, request, user_id, follower_id, format=None):
         user = get_object_or_404(AppUser, pk=user_id)
         follower = get_object_or_404(AppUser, pk=follower_id)
+
+        # Check if there's an existing friend request
+        friend_request = FriendRequest.objects.filter(actor=follower, object=user).first()
+        if friend_request:
+            friend_request.accepted = True
+            friend_request.save()
+
+            # Remove friend request from user's inbox
+            user_inbox, _ = Inbox.objects.get_or_create(authorId=user)
+            user_inbox.follow_request.remove(friend_request)
+
+            # Send notification to requester's inbox
+            notification_summary = f"{user.username} accepted your friend request."
+            notification = FriendRequest.objects.create(
+                actor=user,
+                object=follower,
+                summary=notification_summary,
+                type="Notification",
+            )
+            follower_inbox, _ = Inbox.objects.get_or_create(authorId=follower)
+            follower_inbox.follow_request.add(notification)
+
+        # Add follower
         user.followers.add(follower)
-        return Response({"type": "follower", "detail": "Follower added."}, status=status.HTTP_200_OK)
+        return Response({"type": "follower", "detail": "Follower added and friend request accepted."}, status=status.HTTP_200_OK)
 
     def delete(self, request, user_id, follower_id, format=None):
         user = get_object_or_404(AppUser, pk=user_id)
@@ -94,25 +166,26 @@ class FollowerDetail(APIView):
         user.followers.remove(follower)
         return Response({"type": "follower", "detail": "Follower removed."}, status=status.HTTP_200_OK)
 
-class FriendRequestList(APIView):
-    """List all friend requests of a given user."""
 
+class FriendRequestList(APIView):
     def get(self, request, user_id, format=None):
         user = get_object_or_404(AppUser, pk=user_id)
-        print('is user valid', user.username)
-        print('does this even work', user.recieved_friend_request.all())
-        serializer = FriendRequestSerializer(user.recieved_friend_request.all(), many=True)
-        print(serializer.data)
-        return Response({"type": "friendRequestsRecieved", "items": serializer.data}, status=status.HTTP_200_OK)
-
+        friend_requests = FriendRequest.objects.filter(object=user)
+        data = FriendRequestSerializer(friend_requests, many=True).data
+        for request in data:
+            request['accepted'] = friend_requests.get(id=request['id']).accepted
+        return Response({"type": "friendRequestsReceived", "items": data}, status=status.HTTP_200_OK)
 
 class SentFriendRequestList(APIView):
     """List all friend requests sent by a given user."""
 
     def get(self, request, user_id, format=None):
         user = get_object_or_404(AppUser, pk=user_id)
+        print('user in backedn', user)
         sent_requests = FriendRequest.objects.filter(actor=user)
+        print('sent requsts, ', sent_requests)
         serializer = FriendRequestSerializer(sent_requests, many=True)
+        print('sent back to frotn end', serializer.data)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 

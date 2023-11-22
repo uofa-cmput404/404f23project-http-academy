@@ -1,271 +1,142 @@
-// import React, { useEffect, useState } from 'react';
-// import axiosInstance from '../axiosInstance';
-// import Button from '@mui/material/Button';
-// import '../css/inbox.css';
-// import FriendRequestItem from '../components/FriendRequestItem';
-// import Post from '../components/Post';
-
-// const Inbox = () => {
-//     console.log('inbox component rendered')
-//     const [inboxItems, setInboxItems] = useState({ follow_request: [] }); // Ensure initial state is an object with a follow_request array
-//     const [activeTab, setActiveTab] = useState("liked");
-//     const currentUser = JSON.parse(localStorage.getItem('user'));
-//     const currentUserId = currentUser.id;
-//     const [posts, setPosts] = useState([]);
-//     const [allUsers, setAllUsers] = useState([])
-
-//     useEffect(() => {
-        
-
-//         // fetchInbox();
-        
-//         axiosInstance.get('authors/user').then(response => {
-                
-//                 const usersWithProcessedIds = response.data.items.map(user => ({
-//                     ...user,
-//                     numericId: extractIdFromUrl(user.id)
-//                 }));
-//                 {console.log('it workss', usersWithProcessedIds)}
-        
-//                 setAllUsers(usersWithProcessedIds)
-//                 fetchInbox();
-//             }).catch(error => {
-//                 console.error('Error fetching users', error);
-//             });
-        
-//     }, [currentUserId]);
-
-
-//     const extractIdFromUrl = (url) => {
-//         const segments = url.split('/');
-//         return segments[segments.length - 1];
-//     };
-    
-//     const findAuthorForPost = (post) => {
-
-//         const author = allUsers.find(user => user.numericId === post.author.toString());
-//         console.log('Author for post:', author);
-//         return author;
-//     };
-
-    
-   
-    
-    
-
-//     const fetchInbox = () => {
-//         // console.log('got hererer')
-
-
-
-//         axiosInstance.get(`authors/${currentUserId}/inbox/`).then(response => {
-//             const postsWithAuthors = response.data.posts.map(post => ({
-//                 ...post,
-//                 authorDetails: findAuthorForPost(post)
-//             }));
-//             setInboxItems({...response.data, posts: postsWithAuthors});
-//             console.log('ogo', inboxItems)
-            
-//         }).catch(error => {
-//             console.error('Error fetching users', error);
-//         });
-
-   
-//     };
-    
-    
-
-//     const confirmFriendRequest = async (senderId, receiverId) => {
-//         try {
-//             const response = await axiosInstance.post(`authors/${currentUserId}/followers/acceptFriendRequest/${receiverId}/${senderId}/`);
-            
-            
-//             setInboxItems(prevItems => {
-//                 const updatedRequests = prevItems.follow_request.map(item => {
-//                     if (item.actor.user_id === senderId && item.object.user_id === receiverId) {
-                        
-//                         return { ...item, accepted: true }; 
-//                     }
-//                     return item;
-//                 });
-    
-//                 return { ...prevItems, follow_request: updatedRequests };
-//             });
-    
-//         } catch (error) {
-//             console.error('Error confirming friend request', error);
-//         }
-//     };
-    
-
-//     const establishMutualFriendship = async (friendId) => {
-//         try {
-//             await axiosInstance.post(`authors/${currentUserId}/followers/establishMutualFriendship/${currentUserId}/${friendId.toString()}/`);
-//         } catch (error) {
-//             console.error('Error establishing mutual friendship', error);
-//         }
-//     };
-
-//     const renderPosts = () => {
-//         return (
-//             <div>
-//                 {console.log('items in inbix',inboxItems)}
-//                 {inboxItems.posts.map((post, index) => (
-//                     <Post 
-//                         key={index}
-//                         post={post}
-//                         canEdit={currentUserId === post.author}
-//                         authorDetails={post.authorDetails}
-//                     />
-//                 ))}
-//             </div>
-//         );
-//     };
-    
-    
-    
-
-//     const renderFriendRequests = () => {
-//         return (
-//             <div>
-//                 {inboxItems.follow_request.map(request => (
-//                     <FriendRequestItem 
-//                         key={request.id}
-//                         request={request}
-//                         confirmFriendRequest={confirmFriendRequest}
-//                         establishMutualFriendship={establishMutualFriendship}
-//                     />
-//                 ))}
-//             </div>
-//         );
-//     };
-
-
-//     return (
-//         <div className='inbox-outer-container'>
-//             <h1>INBOX</h1>
-//             <div className='inbox-header'>
-//                 <h2 className={`item1 ${activeTab === "posts" ? "active2" : ""}`} onClick={() => setActiveTab("posts")}>Posts</h2>
-//                 <h2 className={`item2 ${activeTab === "follow" ? "active2" : ""}`} onClick={() => setActiveTab("follow")}>Friend Requests</h2>
-//             </div>
-//             <div className='follow_container'>
-//                 {activeTab === "follow" && renderFriendRequests()}
-//                 {activeTab === "posts" && renderPosts()} 
-//             </div>
-//         </div>
-//     );
-    
-    
-// };
-
-// export default Inbox;
 
 
 import React, { useEffect, useState } from 'react';
 import axiosInstance from '../axiosInstance';
 import '../css/inbox.css';
-import FriendRequestItem from '../components/FriendRequestItem';
 import Post from '../components/Post';
+import { extractUUIDFromURL } from '../utilities/extractUIID';
 
 const Inbox = () => {
-    console.log('inbox component rendered');
-    const [friendRequests, setFriendRequests] = useState([]);
-    const [posts, setPosts] = useState([]);
-    const [activeTab, setActiveTab] = useState("posts");
-    const currentUser = JSON.parse(localStorage.getItem('user'));
-    const currentUserId = currentUser.id;
+    const storedUser_val = JSON.parse(localStorage.getItem('user'));
+    const storedUser = storedUser_val.user
+    const userId = storedUser.id.split("/").pop()
+    const [usersInboxItems, setUsersInboxItems] = useState([]);
     const [allUsers, setAllUsers] = useState([]);
+    const [acceptedRequests, setAcceptedRequests] = useState({});
+    const [followers, setFollowers] = useState([])
 
     useEffect(() => {
-        fetchAllUsers();
-    }, [currentUserId]);
+        getAllusers();
+        getUsersInbox();
+        fetchFollowers();
+    }, []);
 
-    const extractIdFromUrl = (url) => {
-        const segments = url.split('/');
-        return segments[segments.length - 1];
+    const getAllusers = () => {
+        axiosInstance.get('authors/user')
+            .then(response => setAllUsers(response.data.items))
+            .catch(error => console.log(error));
     };
 
-    const findAuthorForPost = (post) => {
-        return allUsers.find(user => user.numericId === post.author.toString());
+    const getUsersInbox = () => {
+        axiosInstance.get(`authors/${userId}/inbox/`)
+            .then(response => {
+                // Enrich posts with author details
+                const enrichedPosts = response.data.posts.map(post => ({
+                    ...post,
+                    authorDetails: findAuthorForPost(post.author)
+                }));
+
+                setUsersInboxItems([...enrichedPosts, ...response.data.likes, ...response.data.follow_request]);
+            })
+            .catch(error => console.error('Error fetching inbox items:', error));
     };
 
-    const fetchAllUsers = () => {
-        axiosInstance.get('authors/user').then(response => {
-            const usersWithProcessedIds = response.data.items.map(user => ({
-                ...user,
-                numericId: extractIdFromUrl(user.id)
-            }));
-            setAllUsers(usersWithProcessedIds);
-            fetchInbox();
-        }).catch(error => {
-            console.error('Error fetching users', error);
-        });
+    const findAuthorForPost = (postId) => {
+        return allUsers.find(user => user.id.includes(postId));
     };
 
-    const fetchInbox = () => {
-        axiosInstance.get(`authors/${currentUserId}/inbox/`).then(response => {
-            const inboxData = response.data;
-            const postsWithAuthors = inboxData.posts.map(post => ({
-                ...post,
-                authorDetails: findAuthorForPost(post)
-            }));
-            setPosts(postsWithAuthors);
-            setFriendRequests(inboxData.follow_request);
-        }).catch(error => {
-            console.error('Error fetching inbox', error);
-        });
+    const acceptFriendRequest = (requesterId, requestId) => {
+        const url = `authors/${userId}/followers/acceptFriend/${requesterId}/`;
+        axiosInstance.post(url, { user_id: userId, requesterId: requesterId })
+            .then(() => {
+                setAcceptedRequests({ ...acceptedRequests, [requestId]: true });
+
+            })
+            .catch(error => console.error('Error accepting friend request:', error));
     };
 
-    const confirmFriendRequest = async (senderId, receiverId) => {
-        try {
-            await axiosInstance.post(`authors/${currentUserId}/followers/acceptFriendRequest/${receiverId}/${senderId}/`);
-            setFriendRequests(prevRequests => prevRequests.map(request => {
-                if (request.actor.user_id === senderId && request.object.user_id === receiverId) {
-                    return { ...request, accepted: true };
-                }
-                return request;
-            }));
-        } catch (error) {
-            console.error('Error confirming friend request', error);
+    const deleteFriendRequest = (requesterId, requestId) => {
+        const url = `authors/${userId}/followers/acceptFriend/${requesterId}/`;
+        axiosInstance.delete(url)
+            .then(() => {
+                // Update the state to remove the deleted request from the UI
+                setUsersInboxItems(prevItems => prevItems.filter(item => item.id !== requestId));
+            })
+            .catch(error => console.error('Error deleting friend request:', error));
+    };
+
+
+    const fetchFollowers = (requestId) => {
+        axiosInstance.get(`/authors/${userId}/followers`)
+            .then(response => {
+                setFollowers(response.data.items.map(item => extractUUIDFromURL(item.id)));
+            })
+            .catch(error => {
+                console.error('Error fetching followers:', error);
+            });
+
+
+        // friendrequests/
+        console.log('requester id', requestId)
+        console.log('all followers', followers)
+    };
+
+
+    const Bidirectional = (friendId) => {
+        console.log(' i went to bidirectional')
+        const url = `authors/${userId}/followers/establishMutualFriendship/${friendId}/`
+        axiosInstance.post(url, { user_id: userId, friendId: friendId })
+            .then(() => getUsersInbox()) // Refresh inbox items after establishing mutual friendship
+            .catch(error => console.error('Error establishing mutual friendship:', error));
+    };
+
+
+
+    const renderFriendRequest = (request) => {
+        const requestId = request.id;
+        const requesterId = extractUUIDFromURL(request.actor.id);
+        const isAlreadyFollower = followers.includes(requesterId);
+        const hasAcceptedRequest = acceptedRequests[requestId];
+
+        return (
+            <div key={requestId}>
+                <p>{request.summary}</p>
+                {!isAlreadyFollower && !hasAcceptedRequest && (
+                    <button onClick={() => acceptFriendRequest(requesterId, requestId)}>
+                        Accept
+                    </button>
+                )}
+                {/* {!hasAcceptedRequest && (
+                    <button onClick={() => deleteFriendRequest(requesterId, requestId)}>
+                        Delete
+                    </button>
+                )} */}
+                {(isAlreadyFollower || hasAcceptedRequest) && (
+                    <button onClick={() => Bidirectional(requesterId)}>
+                        Follow
+                    </button>
+                )}
+            </div>
+        );
+    }
+
+
+    const renderInboxItem = (item) => {
+        switch (item.type) {
+            case 'post':
+                return <Post key={item.id} post={item} canEdit={userId === item.author} authorDetails={item.authorDetails} />;
+            case 'Follow':
+                return renderFriendRequest(item);
+
+            default:
+                return null;
         }
     };
-
-    const establishMutualFriendship = async (senderId, receiverId) => {
-        console.log('mutual', senderId, receiverId)
-        try {
-            await axiosInstance.post(`authors/${currentUserId}/followers/establishMutualFriendship/${receiverId}/${senderId}/`);
-        } catch (error) {
-            console.error('Error establishing mutual friendship', error);
-        }
-    };
-
-    const renderPosts = () => (
-        <div className='post-contain'>
-            {posts.map((post, index) => (
-                <Post key={index} post={post} canEdit={currentUserId === post.author} authorDetails={post.authorDetails} />
-            ))}
-        </div>
-    );
-
-    const renderFriendRequests = () => (
-        <div>
-            {friendRequests.map(request => (
-                <FriendRequestItem key={request.id} request={request} confirmFriendRequest={confirmFriendRequest} establishMutualFriendship={establishMutualFriendship} />
-            ))}
-        </div>
-    );
 
     return (
         <div className='inbox-outer-container'>
             <h1>INBOX</h1>
-            <div className='inbox-header'>
-                <h2 className={`item1 ${activeTab === "posts" ? "active2" : ""}`} onClick={() => setActiveTab("posts")}>Posts</h2>
-                <h2 className={`item2 ${activeTab === "follow" ? "active2" : ""}`} onClick={() => setActiveTab("follow")}>Friend Requests</h2>
-            </div>
-            <div className='follow_container'>
-                {activeTab === "follow" && renderFriendRequests()}
-                {activeTab === "posts" && renderPosts()} 
-            </div>
+            {usersInboxItems.map(renderInboxItem)}
         </div>
     );
 };

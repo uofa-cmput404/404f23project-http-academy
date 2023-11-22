@@ -17,6 +17,8 @@ export const AuthProvider = ({ children }) => {
         try {
             const res = await axiosInstance.post("/authors/login", { email, password });
             localStorage.setItem('user', JSON.stringify(res.data));
+            const author = JSON.parse(localStorage.getItem('user'));
+            console.log('authcontextuser', author)
             setIsAuthenticated(true);
             if (callback) callback(); 
         } catch (error) {

@@ -20,25 +20,29 @@
 from rest_framework import serializers
 from django.contrib.auth import get_user_model, authenticate
 from django.core.exceptions import ValidationError
-
-UserModel = get_user_model()
+from .models import AppUser
+UserModel = AppUser
 
 class UserRegisterSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserModel
-        fields = ('email', 'username', 'password', 'github', 'profileImage')
-        extra_kwargs = {'password': {'write_only': True}}
+        fields = '__all__' 
 
-    def create(self, validated_data):
-        user_obj = UserModel.objects.create_user(
-            email=validated_data['email'],
-            username=validated_data.get('username', ''),
-            password=validated_data['password'],
-            github=validated_data.get('github', ''),
-            profileImage=validated_data.get('profileImage', '')
+    def create(self, clean_data):
+        user_obj = UserModel.objects.create(
+            email=clean_data['email'],
+            username=clean_data.get('username', ''),
+            displayName=clean_data.get('username', ''),
+            github=clean_data.get('github', ''),
+            profileImage=clean_data.get('profileImage', ''),
+            # add other fields as necessary
         )
+        user_obj.set_password(clean_data['password'])
+        user_obj.save()
         return user_obj
+
 		
+
 class UserLoginSerializer(serializers.Serializer):
 	email = serializers.EmailField()
 	password = serializers.CharField()
@@ -66,4 +70,4 @@ class UserUpdateSerializer(serializers.ModelSerializer):
 class UserSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = UserModel
-		fields = ('user_id', 'email', 'username', 'github', 'profileImage')
+		fields = ("type", "id", "url", "host", "displayName", "github", "profileImage")
