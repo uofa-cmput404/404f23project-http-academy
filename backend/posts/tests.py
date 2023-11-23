@@ -62,9 +62,8 @@ class PostTests(TestCase):
         self.assertEqual(first_response.status_code, 200)
         self.assertEqual(len(first_response.data), 0)
         comment = self.createTestComment()
-        second_response = self.client.get(reverse("posts:comments_list", args=[str(comment.postId.id)]))
+        second_response = self.client.get(reverse("posts:comments_list", args=[comment.postId.id]))
         self.assertEqual(len(second_response.data), 1)
-
 
     def test_post_new_comment(self):
         post = self.createTestPost()
