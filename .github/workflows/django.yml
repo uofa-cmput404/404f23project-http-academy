@@ -34,3 +34,6 @@ jobs:
     - name: Replace core.py
       run: |
         cp core.py ./backend/django_on_heroku/core.py
+    - name: Print Modified core.py
+      run: |
+        cat backend/django_on_heroku/core.py
