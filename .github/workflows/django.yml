@@ -31,3 +31,6 @@ jobs:
       run: |
         cd backend
         python manage.py test
+    - name: Replace core.py
+      run: |
+        cp core.py ./backend/django_on_heroku/core.py
