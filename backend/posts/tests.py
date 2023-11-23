@@ -32,7 +32,7 @@ class PostTests(TestCase):
             'title': 'This is a test title',
             'content': 'This is test content',
             'unlisted': True,
-            'author': 1,
+            'author': self.user.pk,
         }
         response = self.client.post(reverse("posts:posts"), data)
         id = response.data["id"]
