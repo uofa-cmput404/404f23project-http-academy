@@ -58,17 +58,13 @@ class PostTests(TestCase):
         self.assertEqual(Post.objects.count(), 0)
 
     def test_get_all_comments_for_post(self):
-        # first_response = self.client.get(reverse("posts:comments_list", args=[1]))
-        # self.assertEqual(first_response.status_code, 200)
-        # self.assertEquals(first_response.data)
-        created_comment1 = self.createTestComment()
-        # self.assertEquals(Comment.objects.count(), 1)
-        second_response = self.client.get(reverse("posts:comments_list", args=[str(created_comment1.pk)]))
-        print("Data: ", second_response.data)
-        print("Type: ", type(second_response.data))
-        # self.assertTrue(second_response.data)
-        print(f"Post primary key: {created_comment1.pk}")
-        print(f"Response data: {second_response.data}")
+        first_response = self.client.get(reverse("posts:comments_list", args=[1]))
+        self.assertEqual(first_response.status_code, 200)
+        self.assertEqual(len(first_response.data), 0)
+        comment = self.createTestComment()
+        second_response = self.client.get(reverse("posts:comments_list", args=[str(comment.postId.id)]))
+        self.assertEqual(len(second_response.data), 1)
+
 
     def test_post_new_comment(self):
         post = self.createTestPost()
