@@ -28,16 +28,15 @@ class PostTests(TestCase):
         self.assertEqual(len(second_response.data), 1)
 
     def test_post_a_post(self):
+        self.assertEqual(Post.objects.count(), 0)
         data = {
             'title': 'This is a test title',
             'content': 'This is test content',
             'unlisted': True,
             'author': self.user.pk,
         }
-        response = self.client.post(reverse("posts:posts"), data)
-        id = response.data["id"]
-        retrieved_post = Post.objects.filter(id=1)
-        self.assertEqual(id, retrieved_post[0].id)
+        self.client.post(reverse("posts:posts"), data)
+        self.assertEqual(Post.objects.count(), 1)
 
     def test_get_a_specific_post(self):
         created_post = self.createTestPost()
