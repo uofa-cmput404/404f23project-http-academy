@@ -64,7 +64,7 @@ class PostTests(TestCase):
         created_comment = self.createTestComment()
         # self.assertEquals(Comment.objects.count(), 1)
         # second_response = self.client.get(reverse("posts:comments_list", args=[created_comment.pk]))
-        print("Comment: ", Comment.objects.filter())
+        print("Comment: ", Comment.objects.filter(id=2))
         # self.assertTrue(second_response.data)
 
     def test_post_new_comment(self):
