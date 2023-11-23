@@ -22,7 +22,6 @@ class PostTests(TestCase):
         first_response = self.client.get(reverse("posts:posts"))
         self.assertEqual(first_response.status_code, 200)
         self.assertEqual(len(first_response.data), 0)
-
         self.createTestPost()
         second_response = self.client.get(reverse("posts:posts"))
         self.assertEqual(len(second_response.data), 1)
@@ -41,14 +40,14 @@ class PostTests(TestCase):
     def test_get_a_specific_post(self):
         created_post = self.createTestPost()
         id = created_post.id
-        response = self.client.get(reverse("posts:post_detail", args=[created_post.pk]))
+        response = self.client.get(reverse("posts:post_detail", args=[id]))
         retrieved_post = response.data
         self.assertEqual(id, retrieved_post["id"])
 
     def test_delete_a_post(self):
         post = self.createTestPost()
         self.assertEqual(Post.objects.count(), 1)
-        response = self.client.delete(reverse('posts:post_detail', args=[post.pk]))
+        response = self.client.delete(reverse('posts:post_detail', args=[post.id]))
         self.assertEqual(response.status_code, 200)
         self.assertEqual(Post.objects.count(), 0)
 
@@ -75,17 +74,17 @@ class PostTests(TestCase):
     
     def test_get_specific_comment(self):
         created_comment = self.createTestComment()
-        response = self.client.get(reverse("posts:comment_detail", args=[created_comment.pk]))
+        response = self.client.get(reverse("posts:comment_detail", args=[created_comment.id]))
         self.assertEqual(response.status_code, 200)
         retrieved_comment_id = response.data["id"]
         self.assertEqual(created_comment.id, retrieved_comment_id)
 
     def test_delete_a_comment(self):
-        self.createTestComment()
-        self.assertEqual(Comment.objects.filter().__len__(), 1)
-        response = self.client.delete(reverse("posts:comment_detail", args=[1]))
+        comment = self.createTestComment()
+        self.assertEqual(Comment.objects.filter().count(), 1)
+        response = self.client.delete(reverse("posts:comment_detail", args=[comment.id]))
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(Comment.objects.filter().__len__(), 0)
+        self.assertEqual(Comment.objects.filter().count(), 0)
 
     def test_get_all_likes_for_a_post(self):
         post = self.createTestPost()
@@ -98,25 +97,25 @@ class PostTests(TestCase):
 
     # def test_delete_a_like(self):
     #     self.createTestLike()
-    #     self.assertEqual(Like.objects.filter().__len__(), 1)
+    #     self.assertEqual(Like.objects.filter().count(), 1)
     #     response = self.client.delete(reverse("posts:like_post", args=[1]))
     #     self.assertEqual(response.status_code, 200)
-    #     self.assertEqual(Like.objects.filter().__len__(), 0)
+    #     self.assertEqual(Like.objects.filter().count(), 0)
 
     def test_create_a_like(self):
         post = self.createTestPost()
-        self.assertEqual(Like.objects.filter().__len__(), 0)
+        self.assertEqual(Like.objects.filter().count(), 0)
         data = {
-            'author': 1,
-            'post': 1
+            'author': self.user.pk,
+            'post': post.id 
         }
         response = self.client.post(reverse("posts:like_post", args=[post.id]), data)
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(Like.objects.filter().__len__(), 1)
+        self.assertEqual(Like.objects.filter().count(), 1)
 
     def test_get_image(self):
         base64 = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAWklEQVR42mNkAAIAAAoAAv/lxKUAAAAASUVORK5CYII="
         post = Post.objects.create(author=self.user, title="Test Post", content="Test Content", image=base64, unlisted=True)
-        response = self.client.get(reverse("posts:get_post_image", args=[post.pk]))
+        response = self.client.get(reverse("posts:get_post_image", args=[post.id]))
         self.assertEqual(response.status_code, 200)
         self.assertEqual(base64, response.data)
