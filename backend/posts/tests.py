@@ -64,7 +64,7 @@ class PostTests(TestCase):
 
     def test_post_new_comment(self):
         post = self.createTestPost()
-        self.assertEquals(Comment.objects.filter(postId=post.id).__len__(), 0)
+        self.assertEquals(Comment.objects.filter(postId=post.id).count(), 0)
         data = {
             'author': 1,
             'comment': 'This is a test comment',
@@ -72,7 +72,7 @@ class PostTests(TestCase):
         }
         response = self.client.post(reverse("posts:comments_list", args=[post.id]), data)
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(Comment.objects.filter(postId=post.id).__len__(), 1)
+        self.assertEqual(Comment.objects.filter(postId=post.id).count(), 1)
     
     def test_get_specific_comment(self):
         created_comment = self.createTestComment()
