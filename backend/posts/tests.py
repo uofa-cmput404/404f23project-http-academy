@@ -17,10 +17,6 @@ class PostTests(TestCase):
     def createTestComment(self):
         post = self.createTestPost()
         return Comment.objects.create(author=self.user, comment="Test Comment", postId=post)
-    
-    def createTestLike(self):
-        post = self.createTestPost()
-        return Like.objects.create(author=self.user, postId=post)
 
     def test_get_all_posts(self):
         first_response = self.client.get(reverse("posts:posts"))
@@ -93,11 +89,12 @@ class PostTests(TestCase):
         self.assertEqual(Comment.objects.filter().__len__(), 0)
 
     def test_get_all_likes_for_a_post(self):
-        first_response = self.client.get(reverse("posts:like_post", args=[1]))
+        post = self.createTestPost()
+        first_response = self.client.get(reverse("posts:like_post", args=[post.id]))
         self.assertEqual(first_response.status_code, 200)
         self.assertEqual(len(first_response.data), 0)
-        self.createTestLike()
-        second_response = self.client.get(reverse("posts:like_post", args=[1]))
+        Like.objects.create(author=self.user, postId=post)
+        second_response = self.client.get(reverse("posts:like_post", args=[post.id]))
         self.assertEqual(len(second_response.data), 1)
 
     # def test_delete_a_like(self):
