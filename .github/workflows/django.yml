@@ -9,6 +9,58 @@ on:
       - main
 
 jobs:
+  database-postgres:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: [ '3.8', '3.9', '3.10', '3.11', '3.12']
+        requirements-file: [
+          django-3.2.txt,
+          django-4.0.txt,
+          django-4.1.txt,
+          django-4.2.txt,
+        ]
+        os: [
+          ubuntu-20.04,
+        ]
+
+    services:
+      postgres:
+        image: postgres:12
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: postgres
+        ports:
+          - 5432:5432
+        # needed because the postgres container does not provide a healthcheck
+        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up Python ${{ matrix.python-version }}
+
+      uses: actions/setup-python@v3
+      with:
+        python-version: ${{ matrix.python-version }}
+        cache: 'pip'
+    - name: Install dependencies
+      run: |
+        sudo apt install gettext gcc -y
+        python -m pip install --upgrade pip
+        pip install pytest
+        pip install -r test_requirements/${{ matrix.requirements-file }}
+        pip install -r test_requirements/databases.txt
+        python setup.py install
+
+    - name: Test with django test runner
+      run: |
+        python manage.py test
+      env:
+        DATABASE_URL: postgres://postgres:postgres@127.0.0.1/postgres
+
+
   build:
 
     runs-on: ubuntu-latest
@@ -31,9 +83,3 @@ jobs:
       run: |
         cd backend
         python manage.py test
-    - name: Replace core.py
-      run: |
-        cp core.py ./backend/django_on_heroku/core.py
-    - name: Print Modified core.py
-      run: |
-        cat backend/django_on_heroku/core.py
