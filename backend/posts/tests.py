@@ -62,13 +62,9 @@ class PostTests(TestCase):
         # self.assertEqual(first_response.status_code, 200)
         # self.assertEquals(first_response.data)
         created_comment1 = self.createTestComment()
-        created_comment2 = self.createTestComment()
-        created_comment3 = self.createTestComment()
         # self.assertEquals(Comment.objects.count(), 1)
-        second_response = self.client.get(reverse("posts:comments_list", args=[created_comment1.pk]))
-        print("Comment: ", Comment.objects.filter())
-        print("2nd: ", second_response)
-        print("2nd: ", second_response.data)
+        second_response = self.client.get(reverse("posts:comments_list", args=[str(created_comment1.pk)]))
+        print("Datan: ", second_response.data)
         # self.assertTrue(second_response.data)
 
     def test_post_new_comment(self):
