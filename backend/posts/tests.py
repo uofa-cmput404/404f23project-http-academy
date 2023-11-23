@@ -84,12 +84,12 @@ class PostTests(TestCase):
         retrieved_comment_id = response.data["id"]
         self.assertEqual(created_comment.id, retrieved_comment_id)
 
-    # def test_delete_a_comment(self):
-    #     self.createTestComment()
-    #     self.assertEqual(Comment.objects.filter().__len__(), 1)
-    #     response = self.client.delete(reverse("posts:comment_detail", args=[1]))
-    #     self.assertEqual(response.status_code, 200)
-    #     self.assertEqual(Comment.objects.filter().__len__(), 0)
+    def test_delete_a_comment(self):
+        self.createTestComment()
+        self.assertEqual(Comment.objects.filter().__len__(), 1)
+        response = self.client.delete(reverse("posts:comment_detail", args=[1]))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(Comment.objects.filter().__len__(), 0)
 
     def test_get_all_likes_for_a_post(self):
         first_response = self.client.get(reverse("posts:like_post", args=[1]))
