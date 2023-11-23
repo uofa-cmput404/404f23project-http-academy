@@ -66,7 +66,7 @@ class PostTests(TestCase):
         post = self.createTestPost()
         self.assertEquals(Comment.objects.filter(postId=post.id).count(), 0)
         data = {
-            'author': 1,
+            'author': self.user.pk,
             'comment': 'This is a test comment',
             'postId': post.id,
         }
