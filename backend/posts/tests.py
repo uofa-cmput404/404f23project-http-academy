@@ -64,8 +64,11 @@ class PostTests(TestCase):
         created_comment1 = self.createTestComment()
         # self.assertEquals(Comment.objects.count(), 1)
         second_response = self.client.get(reverse("posts:comments_list", args=[str(created_comment1.pk)]))
-        print("Datan: ", second_response.data)
+        print("Data: ", second_response.data)
+        print("Type: ", type(second_response.data))
         # self.assertTrue(second_response.data)
+        print(f"Post primary key: {created_comment1.pk}")
+        print(f"Response data: {second_response.data}")
 
     def test_post_new_comment(self):
         post = self.createTestPost()
