@@ -60,12 +60,12 @@ class PostTests(TestCase):
     def test_get_all_comments_for_post(self):
         first_response = self.client.get(reverse("posts:comments_list", args=[1]))
         self.assertEqual(first_response.status_code, 200)
-        self.assertEqual(len(first_response.data), 0)
-        comment = self.createTestComment()
-        second_response = self.client.get(reverse("posts:comments_list", args=[comment.pk]))
-        self.assertEqual(len(second_response.data), 1)
+        self.assertFalse(first_response.data)
+        created_comment = self.createTestComment()
+        second_response = self.client.get(reverse("posts:comments_list", args=[created_comment.pk]))
+        self.assertTrue(second_response.data)
 
-    def test_post_new_commentt(self):
+    def test_post_new_comment(self):
         post = self.createTestPost()
         self.assertEquals(Comment.objects.filter(postId=post.id).__len__(), 0)
         data = {
