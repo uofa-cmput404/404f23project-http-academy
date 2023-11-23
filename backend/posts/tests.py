@@ -51,11 +51,11 @@ class PostTests(TestCase):
         self.assertEqual(id, retrieved_post["id"])
 
     def test_delete_a_post(self):
-        self.createTestPost()
-        self.assertEqual(Post.objects.filter().__len__(), 1)
-        response = self.client.delete(reverse('posts:post_detail', args=[1]))
+        post = self.createTestPost()
+        self.assertEqual(Post.objects.count(), 1)
+        response = self.client.delete(reverse('posts:post_detail', args=[post.pk]))
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(Post.objects.filter().__len__(), 0)
+        self.assertEqual(Post.objects.count(), 0)
 
     def test_get_all_comments_for_post(self):
         first_response = self.client.get(reverse("posts:comments_list", args=[1]))
