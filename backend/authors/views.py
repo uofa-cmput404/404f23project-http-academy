@@ -35,12 +35,14 @@ from inbox.models import Inbox
 from django.middleware.csrf import get_token
 # Create your views here.
 
-
+from drf_yasg.utils import swagger_auto_schema
 
 
 from rest_framework import generics
 class UserRegister(APIView):
 	permission_classes = (permissions.AllowAny,)
+
+	@swagger_auto_schema(operation_description="Register a user", request_body=UserRegisterSerializer, responses={201: "{'type': 'author', 'id': {id}}", 400: "{'type': 'error', 'message': {errors}}"})
 	def post(self, request):
 		clean_data = custom_validation(request.data)
 		serializer = UserRegisterSerializer(data=clean_data)
@@ -63,6 +65,8 @@ class UserLogin(APIView):
 	permission_classes = (permissions.AllowAny,)
 	authentication_classes = (SessionAuthentication,)
 	##
+
+	@swagger_auto_schema(operation_description="Login a user", request_body=UserLoginSerializer, responses={200: "{'type': 'author', 'id': {id}}", 400: "{'type': 'error', 'message': {errors}}"})
 	def post(self, request):
 		data = request.data
 		assert validate_email(data)
@@ -79,8 +83,11 @@ class UserLogin(APIView):
 			return Response(response, status=status.HTTP_200_OK, headers = {'X-Csrftoken': csrf_token})
 
 class UserLogout(APIView):
+	
 	permission_classes = (permissions.AllowAny,)
 	authentication_classes = ()
+	
+	@swagger_auto_schema(operation_description="Logout a user", responses={200: "{'type': 'author', 'id': {id}}", 400: "{'type': 'error', 'message': {errors}}"})
 	def post(self, request):
 		logout(request)
 		return Response(status=status.HTTP_200_OK)
@@ -95,6 +102,7 @@ class UserUpdate(APIView):
         except AppUser.DoesNotExist:
             raise Http404
 
+    @swagger_auto_schema(operation_description="Update a specific author", request_body=UserSerializer, responses={200: "{'type': 'author', 'id': {id}}", 400: "{'type': 'error', 'message': {errors}}"})
     def patch(self, request, pk, format=None):
         user = self.get_object(pk)
         serializer = UserUpdateSerializer(user, data=request.data)
@@ -107,7 +115,9 @@ class UserUpdate(APIView):
 class UserView(APIView):
 	permission_classes = (permissions.IsAuthenticated,)
 	authentication_classes = (SessionAuthentication,)
+
 	
+	@swagger_auto_schema(operation_description="Get a list of all authors", responses={200: UserSerializer(many=True) , 400: 'Bad Request'})
 	def get(self, request):
 		serializer = UserSerializer(AppUser.objects.all(), many=True)
 		authors = AppUser.objects.all()
@@ -139,7 +149,8 @@ class UserView(APIView):
 class UserDetails(APIView):
 	permission_classes = (permissions.IsAuthenticated,)
 	authentication_classes = (SessionAuthentication,)
-	
+
+	@swagger_auto_schema(operation_description="Get a specific author", responses={200: UserSerializer, 400: 'Bad Request'})
 	def get(self, request, pk):
 		try:
 			author = AppUser.objects.get(pk=pk)
