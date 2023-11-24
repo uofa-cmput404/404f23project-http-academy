@@ -13,6 +13,8 @@ import uuid
 from django.http import Http404
 from django.shortcuts import get_object_or_404
 
+from drf_yasg.utils import swagger_auto_schema
+
 
 def get_user(pk):
         try:
@@ -65,6 +67,7 @@ def own_posts_list(request, pk):
 
 
 @api_view(['GET', 'POST'])
+@swagger_auto_schema(operation_description="Get all posts", responses={200: "{'type': 'author', 'id': {id}}", 400: "{'type': 'error', 'message': {errors}}"})
 def posts_list(request, pk = None):
     if request.method == 'POST':
         # if we want to create a new post, use the serializer and save if valid
@@ -152,6 +155,7 @@ def post_detail(request, pk, post_id):
         return Response(serializer.data)
 
 @api_view(['GET', 'POST'])
+@swagger_auto_schema(operation_description="Get all comments for a post", responses={200: "{'type': 'author', 'id': {id}}", 400: "{'type': 'error', 'message': {errors}}"})
 def comments_list(request, pk, post_id):
     if request.method == 'POST':
         print('Received comment data:', request.data)
@@ -321,6 +325,7 @@ def comment_detail(request, pk, post_id):
 
 
 @api_view(['GET'])
+@swagger_auto_schema(operation_description="Get all image data for a post", responses={200: "{'type': 'author', 'id': {id}}", 400: "{'type': 'error', 'message': {errors}}"})
 def get_post_image(request, pk):
     post = Post.objects.get(id=pk)
     serializer = PostSerializer(post, many=False)
