@@ -9,7 +9,7 @@ from rest_framework import routers
 #     # path('<str:pk>', views.author_detail), # GET specific author / update author profile 
 # ]
 
-
+app_name = 'authors'
 
 urlpatterns = [
 	path('register', views.UserRegister.as_view(), name='register'),
