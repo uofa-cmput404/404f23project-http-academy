@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'posts',
     'authors',
     'node',
+    'drf_yasg',
     'inbox',
     'followers',
     'like'

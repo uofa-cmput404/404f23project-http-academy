@@ -11,12 +11,16 @@ from posts.serializers import PostSerializer
 from like.serializers import LikeSerializer
 from .models import Inbox
 from like.models import Like
+from drf_yasg.utils import swagger_auto_schema
 
 class InboxView(APIView):
     """
     API view to manage the inbox of an AppUser.
     """
-
+    @swagger_auto_schema(
+        operation_description="Retrieve all posts and likes from the inbox of the specified AppUser.",
+        responses={200: "{'type': 'inbox', 'author_id': {author_id}, 'posts': {posts}, 'likes': {likes}}", 404: "Not found"}
+    )
     def get(self, request, author_id, format=None):
         """
         Retrieves all posts and likes from the inbox of the specified AppUser.
@@ -37,6 +41,10 @@ class InboxView(APIView):
         }
         return Response(response, status=status.HTTP_200_OK)
 
+    @swagger_auto_schema(
+        operation_description="Adds a post or like to the inbox of the specified AppUser.",
+        responses={201: "{'detail': 'Post added to inbox'}", 400: "{'detail': 'Unsupported request type'}", 404: "Not found"}
+    )
     def post(self, request, author_id, format=None):
         """
         Adds a post or like to the inbox of the specified AppUser.
@@ -117,6 +125,10 @@ class InboxView(APIView):
         print("Follow request added to inbox", inbox)
         return Response({"detail": "Follow request added to inbox"}, status=status.HTTP_201_CREATED)
 
+    @swagger_auto_schema(
+        operation_description="Clears the inbox of the specified AppUser.",
+        responses={204: "{'detail': 'Inbox cleared successfully'}", 404: "Not found"}
+    )
     def delete(self, request, author_id, format=None):
         """
         Clears the inbox of the specified AppUser.

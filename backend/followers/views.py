@@ -8,10 +8,14 @@ from authors.serializers import UserSerializer
 from .models import FriendRequest
 from .serializers import FriendRequestSerializer
 from inbox.models import Inbox
+from drf_yasg.utils import swagger_auto_schema
 
 class FollowerList(APIView):
     """List all the followers of a given user."""
-
+    @swagger_auto_schema(
+        operation_description="Retrieve all followers of the specified AppUser.",
+        responses={200: UserSerializer(many=True), 404: "Not found"}
+    )
     def get(self, request, user_id, format=None):
         user = get_object_or_404(AppUser, pk=user_id)
         serializer = UserSerializer(user.followers.all(), many=True)
@@ -20,6 +24,10 @@ class FollowerList(APIView):
 
 
 class UnfriendUser(APIView):
+    @swagger_auto_schema(
+        operation_description="Unfriend a user.",
+        responses={200: "{'detail': 'Unfriended successfully'}"}
+    )
     def delete(self, request, user_id, requester_id):
         user = get_object_or_404(AppUser, pk=user_id)
         other_user = get_object_or_404(AppUser, pk=requester_id)
@@ -36,8 +44,11 @@ class UnfriendUser(APIView):
     
 class AcceptFriendRequest(APIView):
     """Accept a friend request."""
-
-
+    @swagger_auto_schema(
+        operation_description="Accept a friend request.",
+        request_body=FriendRequestSerializer,
+        responses={200: "{'type': 'friendRequest', 'detail': 'Friend request sent.'}", 404: "{'type': 'friendRequest', 'detail': 'Friend request does not exist or is already accepted.'}"}
+    )
     def post(self, request, user_id, requester_id, format=None):
         user = get_object_or_404(AppUser, pk=user_id)
         requester = get_object_or_404(AppUser, pk=requester_id)
@@ -86,7 +97,7 @@ class AcceptFriendRequest(APIView):
 
 class FollowingList(APIView):
     """List all the users that a given user is following."""
-
+    
     def get(self, request, user_id, format=None):
         user = get_object_or_404(AppUser, pk=user_id)
         following_users = user.following.all()

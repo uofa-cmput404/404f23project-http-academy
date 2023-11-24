@@ -12,7 +12,7 @@ from authors.models import AppUser
 import uuid 
 from django.http import Http404
 from django.shortcuts import get_object_or_404
-
+from drf_yasg.utils import swagger_auto_schema
 
 def get_user(pk):
         try:
@@ -62,8 +62,6 @@ def own_posts_list(request, pk):
         raise NotFound(detail="Author not found", code=404)
     
 
-
-
 @api_view(['GET', 'POST'])
 def posts_list(request, pk = None):
     if request.method == 'POST':
@@ -91,7 +89,6 @@ def posts_list(request, pk = None):
                 else:
                     # Otherwise, show only public posts of the author
                     posts = posts.filter(visibility="PUBLIC")
-
             else:
                 # Fetch all public posts if no author id is provided
                 posts = Post.objects.filter(visibility="PUBLIC")
@@ -321,6 +318,7 @@ def comment_detail(request, pk, post_id):
 
 
 @api_view(['GET'])
+@swagger_auto_schema(operation_description="Get all image data for a post", responses={200: "{'type': 'author', 'id': {id}}", 400: "{'type': 'error', 'message': {errors}}"})
 def get_post_image(request, pk):
     post = Post.objects.get(id=pk)
     serializer = PostSerializer(post, many=False)
