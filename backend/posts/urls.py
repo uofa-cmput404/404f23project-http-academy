@@ -29,12 +29,15 @@ urlpatterns = [
     path('ownPosts/', views.own_posts_list), # GET all posts, POST a new post for a specific author
     # path('<uuid:pk>/', views.posts_list, name='author_posts_list'), # GET all or public posts of a specific author
     # path('<uuid:post_id>/', views.post_detail, name='post_detail'), # GET a specific post, DELETE a post
-    path('<uuid:pk>/comments/', views.comments_list), # GET all comments for a post, POST a new comment
-    path('comments/<uuid:pk>', views.comment_detail), # GET a specific comment, DELETE a comment
+    path('<uuid:post_id>/comments/', views.comments_list), # GET all comments for a post, POST a new comment
+    # path('comments/<uuid:pk>', views.comment_detail), # GET a specific comment, DELETE a comment
     # path('<uuid:pk>/like/', views.like_post), # GET all likes for a post, POST a like, DELETE a like
     # path('<uuid:pk>/like/<uuid:pkLike>', views.like_detail), # GET a specific like to delete
     path('<uuid:pk>/image/', views.get_post_image), # GET the image for a post
     # path('<uuid:author_id>/posts/<int:post_id>/', views.post_detail, name='post_detail')
     path('<uuid:post_id>/', views.post_detail, name='author_post_detail'),
-    path('<uuid:post_id>/like/', include('like.urls'))
+    path('<uuid:post_id>/like/', include('like.urls')),
+    # path('<uuid:comment_id>/like/', include('like.urls')),
+    path('comments/<uuid:comment_id>/likes/', views.comment_like),
+
 ]

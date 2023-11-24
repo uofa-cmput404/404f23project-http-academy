@@ -164,12 +164,12 @@ export default function Hub() {
 
 
     return (
-        <div className='outer-container2'>
-            <div className='full-contain2'>
+        <div className='outer-containers2'>
+            <div className='full-contains2'>
                 <h1 className='header'>HUB</h1>
                 <h4>Looking for someone new to follow!</h4>
             </div>
-            <div className='list-flex2'>
+            <div className='list-flexs2'>
                 <List>
                     {allUsers.map((user) => {
                         const userUUID = extractUUIDFromURL(user.id);

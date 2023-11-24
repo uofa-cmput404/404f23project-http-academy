@@ -15,6 +15,7 @@ export default function Home() {
     const storedUser_str = storedUser.user
     const userId = storedUser_str.id.split("/").pop()
     useEffect(() => {
+        console.log('in home js', storedUser)
         if (!isAuthenticated) {
             navigate('/login'); // Redirect to login if not authenticated
         }

@@ -1,22 +1,4 @@
-# from rest_framework import serializers
-# from .models import Author
 
-# class AuthorSerializer(serializers.ModelSerializer):
-#     # create a serializer for the Post model
-   
-#     class Meta:
-#         model = Author
-#         fields = '__all__'
-
-#     def create(self, validated_data):
-#         print(validated_data)
-#         # Create and return a new `Post` instance, given the validated data
-#         return Author.objects.create(**validated_data)
-
-#     def delete(self, instance):
-#         # delete a specific post
-#         instance.delete()
-#         return instance
 from rest_framework import serializers
 from django.contrib.auth import get_user_model, authenticate
 from django.core.exceptions import ValidationError

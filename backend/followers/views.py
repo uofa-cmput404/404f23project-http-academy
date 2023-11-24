@@ -15,6 +15,7 @@ class FollowerList(APIView):
     def get(self, request, user_id, format=None):
         user = get_object_or_404(AppUser, pk=user_id)
         serializer = UserSerializer(user.followers.all(), many=True)
+        print('this view was activated', serializer.data)
         return Response({"type": "followers", "items": serializer.data}, status=status.HTTP_200_OK)
 
 
@@ -55,19 +56,14 @@ class AcceptFriendRequest(APIView):
         requester.following.add(user)
         user.followers.add(requester)
 
-        # requester.followers.add(user)
-
-        # print('user following list', user.following.all())
-        # print('user followers list', user.followers.all())
-        # print('requester following list', requester.following.all())
-        # print('requester followers list', requester.followers.all())
-        # Mark the friend request as accepted
+      
         friend_request.accepted = True
         friend_request.save()
 
+        print(' at east i got here')
         # Create and send notification to the requester
         notification_summary = f"{user.username} accepted your friend request."
-        notification = FriendRequest.objects.create(
+        notification, created = FriendRequest.objects.get_or_create(
             actor=user,  # the actor is now the acceptor
             object=requester,  # the original person that sent request
             summary=notification_summary,
@@ -76,7 +72,10 @@ class AcceptFriendRequest(APIView):
         requester_inbox, _ = Inbox.objects.get_or_create(authorId=requester)
         requester_inbox.follow_request.add(notification)
         
-        return Response({"detail": "Friend request accepted and mutual following established."}, status=status.HTTP_200_OK)
+        if created:
+            return Response({"type": "friendRequest", "detail": "Friend request sent."}, status=status.HTTP_200_OK)
+        else:
+            return Response({"type": "friendRequest", "detail": "Friend request already exists."}, status=status.HTTP_200_OK)
 
     def delete(self, request, user_id, requester_id, format=None):
         user = get_object_or_404(AppUser, pk=user_id)

@@ -8,6 +8,7 @@ from rest_framework.views import APIView
 
 from authors.models import AppUser
 from posts.models import Post
+from posts.models import Comment
 
 from .models import Like
 from .serializers import LikeSerializer
@@ -26,8 +27,16 @@ class LikesView(APIView):
             likes = LikeSerializer(likes, many=True)
             likes_dict = {"type": "likes", "items": likes.data}
             return Response(likes_dict, status=status.HTTP_200_OK)
-
-       
+        else:
+            try:
+                comment = Comment.objects.get(pk=comment_id)
+            except Comment.DoesNotExist:
+                raise Http404("the comment dont exists")
+            
+            likes = list(Like.objects.filter(object=comment.url))
+            likes = LikeSerializer(likes, many=True)
+            likes_dict = {"type": "likes", "items": likes.data}
+            return Response(likes_dict, status=status.HTTP_200_OK)
 
     def post(self, request: Request, pk: str, post_id: str) -> Response:
         """Add a like to the post."""

@@ -10,6 +10,7 @@ export const AuthProvider = ({ children }) => {
 
     useEffect(() => {
         const user = localStorage.getItem('user');
+        console.log(user)
         setIsAuthenticated(!!user); // we use localstorage so that the user session persists 
     }, []);
 
@@ -18,40 +19,44 @@ export const AuthProvider = ({ children }) => {
             const res = await axiosInstance.post("/authors/login", { email, password });
             localStorage.setItem('user', JSON.stringify(res.data));
             const author = JSON.parse(localStorage.getItem('user'));
+            // const token = JSON.parse(localStorage.getItem('csrf_token'));
             console.log('authcontextuser', author)
+            // console.log('authcontexttoken', token)
             setIsAuthenticated(true);
-            if (callback) callback(); 
+            if (callback) callback();
         } catch (error) {
             console.error('Login failed', error);
             throw error;
         }
     };
 
-    const registerUser = async (email, 
-        username, 
-        password, 
-        github, 
+    const registerUser = async (email,
+        username,
+        password,
+        github,
         profileImage, callback) => {
-            console.log('data sent', email, 
-            username, 
-            password, 
-            github, 
-            profileImage )
+        console.log('data sent', email,
+            username,
+            password,
+            github,
+            profileImage)
         try {
-            await axiosInstance.post("/authors/register", {email, 
-                username, 
-                password, 
-                github, 
-                profileImage });
+            await axiosInstance.post("/authors/register", {
+                email,
+                username,
+                password,
+                github,
+                profileImage
+            });
             // Log in the user after registration
             await loginUser(email, password);
-            if (callback) callback(); 
+            if (callback) callback();
         } catch (error) {
             console.error('Registration failed', error);
-            throw error; 
+            throw error;
         }
     };
-    
+
 
     const logout = () => {
         axiosInstance.post("/authors/logout", { withCredentials: true })

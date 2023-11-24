@@ -4,11 +4,13 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from authors.models import AppUser
-from posts.models import Post, Like
+from posts.models import Post
 from followers.models import FriendRequest
 from followers.serializers import FriendRequestSerializer
-from posts.serializers import PostSerializer, PostLikeSerializer
+from posts.serializers import PostSerializer
+from like.serializers import LikeSerializer
 from .models import Inbox
+from like.models import Like
 
 class InboxView(APIView):
     """
@@ -24,7 +26,7 @@ class InboxView(APIView):
 
         # Serialize posts and likes
         posts_serializer = PostSerializer(inbox.posts.all().order_by("-published"), many=True)
-        likes_serializer = PostLikeSerializer(inbox.like.all(), many=True)
+        likes_serializer = LikeSerializer(inbox.like.all(), many=True)
         follow_serializer = FriendRequestSerializer(inbox.follow_request.all(), many = True)
         response = {
             "type": "inbox",
@@ -125,3 +127,7 @@ class InboxView(APIView):
         inbox.posts.clear()
         inbox.like.clear()
         return Response({"detail": f"Inbox of {author.username} cleared successfully"}, status=status.HTTP_204_NO_CONTENT)
+
+
+
+

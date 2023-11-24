@@ -32,7 +32,10 @@ from rest_framework.response import Response
 from .models import AppUser
 from .serializers import UserUpdateSerializer
 from inbox.models import Inbox
+from django.middleware.csrf import get_token
 # Create your views here.
+
+
 
 
 from rest_framework import generics
@@ -69,10 +72,11 @@ class UserLogin(APIView):
 			user = serializer.check_user(data)
 			login(request, user)
 			serializer = UserSerializer(user)
-			response = {"user": serializer.data}
-		
-			return Response(response, status=status.HTTP_200_OK)
-
+			csrf_token = get_token(request)
+			print('hit this ogo', csrf_token)
+			response = {"user": serializer.data, "csrf_token": csrf_token}
+			print('response sent back to the front end', response)
+			return Response(response, status=status.HTTP_200_OK, headers = {'X-Csrftoken': csrf_token})
 
 class UserLogout(APIView):
 	permission_classes = (permissions.AllowAny,)
@@ -143,4 +147,5 @@ class UserDetails(APIView):
 			return Response({"status": 1,
 						"message": "Part not found"}, status=HTTP_404_NOT_FOUND)
 		serializer = UserSerializer(author)
+		
 		return Response(serializer.data, status=status.HTTP_200_OK)

@@ -68,14 +68,20 @@ class CommentSerializer(serializers.ModelSerializer):
         return instance
     
 
-class PostLikeSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Like
-        fields = ['id', 'author', 'postId', 'like']
+# class PostLikeSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = Like
+#         fields = ['id', 'author', 'postId', 'like']
 
 
 # for liking comments later on
 class CommentLikeSerializer(serializers.ModelSerializer):
+    author_displayName = serializers.CharField(source='author.displayName')
+    author_id = serializers.UUIDField(source='author.user_id')
+
     class Meta:
         model = Like
-        fields = ['id', 'author', 'commentId', 'like']
+        fields = ['id', 'author_displayName', 'author_id', 'commentId']
+
+    # def get_author_id(self, obj):
+    #     return obj.author.user_id

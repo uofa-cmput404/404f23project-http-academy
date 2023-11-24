@@ -8,8 +8,11 @@ from authors.models import AppUser
 DEFAULT_HOST = "http://127.0.0.1:8000/"
 
 
+
 import uuid
 class Post(models.Model):
+
+     
     
     post_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     id = models.URLField(max_length=2048, blank=True, null=True, editable=False)
@@ -25,18 +28,36 @@ class Post(models.Model):
     contentType = models.CharField(max_length=20, default='text/plain')
     categories = models.ForeignKey('Category', on_delete=models.CASCADE, default=None, null=True)
     comments = models.ForeignKey('Comment', on_delete=models.CASCADE, default=None, null=True)
+    
     likes = models.ForeignKey('Like', on_delete=models.CASCADE, default=None, null=True)
     visibility = models.CharField(max_length=100, default='PUBLIC')
     unlisted = models.BooleanField()
     url = models.URLField(max_length=500,editable=False,null=True)
-
+    # comments = models.URLField(max_length=500,editable=False,default=str(url) + '/comments')
 class Comment(models.Model):
-    id = models.AutoField(primary_key=True)
+
+    
+    CONTENT_CHOICE = [
+        ("text/markdown","text/markdown"), 
+        ("text/plain","text/plain"),
+        ("application/base64","application/base64"),
+        ("image/png;base64","image/png;base64"),
+        ("image/jpeg;base64","image/jpeg;base64")
+    ]
+
+    comment_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    id = models.URLField(max_length=2048, blank=True, null=True, editable=False)
     author = models.ForeignKey(AppUser, on_delete=models.CASCADE, db_index=True)
-    comment = models.CharField(max_length=100)
-    contentType = models.CharField(max_length=100, default='text/plain')
+    comment = models.TextField()
+    contentType = models.CharField(max_length=100, choices=CONTENT_CHOICE, default='text/plain')
     published = models.DateTimeField(auto_now_add=True)
-    postId = models.ForeignKey(Post, on_delete=models.CASCADE, db_index=True)
+    postId = models.ForeignKey(Post, on_delete=models.CASCADE, db_index=True, related_name="comment_for_post")
+    url = models.URLField(max_length=500,editable=False,null=True,blank=True)
+
+    def save(self, *args, **kwargs):
+        self.url = str(self.postId.url) + "/comments/" + str(self.comment_id)
+        self.id = self.url
+        super().save(*args, **kwargs)
 
 
 class Like(models.Model):

@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from .models import Post, Comment, Like
 from django.urls import reverse 
-from .serializers import PostSerializer, CommentSerializer, PostLikeSerializer
+from .serializers import PostSerializer, CommentSerializer, CommentLikeSerializer
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from django.core.paginator import Paginator
@@ -152,24 +152,84 @@ def post_detail(request, pk, post_id):
         return Response(serializer.data)
 
 @api_view(['GET', 'POST'])
-def comments_list(request, pk):
+def comments_list(request, pk, post_id):
     if request.method == 'POST':
-        # if we want to create a new comment, use the serializer and save if valid
-        serializer = CommentSerializer(data=request.data)
+        print('Received comment data:', request.data)
+        print('Comment post ID:', type(post_id))
+
+       
+        request_data_with_postId = request.data.copy()
+        request_data_with_postId['postId'] = post_id
+
+        serializer = CommentSerializer(data=request_data_with_postId)
+
         if serializer.is_valid():
+            print('it actually worked and saved a comment')
             serializer.save()
         else:
+            print('serialzier eerror', serializer.errors)
             return Response(serializer.errors)
     else:
-        # if we want to get all comments for a post, use the serializer to return all comments
-        comments = Comment.objects.filter(postId=pk)
+        # Handling GET request
+        print('post id for comment', post_id)
+        print(' ig tohere to retrieve data', Comment.objects.all())
+        comments = Comment.objects.filter(postId=post_id)
+        print('cmment for my post', comments)
         serializer = CommentSerializer(comments, many=True)
+        print('ser data', serializer.data)
+        return Response(serializer.data)
     return Response(serializer.data)
+@api_view(['GET', 'POST', 'DELETE'])
+def comment_like(request, pk, comment_id):
+    try:
+        author = AppUser.objects.get(pk=pk)
+        authorid = author.user_id
+        comment = Comment.objects.get(pk=comment_id)
+    except (AppUser.DoesNotExist, Comment.DoesNotExist):
+        return Response({"error": "Comment or Author not found"}, status=status.HTTP_404_NOT_FOUND)
+
+    if request.method == 'GET':
+        likes = Like.objects.filter(commentId=comment.comment_id)
+        serializer = CommentLikeSerializer(likes, many=True)
+        response_data = serializer.data
+        print('response backkk', response_data)
+        # Add the authorid to the response data
+        # response_data['authorid'] = authorid
+        return Response(response_data, status=status.HTTP_200_OK)
+
+    elif request.method == 'POST':
+       
+        user_id = request.data.get('author')
+        user = get_object_or_404(AppUser, pk=user_id)
+
+        # Check if the user already liked this comment
+        if Like.objects.filter(author=user, commentId=comment).exists():
+            return Response({"error": "You have already liked this comment"}, status=status.HTTP_400_BAD_REQUEST)
+
+        print('new like is genearted')
+        new_like = Like(author=user, commentId=comment)
+        new_like.save()
+        return Response({"message": "Comment liked successfully"}, status=status.HTTP_201_CREATED)
+
+    elif request.method == 'DELETE':
+        print('i got here to unlike a commen', comment_id, pk)
+        # user_id = request.data.get('author')
+        user = get_object_or_404(AppUser, pk=pk)
+
+        # Find the like to delete
+        like = Like.objects.filter(author=user, commentId=comment)
+        if like.exists():
+            like.delete()
+            return Response({"message": "Like removed successfully"}, status=status.HTTP_204_NO_CONTENT)
+        else:
+            return Response({"error": "Like not found"}, status=status.HTTP_404_NOT_FOUND)
+    else:
+        return Response({"error": "Method not allowed"}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
 @api_view(['GET', 'DELETE', 'PATCH'])
-def comment_detail(request, pk):
+def comment_detail(request, pk, post_id):
     # get the comment with the specified ID
-    comment = Comment.objects.get(id=pk)
+    comment = Comment.objects.get(id=post_id)
     serializer = CommentSerializer(comment, many=False)
 
     if request.method == 'DELETE':

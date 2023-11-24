@@ -1,6 +1,8 @@
 from django.db import models
 from authors.models import AppUser
-from posts.models import Post, Like 
+from posts.models import Post
+from like.models import Like
+
 from followers.models import FriendRequest
 # Create your models here.
 class Inbox(models.Model):

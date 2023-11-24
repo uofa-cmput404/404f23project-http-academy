@@ -6,6 +6,7 @@ from followers.views import FollowingList
 from rest_framework import routers
 
 
+# app_name = 'authors'
 urlpatterns = [
 	path('register', views.UserRegister.as_view(), name='register'),
 	path('login', views.UserLogin.as_view(), name='login'),
@@ -21,5 +22,6 @@ urlpatterns = [
 	path('<uuid:user_id>/followers/', include('followers.urls'), name="followers"),
     path('<uuid:user_id>/following/', FollowingList.as_view(), name='following-list'),
 
-    path('<uuid:author_id>/liked/', LikedView.as_view(), name="author-liked")
+    path('<uuid:author_id>/liked/', LikedView.as_view(), name="author-liked"),
+    # path('get-csrf-token/', views.csrf_token, name='get-csrf-token'),
 ]
