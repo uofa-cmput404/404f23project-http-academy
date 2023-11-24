@@ -33,6 +33,8 @@ from .models import AppUser
 from .serializers import UserUpdateSerializer
 # Create your views here.
 
+from drf_yasg.utils import swagger_auto_schema
+
 
 from rest_framework import generics
 class UserRegister(APIView):
@@ -84,12 +86,15 @@ class UserLogout(APIView):
 class UserUpdate(APIView):
     permission_classes = (permissions.IsAuthenticated,)		
 	# authentication_classes = (SessionAuthentication,)
+
     def get_object(self, pk):
         try:
             return AppUser.objects.get(pk=pk)
         except AppUser.DoesNotExist:
             raise Http404
 
+
+    @swagger_auto_schema(operation_description="Update a specific author", request_body=UserSerializer, responses={200: "{'type': 'author', 'id': {id}}", 400: "{'type': 'error', 'message': {errors}}"})
     def patch(self, request, pk, format=None):
         user = self.get_object(pk)
         serializer = UserUpdateSerializer(user, data=request.data)
@@ -103,6 +108,7 @@ class UserView(APIView):
 	permission_classes = (permissions.IsAuthenticated,)
 	authentication_classes = (SessionAuthentication,)
 	
+	@swagger_auto_schema(operation_description="Get a list of all authors", responses={200: UserSerializer(many=True) , 400: 'Bad Request'})
 	def get(self, request):
 		serializer = UserSerializer(AppUser.objects.all(), many=True)
 		authors = AppUser.objects.all()
@@ -135,6 +141,7 @@ class UserDetails(APIView):
 	permission_classes = (permissions.IsAuthenticated,)
 	authentication_classes = (SessionAuthentication,)
 	
+	@swagger_auto_schema(operation_description="Get a specific author", responses={200: UserSerializer, 400: 'Bad Request'})
 	def get(self, request, pk):
 		try:
 			author = AppUser.objects.get(pk=pk)
