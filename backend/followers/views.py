@@ -9,6 +9,9 @@ from .models import FriendRequest
 from .serializers import FriendRequestSerializer
 from inbox.models import Inbox
 
+from drf_yasg.utils import swagger_auto_schema
+
+
 class FollowerList(APIView):
     """List all the followers of a given user."""
      @swagger_auto_schema(
