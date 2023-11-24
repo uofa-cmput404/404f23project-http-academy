@@ -17,15 +17,25 @@ const Inbox = () => {
 
     useEffect(() => {
         getAllusers();
-        getUsersInbox();
-        fetchFollowers();
     }, []);
 
+    useEffect(() => {
+        if (allUsers.length > 0) {
+            getUsersInbox();
+            fetchFollowers();
+        }
+    }, [allUsers]);
+
+
     const getAllusers = () => {
-        axiosInstance.get('authors/user')
-            .then(response => setAllUsers(response.data.items))
+        return axiosInstance.get('authors/user')
+            .then(response => {
+                setAllUsers(response.data.items);
+                return response;
+            })
             .catch(error => console.log(error));
     };
+
 
     const getUsersInbox = () => {
         axiosInstance.get(`authors/${userId}/inbox/`)
@@ -35,14 +45,19 @@ const Inbox = () => {
                     ...post,
                     authorDetails: findAuthorForPost(post.author)
                 }));
-
+                console.log('i enriched', enrichedPosts)
+                console.log('i enriched v2', response.data.posts)
                 setUsersInboxItems([...enrichedPosts, ...response.data.likes, ...response.data.follow_request]);
             })
             .catch(error => console.error('Error fetching inbox items:', error));
     };
 
     const findAuthorForPost = (postId) => {
-        return allUsers.find(user => user.id.includes(postId));
+        console.log('what does postid ', postId)
+        console.log('all users ?', allUsers)
+        const foundUser = allUsers.find(user => user.id.includes(postId));
+        console.log('found user', foundUser)
+        return foundUser
     };
 
     const acceptFriendRequest = (requesterId, requestId) => {
@@ -122,8 +137,10 @@ const Inbox = () => {
 
 
     const renderInboxItem = (item) => {
+        console.log('does this work', item)
         switch (item.type) {
             case 'post':
+                console.log('cardetail', item.authorDetails)
                 return <Post key={item.id} post={item} canEdit={userId === item.author} authorDetails={item.authorDetails} />;
             case 'Follow':
                 return renderFriendRequest(item);

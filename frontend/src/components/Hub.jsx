@@ -14,13 +14,23 @@ export default function Hub() {
     const [sentRequests, setSentRequests] = useState(new Set());
 
     const [followingList, setFollowingList] = useState([])
+    const [followersList, setFollowersList] = useState([])
+
+    const [isFollowingLoaded, setIsFollowingLoaded] = useState(false);
+    const [isFollowersLoaded, setIsFollowersLoaded] = useState(false);
+
+    const [buttonState, setButtonState] = useState("Follow")
     useEffect(() => {
         fetchFollowing();
+        fetchFollowers();
     }, [userId]);
 
     useEffect(() => {
+        if (isFollowersLoaded) {
+            fetchAllUsers();
+        }
 
-        fetchAllUsers(); // This should be called after the following list is updated
+
 
     }, [followingList, sentRequests]);
 
@@ -43,6 +53,7 @@ export default function Hub() {
                 const filteredUsers = response.data.items.filter(item => {
                     const userUUID = extractUUIDFromURL(item.id);
                     console.log('foollowig list', followingList)
+                    console.log('fellowers list', followersList)
                     console.log('user id', userUUID)
                     console.log('other user id', userId)
                     return userUUID !== userId && !followingList.includes(userUUID);
@@ -57,6 +68,21 @@ export default function Hub() {
         axiosInstance.get(`/authors/${userId}/following`)
             .then(response => {
                 setFollowingList(response.data.items.map(item => extractUUIDFromURL(item.id)));
+                setIsFollowingLoaded(true);
+            })
+            .catch(error => {
+                console.error('Error fetching followers:', error);
+            });
+        console.log('requester id', requestId)
+        console.log('all following', followingList)
+    };
+
+    const fetchFollowers = (requestId) => {
+        axiosInstance.get(`/authors/${userId}/followers`)
+            .then(response => {
+                console.log('ogo foll', response.data.items)
+                setFollowersList(response.data.items.map(item => extractUUIDFromURL(item.id)));
+                setIsFollowersLoaded(true);
             })
             .catch(error => {
                 console.error('Error fetching followers:', error);
@@ -69,7 +95,7 @@ export default function Hub() {
     /*
     1. check followers list - that means mutual friendship not establshed / has being cut 
     2. if not in this list then set (setSentrequest) to empty set
-    
+
 
 
     */
@@ -110,9 +136,30 @@ export default function Hub() {
         axiosInstance.post(`authors/${userUUID}/inbox/`, followData)
             .then(response => {
                 setSentRequests(new Set([...sentRequests, userUUID])); // Update the state
+
                 console.log("Friend request sent", response);
+                setButtonState('Request Sent')
             })
+
             .catch(error => console.error('Error sending friend request:', error));
+    };
+
+
+
+    // const getButtonState = (userUUID) => {
+    //     if (!followingList.includes(userUUID)) {
+    //         return 'Follow';
+    //     } else if (sentRequests.has(userUUID)) {
+    //         return 'Request Sent';
+    //     }
+    // };
+
+    const getdisabledState = (userUUID) => {
+        if (!followingList.includes(userUUID)) {
+            return false;
+        } else if (sentRequests.has(userUUID)) {
+            return true;
+        }
     };
 
 
@@ -126,19 +173,24 @@ export default function Hub() {
                 <List>
                     {allUsers.map((user) => {
                         const userUUID = extractUUIDFromURL(user.id);
+                        const isRequestSent = sentRequests.has(userUUID);
+                        const buttonLabel = isRequestSent ? 'Request Sent' : 'Follow';
+                        const disabledState = isRequestSent;
+
                         return (
                             <ListItem key={user.id}>
                                 <ListItemText primary={user.displayName} />
                                 <Button
                                     variant="outlined"
                                     onClick={() => handleFollow(user)}
-                                    disabled={sentRequests.has(userUUID)}
+                                    disabled={disabledState}
                                 >
-                                    {sentRequests.has(userUUID) ? 'Request Sent' : 'Follow'}
+                                    {buttonLabel}
                                 </Button>
                             </ListItem>
                         );
                     })}
+
                 </List>
             </div>
         </div>

@@ -4,6 +4,7 @@ import "../css/Modal.css";
 import MakePost from "../pages/MakePost";
 import EditPost from "../components/EditPost";
 import SharePost from '../components/SharePost'
+import CommentPost from '../components/CommentPost'
 const Modal = ({ isOpen, onClose, mode, post, users }) => {
 
   const getContent = () => {
@@ -11,12 +12,17 @@ const Modal = ({ isOpen, onClose, mode, post, users }) => {
       case "make":
         return <MakePost onClose={onClose} />;
       case "edit":
-        console.log('post in modal', post)
+        // console.log('post in modal', post)
+        console.log('post in modal for editing', post)
         return <EditPost onClose={onClose} posts={post} />;
 
       case "Share":
-        console.log('post in modal', post)
+
         return <SharePost onClose={onClose} posts={post} users={users} />
+
+      case "comment":
+
+        return <CommentPost onClose={onClose} posts={post} users={users} />
       default:
         return null;
     }

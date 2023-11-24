@@ -20,7 +20,7 @@ export default function Detail() {
 
   return (
     <div>
-      <h1>Detailed Post for Post: {id}</h1>
+      {/* <h1>Detailed Post for Post: {id}</h1> */}
       {/* Specifically passing id in because grabbing post.id in DetailedPost causes problems */}
       <DetailedPost post={post} id={id} image={post.image} />
     </div>

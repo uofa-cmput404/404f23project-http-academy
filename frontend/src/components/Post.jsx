@@ -110,6 +110,11 @@ export default function Post({ post, canEdit, authorDetails }) {
         setModalMode('edit');
     };
 
+    const handleComment = () => {
+        setOpenModal(true);
+        setModalMode('comment')
+    }
+
     return (
         <div className="card">
             <div className="edit-container">
@@ -118,14 +123,15 @@ export default function Post({ post, canEdit, authorDetails }) {
                 </button>
             </div>
 
-            <Link to={`/post/${post.id}`} style={{ color: 'black', textDecoration: 'none' }}>
-                <div className="card-body">
-                    <h2 className="card-title">{post.title}</h2>
-                </div>
-            </Link>
+
+            <div className="card-body">
+                <h2 className="card-title">{post.title}</h2>
+            </div>
+
 
             <div className="footer-container">
                 <div className="userNamePost">
+                    {console.log('person who made post', authorDetails)}
                     {authorDetails?.displayName && (
                         <span>
                             {authorDetails.displayName}
@@ -145,7 +151,7 @@ export default function Post({ post, canEdit, authorDetails }) {
                     ) : (
                         <FavoriteBorderOutlinedIcon onClick={handleLike} style={{ fontSize: '40px', cursor: 'pointer', marginRight: '10px' }} />
                     )}
-                    <ChatBubbleOutlineIcon style={{ fontSize: '40px', cursor: 'pointer', marginRight: '10px' }} />
+                    <ChatBubbleOutlineIcon onClick={handleComment} style={{ fontSize: '40px', cursor: 'pointer', marginRight: '10px' }} />
                     <ShareOutlinedIcon onClick={handleShare} style={{ fontSize: '40px', cursor: 'pointer' }} />
                 </div>
                 {openModal && <Modal isOpen={openModal} mode={modalMode} users={allusers} post={post} onClose={() => setOpenModal(false)} />}

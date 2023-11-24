@@ -14,7 +14,9 @@ export default function EditPost({ onClose, posts }) {
   const storedUser = storedUser_val.user
   const userId = storedUser.id.split("/").pop()
   const navigate = useNavigate();
+  console.log('postsss', posts)
   const postId = posts.post_id;
+
 
   const url = `authors/${userId}/posts/${postId}/`;
 
