@@ -5,11 +5,8 @@ from .serializers import PostSerializer, CommentSerializer, PostLikeSerializer
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
-from drf_yasg.utils import swagger_auto_schema
 
 # Create your views here.
-
-@swagger_auto_schema(operation_description="Get all posts of an author", responses={200: PostSerializer(many=True)})
 @api_view(['GET', 'POST'])
 def posts_list(request):
     if request.method == 'POST':
@@ -31,7 +28,6 @@ def posts_list(request):
 
 
 
-@swagger_auto_schema(operation_description="Get/Update/Create/Delete a post of an author with the given ID", request_body = PostSerializer, responses={200: PostSerializer(), 400: "Bad request", 401: "type: error, message: Not authorized"})
 @api_view(['GET', 'DELETE', 'PATCH'])
 def post_detail(request, pk):
     # get the post with the specified ID
@@ -63,9 +59,6 @@ def post_detail(request, pk):
         # if we want to get a post, use the serializer to return the post
         return Response(serializer.data)
 
-
-
-@swagger_auto_schema(operation_description="Create/Get a comment for a post", request_body = CommentSerializer, responses={201: CommentSerializer(), 400: "Bad request"})
 @api_view(['GET', 'POST'])
 def comments_list(request, pk):
     if request.method == 'POST':
@@ -81,9 +74,6 @@ def comments_list(request, pk):
         serializer = CommentSerializer(comments, many=True)
     return Response(serializer.data)
 
-
-
-@swagger_auto_schema(operation_description="Get/Update/Delete a comment for a post", request_body = CommentSerializer, responses={200: CommentSerializer(), 400: "Bad request"})
 @api_view(['GET', 'DELETE', 'PATCH'])
 def comment_detail(request, pk):
     # get the comment with the specified ID
@@ -111,8 +101,6 @@ def comment_detail(request, pk):
         # if we want to get a comment, use the serializer to return the comment
         return Response(serializer.data)
     
-
-@swagger_auto_schema(operation_description="Get/Post a like for a post", request_body = PostLikeSerializer, responses={200: PostLikeSerializer(), 400: "Bad request"})
 @api_view(['GET', 'POST'])
 def like_post(request, pk):
     
@@ -161,8 +149,6 @@ def like_post(request, pk):
         return Response(likes)
 '''
 
-
-@swagger_auto_schema(operation_description="Get/Delete with the given ID", responses={200: PostLikeSerializer(), 400: "Bad request"})
 @api_view(['GET', 'DELETE'])
 def like_detail(request, pk, pkLike):
     # get the like with the specified ID
@@ -182,7 +168,6 @@ def like_detail(request, pk, pkLike):
 
 
 
-@swagger_auto_schema(operation_description="Get a list of images for a post", responses={200: PostSerializer(many=True)})
 @api_view(['GET'])
 def get_post_image(request, pk):
     post = Post.objects.get(id=pk)
