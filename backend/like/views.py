@@ -13,7 +13,10 @@ from posts.models import Comment
 from .models import Like
 from .serializers import LikeSerializer
 
+from drf_yasg.utils import swagger_auto_schema
+
 class LikesView(APIView):
+    @swagger_auto_schema(description="Get all likes for a post", responses={200: LikeSerializer(many=True), 404: "Not found"})
     def get(self, request: Request, pk: str, post_id: str, comment_id:str = None) -> Response:
         """Return the likes of the post."""
         if comment_id is None:
@@ -38,6 +41,8 @@ class LikesView(APIView):
             likes_dict = {"type": "likes", "items": likes.data}
             return Response(likes_dict, status=status.HTTP_200_OK)
 
+    
+    @swagger_auto_schema(description="Add a like to a post", responses={201: "{'type': 'Like', 'detail': '{author} liked {post}.'}", 400: "{'error': 'Post already liked by this author'}"})
     def post(self, request: Request, pk: str, post_id: str) -> Response:
         """Add a like to the post."""
         liking_author = get_object_or_404(AppUser, pk=pk)  # The user who likes the post
@@ -50,6 +55,8 @@ class LikesView(APIView):
         Like.objects.create(author=liking_author, object=post_to_like.url, summary=f"{liking_author.displayName} likes {post_to_like.title}.")
         return Response({"type": "Like", "detail": f"{liking_author.displayName} liked {post_to_like.url}."}, status=status.HTTP_201_CREATED)
 
+    
+    @swagger_auto_schema(description="Delete a like for a post", responses={204: "{'detail': 'Like removed.'}", 404: "{'detail': 'Like not found.'}"})
     def delete(self, request, pk, post_id):
         author = get_object_or_404(AppUser, pk=pk)
         post = get_object_or_404(Post, pk=post_id)
@@ -63,7 +70,7 @@ class LikesView(APIView):
     
 
 class LikedView(APIView):
-    
+    @swagger_auto_schema(description="Get all posts that the author liked", responses={200: LikeSerializer(many=True), 404: "Not found"})
     def get(self, request, author_id):
         """Return the posts that the author liked."""
         author = get_object_or_404(AppUser, pk=author_id)
