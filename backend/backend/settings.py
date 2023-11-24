@@ -94,6 +94,17 @@ DATABASES = {
     }
 }
 
+# Use PostgreSQL in GitHub Actions workflow
+if 'GITHUB_ACTIONS' in os.environ:
+    DATABASES['default'] = {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'your_database_name',
+        'USER': 'your_postgres_user',
+        'PASSWORD': 'your_postgres_password',
+        'HOST': 'localhost',
+        'PORT': '5432',
+    }
+
 AUTH_USER_MODEL = 'authors.AppUser'
 
 REST_FRAMEWORK = {
