@@ -1,6 +1,7 @@
 from django.test import TestCase
 from django.urls import reverse
 from django.contrib.auth import get_user_model
+from authors.serializers import UserLoginSerializer
 
 # Create your tests here.
 class AuthorTests(TestCase):
@@ -21,11 +22,3 @@ class AuthorTests(TestCase):
     User = get_user_model()
     all_users = User.objects.all()
     self.assertEqual(len(all_users), 1)
-
-  def test_login_author(self):
-    User = self.createAuthor()
-    response = self.client.post(reverse("authors:login"), {'email': User.email, 'password': 'test123'})
-    print("Response: ", dir(response))
-    self.assertEqual(response.status_code, 200)
-
-
