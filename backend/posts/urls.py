@@ -25,6 +25,7 @@ from rest_framework import routers
 app_name = 'posts'
 
 urlpatterns = [
+
     path('', views.posts_list), # GET all posts, POST a new post
     path('ownPosts/', views.own_posts_list), # GET all posts, POST a new post for a specific author
     # path('<uuid:pk>/', views.posts_list, name='author_posts_list'), # GET all or public posts of a specific author
