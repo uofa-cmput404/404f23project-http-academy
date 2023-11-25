@@ -1,0 +1,92 @@
+.inbox-outer-container h1{
+    font-size: 52px;
+}
+
+.inbox-header{
+    display: flex;
+    justify-content: flex-start;
+    
+}
+
+.inbox-header h2{
+    font-size: 30px;
+}
+
+.item1{
+    margin-right: 30px;
+    font-weight: 400;
+    cursor: pointer;
+}
+.item2{
+    font-weight: 400;
+    cursor: pointer;
+}
+
+
+.active2 {
+    font-weight: bold;
+    color: black;
+}
+
+.request_list{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.request_list p{
+    font-size: 25px;
+    
+}
+
+.confirm_req_container{
+    display: flex;
+    justify-content: space-between;
+    
+}
+
+.accept_req{
+    margin-right: 40px;
+    background-color: #77E06E;
+    color: #fff;
+    border-radius: 30px;
+    padding: 10px;
+    width: 136px;
+    height: 51px;
+    
+}
+
+.accept_req:hover{
+    
+    background-color: #77E06E;
+   
+}
+
+.deny_req{
+    
+    background-color: #E65B5B;
+    color: #fff;
+    border-radius: 30px;
+    padding: 10px;
+    width: 136px;
+    height: 51px;
+    
+}
+
+.deny_req:hover{
+    background-color: #E65B5B;
+}
+
+.sharedPost-container{
+    display: flex;
+    
+}
+
+.sharedPost-container p{
+    margin-left: 40px;
+}
+
+.post-contain{
+    display: flex;
+}

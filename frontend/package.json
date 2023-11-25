@@ -5,16 +5,20 @@
   "dependencies": {
     "@babel/plugin-proposal-private-property-in-object": "^7.16.7",
     "@babel/plugin-transform-private-property-in-object": "^7.16.7",
-    "@emotion/react": "^11.10.6",
-    "@emotion/styled": "^11.10.6",
+    "@emotion/react": "^11.11.1",
+    "@emotion/styled": "^11.11.0",
+    "@mui/icons-material": "^5.14.16",
+    "@mui/material": "^5.14.17",
     "@popperjs/core": "^2.11.6",
     "@testing-library/user-event": "^13.5.0",
     "axios": "^1.5.1",
+    "commonmark": "^0.27.0",
     "cors": "^2.8.5",
     "enzyme": "^3.11.0",
     "history": "^5.3.0",
     "jwt-decode": "^3.1.2",
     "react": "^18.2.0",
+    "react-commonmark": "^3.0.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.10.0",
     "react-scripts": "^5.0.1",
@@ -57,6 +61,8 @@
   },
   "test": "react-scripts test --transformIgnorePatterns \"node_modules/(?!axios)/\"",
   "jest": {
-    "transformIgnorePatterns": ["node_modules\/(?!axios)"]
+    "transformIgnorePatterns": [
+      "node_modules/(?!axios)"
+    ]
   }
 }

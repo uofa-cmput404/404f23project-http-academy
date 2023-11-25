@@ -11,5 +11,7 @@ class Node(models.Model):
     username=models.CharField(max_length=100)
     password=models.CharField(max_length=100)
 
+    team = models.IntegerField(default=0)
+
     def __str__(self):
         return "Host: " + self.host

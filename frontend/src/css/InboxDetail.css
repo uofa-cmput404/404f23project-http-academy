@@ -1,0 +1,12 @@
+.item-inboxDetail{
+    display: flex;
+    margin-top: 25px;
+    
+}
+
+.item-inboxDetail h1{
+    margin-left: 15px;
+    font-weight: 400;
+    font-size: 25px;
+}
+

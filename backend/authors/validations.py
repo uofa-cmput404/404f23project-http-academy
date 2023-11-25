@@ -1,6 +1,8 @@
 from django.core.exceptions import ValidationError
 from django.contrib.auth import get_user_model
-UserModel = get_user_model()
+from authors.models import AppUser
+# UserModel = get_user_model()
+UserModel = AppUser
 
 def custom_validation(data):
     email = data['email'].strip()

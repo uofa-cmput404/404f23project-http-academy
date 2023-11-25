@@ -1,135 +1,161 @@
-
+import React, { useEffect, useState } from "react";
+import { Link, useNavigate } from 'react-router-dom';
 import axiosInstance from "../axiosInstance";
-import React, { useState } from "react";
 import "../css/Post.css";
-import { Link } from 'react-router-dom';
 import editIcon from '../assets/images/ellipsis.png';
-import likeIcon from '../assets/images/heart.png';
-import commentIcon from '../assets/images/chat.png';
 import Modal from "../components/Modal";
-import shareIcon from '../assets/images/share.png';
+import FavoriteBorderOutlinedIcon from '@mui/icons-material/FavoriteBorderOutlined';
+import FavoriteIcon from '@mui/icons-material/Favorite';
+import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
+import ShareOutlinedIcon from '@mui/icons-material/ShareOutlined';
 
-export default function Post({ post, canEdit }) {
-
+export default function Post({ post, canEdit, authorDetails }) {
     const [openModal, setOpenModal] = useState(false);
     const [modalMode, setModalMode] = useState("");
+    const [liked, setLiked] = useState(false);
+    const [likesCount, setLikesCount] = useState(0);
+    const navigate = useNavigate();
+    const [allusers, setAllUsers] = useState([]);
+    const [likeCount, setLikeCount] = useState(0)
+    const loggedINUser = JSON.parse(localStorage.getItem('user'));
+    const storedUser = loggedINUser?.user;
+    const userId = storedUser?.id.split("/").pop();
 
-    console.log('edit prop', canEdit);
+    useEffect(() => {
+        if (authorDetails) {
+            console.log('Author Details:', authorDetails);
+            fetchLikes();
+            getAllUsers();
 
+        }
+    }, [authorDetails]);
 
-
-    // const handleEdit = () => {
-    //     // Your like functionality here
-    //     console.log('Edit button clicked');
+    /*
+        dprecated for now
+    */
+    // const goToAuthorProfile = () => {
+    //     if (authorDetails) {
+    //         navigate(`/profile`, { state: { author: authorDetails } });
+    //     } else {
+    //         console.error('Author details are not available');
+    //     }
     // };
 
+    const extractUUIDFromURL = (url) => {
+        const parts = url.split('/');
+        let uuid = parts.pop();
+        if (uuid === '') uuid = parts.pop();
+        return uuid;
+    }
+
+    const getAllUsers = () => {
+        axiosInstance.get("authors/user")
+            .then(response => {
+                const filteredUsers = response.data.items.filter(user => extractUUIDFromURL(user.id) !== userId);
+                setAllUsers(filteredUsers);
+            })
+            .catch(error => console.error('Error fetching users:', error));
+    };
+
+    const fetchLikes = () => {
+        const postAuthorId = extractUUIDFromURL(authorDetails.id);
+        const likeUrl = `authors/${postAuthorId}/posts/${post.post_id}/like/`;
+        axiosInstance.get(likeUrl)
+            .then(response => {
+                const likeItems = response.data.items || [];
+                console.log('this are the likes for  post', response.data.items)
+                setLikeCount(response.data.items.length)
+                setLikesCount(likeItems.length);
+                setLiked(likeItems.some(like => like.author.id === storedUser.url));
+            })
+            .catch(error => console.error('Error fetching likes:', error));
+    };
 
     const handleLike = () => {
-        // Your like functionality here
-        console.log('Like button clicked');
+
+        const loggedInUserId = extractUUIDFromURL(loggedINUser.user.id);
+        const likeUrl = `authors/${loggedInUserId}/posts/${post.post_id}/like/`;
+
+        if (liked) {
+            axiosInstance.delete(likeUrl)
+                .then(() => {
+                    setLiked(false);
+                    fetchLikes();
+                })
+                .catch(error => console.error('Error unliking post:', error));
+        } else {
+            const likesData = {
+                author: storedUser,
+                type: "like",
+                summary: `${storedUser.displayName} Likes your post`,
+                object: post.url
+            };
+            axiosInstance.post(likeUrl, likesData)
+                .then(() => {
+                    setLiked(true);
+                    fetchLikes();
+                })
+                .catch(error => console.error('Error liking post:', error));
+        }
     };
-
-    const handleComment = () => {
-        // Your like functionality here
-        console.log('Comment button clicked');
-    };
-
-    // Overrides the anchor tag styling caused by the Link component
-    const neutral = {
-        color: 'black',
-        textDecoration: 'none'
-    };
-
-    //if the post is made by the current logged in user then display edit button 
-    //else dont 
-
-    // const storedUser = JSON.parse(localStorage.getItem('user'));
-
-    //   console.log(storedUser)
-    // const editPost = () => {
-
-    //     console.log('can edit', canEdit)
-    //     navigate(`/post/edit/${post.id}`);
-    // }
-
-
-
-
-    const editPost = () => {
-        // Open the modal and set it to show the EditPost component
-        setModalMode('edit');
-        setOpenModal(true);
-    };
-
-
-      //if the post is made by the current logged in user then display edit button 
-  //else dont 
-  
 
 
     const handleShare = () => {
-        console.log('Share icon clicked', `localhost`);
-      
-    
-        axiosInstance.get(`posts/shareable_link/${post.id}`).then(response => {
-            
-            console.log('url copied to user', response.data.url);
-            let rewritternUrl = response.data.url.replace('localhost:8000/posts', 'localhost:3000/post')
-            console.log('heeee', rewritternUrl)
-            navigator.clipboard.writeText(response.data.url).then(() => {
-                console.log('Link copied to clipboard');
-            }).catch(err => {
-                console.error('Could not copy text: ', err);
-            });
-            
-        }).catch(error => {
-            console.log(error);
-        });
+        setOpenModal(true);
+        setModalMode('Share');
+    };
+
+    const handleEdit = () => {
+        setOpenModal(true);
+        setModalMode('edit');
+    };
+
+    const handleComment = () => {
+        setOpenModal(true);
+        setModalMode('comment')
     }
-    
 
     return (
         <div className="card">
             <div className="edit-container">
-            <button onClick={editPost} className={`edit-button ${canEdit ? "" : "invisible"}`}>
-                <img src={editIcon} alt="Edit" />
-            </button>
+                <button onClick={handleEdit} className={`edit-button ${canEdit ? "" : "invisible"}`}>
+                    <img src={editIcon} alt="Edit" />
+                </button>
             </div>
-            
 
-            <Link to={`/post/${post.id}`} style={neutral}>
+
             <div className="card-body">
                 <h2 className="card-title">{post.title}</h2>
-                {/* <p className="card-text">{post.content}</p> */}
-            </div>
-           <h3>{canEdit}</h3>
-          </Link>
-          <div className="footer-container">
-            <div className="userNamePost">
-                {/* need to include the actual user name of the user who made the post
-                the below is wrong - this is the current logged in user 
-                */}
-            {/* {storedUser.username}  */} 
-            </div>
-           
-            <div className="card-footer">
-                <button onClick={handleLike} className="edit-button">
-                    <img src={likeIcon} alt="Like" />
-                </button>
-                <button onClick={handleComment} className="edit-button">
-                    <img src={commentIcon} alt="Like" />
-                </button>
-                {<button onClick={handleShare} className="edit-button">
-                    <img src={shareIcon} alt="Like" />
-                </button>}
-                
             </div>
 
-            {openModal && <Modal isOpen={openModal} mode = {modalMode} post = {post} onClose={() => setOpenModal(false)} />}
-          </div>
 
-            {/* {canEdit ?  (
-          <button onClick={editPost}>Edit</button> ): " "} */}
+            <div className="footer-container">
+                <div className="userNamePost">
+                    {console.log('person who made post', authorDetails)}
+                    {authorDetails?.displayName && (
+                        <span>
+                            {authorDetails.displayName}
+                        </span>
+                    )}
+                </div>
+                <div className="card-footer">
+                    <span className="like-count">{likesCount}</span>
+                    {liked ? (
+                        <>
+
+                            <FavoriteIcon onClick={handleLike} style={{ fontSize: '40px', color: 'red', cursor: 'pointer', marginRight: '10px' }} />
+
+
+                        </>
+
+                    ) : (
+                        <FavoriteBorderOutlinedIcon onClick={handleLike} style={{ fontSize: '40px', cursor: 'pointer', marginRight: '10px' }} />
+                    )}
+                    <ChatBubbleOutlineIcon onClick={handleComment} style={{ fontSize: '40px', cursor: 'pointer', marginRight: '10px' }} />
+                    <ShareOutlinedIcon onClick={handleShare} style={{ fontSize: '40px', cursor: 'pointer' }} />
+                </div>
+                {openModal && <Modal isOpen={openModal} mode={modalMode} users={allusers} post={post} onClose={() => setOpenModal(false)} />}
+            </div>
         </div>
     );
 }

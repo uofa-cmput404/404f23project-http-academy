@@ -1,109 +1,187 @@
 import React, { useEffect, useState } from "react";
 import "../css/Profile.css";
 import axiosInstance from "../axiosInstance";
+import { useLocation } from "react-router-dom";
+import { Button, Avatar } from "@mui/material";
+import { yellow } from "@mui/material/colors";
+import Typography from '@mui/material/Typography';
+import { extractUUIDFromURL } from "../utilities/extractUIID";
+import Post from '../components/Post';
 
 const Profile = () => {
-  const [email, setEmail] = useState("");
   const [username, setUsername] = useState("");
   const [editMode, setEditMode] = useState(false);
   const [error, setError] = useState("");
+  const [hasSentRequest, setHasSentRequest] = useState(false);
+  const location = useLocation();
+  const [author, setAuthor] = useState(null);
+  const [authorDetails, setAuthorDetails] = useState(null);
+  const [isCurrentUser, setIsCurrentUser] = useState(false);
+  const [followers, setFollowers] = useState([]);
+  const [postsowned, setPostsOwned] = useState([])
+  const [following, setFollowing] = useState([]);
+  const storedUser_val = JSON.parse(localStorage.getItem('user'));
+  const storedUser = storedUser_val.user
+  const userId = storedUser.id.split("/").pop()
 
-  // const storedUser = JSON.parse(localStorage.getItem('user'));
-  const [userid, setUserID] = useState(0);
+
   useEffect(() => {
-    const handleStorageChange = () => {
-      const storedUser = JSON.parse(localStorage.getItem('user'));
-      console.log(storedUser);
-      if (storedUser) {
-        setEmail(storedUser.email);
-        setUsername(storedUser.username);
-        setUserID(storedUser.id);
-      }
-    };
 
-    window.addEventListener('storage', handleStorageChange);
+    fetchFollowers();
+    fetchFollowing();
+    fetchPosts();
+  }, [userId]);
 
-    // Call the function to make sure the user is updated when the component mounts
-    handleStorageChange();
+  const handleUnfriend = (requesterId) => {
 
-    return () => {
-      // Remove the event listener when the component unmounts
-      window.removeEventListener('storage', handleStorageChange);
-    };
-  }, []);
-
-  const handleUpdate = async () => {
-    if (!email || !username) {
-      setError("Please fill out all fields.");
-      return;
-    }
-
-    axiosInstance
-      .patch(`authors/${userid}/update/`, {
-        username,
-        email,
+    const url = `authors/${userId}/followers/removeFriend/${requesterId}/`;
+    axiosInstance.delete(url, { user_id: userId, requesterId: requesterId })
+      .then(response => {
+        // Refresh the followers and following list after made unfrined user
+        fetchFollowers();
+        fetchFollowing();
       })
-      .then((response) => {
-        console.log('server response', response);
-        localStorage.setItem('user', JSON.stringify(response.data));
-        setEditMode(false);
-        setError("");
-      })
-      .catch((error) => {
-        console.log('Error updating profile', error);
-        setError("An error occurred while updating your profile.");
+      .catch(error => {
+        console.error('Error unfriending user:', error);
       });
-
   };
 
-  return (
-    <div className="profile-container">
-      <div className="profile-card">
-        {editMode ? (
-          <div>
-            <div className="profile-header">Edit Profile</div>
-            <label className="profile-label">
-              Username:
-              <input
-                className="profile-input"
-                type="text"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-              />
-            </label>
-            <br />
-            <label className="profile-label">
-              Email:
-              <input
-                className="profile-input"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-              />
-            </label>
-            <br />
-            <button className="profile-button" onClick={handleUpdate}>
-              Update
-            </button>
-            <button className="profile-button profile-button-cancel" onClick={() => setEditMode(false)}>
-              Cancel
-            </button>
-          </div>
-        ) : (
-          <div>
-            <div className="profile-header">Profile</div>
-            USERNAME: <h2>{username}</h2>
-            Email: <h2>{email}</h2>
-            <button className="profile-button" onClick={() => setEditMode(true)}>
-              Edit
-            </button>
-          </div>
-        )}
-        {error && <p className="profile-error">{error}</p>}
-      </div>
-    </div>
 
+  const fetchFollowers = () => {
+
+    axiosInstance.get(`/authors/${userId}/followers`)
+      .then(response => {
+        setFollowers(response.data.items);
+      })
+      .catch(error => {
+        console.error('Error fetching followers:', error);
+      });
+  };
+
+  const fetchFollowing = () => {
+    axiosInstance.get(`/authors/${userId}/following`)
+      .then(response => {
+        setFollowing(response.data.items);
+      })
+      .catch(error => {
+        console.error('Error fetching following:', error);
+      });
+  };
+
+  const followButtonStyle = {
+    border: '1px solid black',
+    backgroundColor: 'white',
+    color: 'black',
+    marginTop: '20px',
+    width: "180px",
+    textAlign: "center"
+  };
+
+  const fetchPosts = () => {
+
+    console.log('user id sent when getting posts', userId)
+    const url = "authors/" + userId + "/posts/" + "ownPosts/"
+    axiosInstance.get(url).then(response => {
+      console.log('all posts', response.data)
+      const Posts = response.data.items
+      const postsWithAuthors = Posts.map(post => ({
+        ...post,
+      }));
+
+      console.log('posts i own', postsWithAuthors)
+      setPostsOwned(postsWithAuthors);
+
+
+    }).catch(error => {
+      console.log(error);
+    });
+  }
+
+
+
+  const checkProfImageExist = (user) => {
+    const userProfileUrl = user.profileImage;
+    const userName = user.displayName;
+    const hasImage = userProfileUrl && userProfileUrl.match(/\.(jpeg|jpg|gif|png)$/);
+    const avatarStyle = { width: 100, height: 100 };
+
+    return (
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', marginTop: "40px" }}>
+        {hasImage ? (
+          <Avatar alt={userName} src={userProfileUrl} style={avatarStyle} />
+        ) : (
+          <Avatar sx={{ bgcolor: yellow[500], ...avatarStyle }}>
+            {userName ? userName[0] : '?'}
+          </Avatar>
+        )}
+        <Typography variant="body1" style={{ fontSize: "40px", fontWeight: "bold", marginTop: '10px', textAlign: 'center', width: '100px' }}>
+          {userName}
+        </Typography>
+      </div>
+    );
+  };
+
+  const renderPosts = (item) => {
+    console.log('rendering posts', item)
+    // return(
+    //   <Post key={item.id} post={item} canEdit={userId === item.author} authorDetails={item.authorDetails} />
+    // )
+  }
+
+
+  return (
+    <div>
+      <div className="profile-contain">
+        <h1>PROFILE</h1>
+      </div>
+      <div className="full-containr">
+        <div className="profile-inContainer">
+          <div>
+            {checkProfImageExist(storedUser)}
+          </div>
+          <div className="listsContainer">
+            <div className="followersList">
+              <h2>Followers</h2>
+              {followers.map(follower => (
+                <div key={follower.id} className="follower-item">
+                  <p>{follower.displayName}</p>
+                  <Button onClick={() => handleUnfriend(extractUUIDFromURL(follower.id))}>
+                    Unfriend
+                  </Button>
+                </div>
+              ))}
+            </div>
+            <div className="followingList">
+              <h2>Following</h2>
+              {following.map(follow => (
+                <div key={follow.id} className="following-item">
+                  <p>{follow.displayName}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+        <div className="post-section">
+          <div className="post-heading">
+            <h1>Posts</h1>
+            {postsowned.map(item => (
+              <Post key={item.post_id} post={item} canEdit={userId === item.author} authorDetails={storedUser} />
+
+            ))}
+          </div>
+
+
+        </div>
+      </div>
+
+
+    </div>
   );
+
+
+
+
 };
 
 export default Profile;
+
