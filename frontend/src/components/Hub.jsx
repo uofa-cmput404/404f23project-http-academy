@@ -10,16 +10,16 @@ export default function Hub() {
     const userId = storedUser?.id.split("/").pop();
 
     const [allUsers, setAllUsers] = useState([]);
-    const [followRequests, setFollowRequests] = useState({});
+
     const [sentRequests, setSentRequests] = useState(new Set());
 
     const [followingList, setFollowingList] = useState([])
     const [followersList, setFollowersList] = useState([])
 
-    const [isFollowingLoaded, setIsFollowingLoaded] = useState(false);
+    // const [isFollowingLoaded, setIsFollowingLoaded] = useState(false);
     const [isFollowersLoaded, setIsFollowersLoaded] = useState(false);
 
-    const [buttonState, setButtonState] = useState("Follow")
+    // const [buttonState, setButtonState] = useState("Follow")
     useEffect(() => {
         fetchFollowing();
         fetchFollowers();
@@ -68,7 +68,7 @@ export default function Hub() {
         axiosInstance.get(`/authors/${userId}/following`)
             .then(response => {
                 setFollowingList(response.data.items.map(item => extractUUIDFromURL(item.id)));
-                setIsFollowingLoaded(true);
+                // setIsFollowingLoaded(true);
             })
             .catch(error => {
                 console.error('Error fetching followers:', error);
@@ -138,7 +138,7 @@ export default function Hub() {
                 setSentRequests(new Set([...sentRequests, userUUID])); // Update the state
 
                 console.log("Friend request sent", response);
-                setButtonState('Request Sent')
+                // setButtonState('Request Sent')
             })
 
             .catch(error => console.error('Error sending friend request:', error));
@@ -154,13 +154,13 @@ export default function Hub() {
     //     }
     // };
 
-    const getdisabledState = (userUUID) => {
-        if (!followingList.includes(userUUID)) {
-            return false;
-        } else if (sentRequests.has(userUUID)) {
-            return true;
-        }
-    };
+    // const getdisabledState = (userUUID) => {
+    //     if (!followingList.includes(userUUID)) {
+    //         return false;
+    //     } else if (sentRequests.has(userUUID)) {
+    //         return true;
+    //     }
+    // };
 
 
     return (
