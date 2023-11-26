@@ -274,6 +274,8 @@ class UserView(APIView):
 		# customize it beofre sending
 
 
+		
+
 class UserDetails(APIView):
 	permission_classes = (permissions.IsAuthenticated,)
 	authentication_classes = (SessionAuthentication,)

@@ -3,13 +3,13 @@ import json
 
 csrf_token_url = "http://127.0.0.1:8000/authors/login"
 login_url = "http://127.0.0.1:8000/authors/user"
-
+access_url = "https://cmput404-httpacademy-local-cb3d56814192.herokuapp.com/authors/logout"
 session = requests.Session()
 print("Session:", session)
 
 # credentials
-email = "oliver@gmail.com"
-password = "ogo12345"
+email = "http@gmail.com"
+password = "http"
 
 # Get CSRF token
 csrf_response = session.post(csrf_token_url, json={'email':email, "password":password})
@@ -40,3 +40,46 @@ else:
     # Print out the response headers and cookies for debugging
     print("Response Headers:", login_response.headers)
     print("Response Cookies:", len(login_response.cookies))
+
+
+# import requests
+# import json
+
+# # URLs
+# login_url =  "https://cmput404-httpacademy-local-cb3d56814192.herokuapp.com/authors/login"
+# logout_url = "https://cmput404-httpacademy-local-cb3d56814192.herokuapp.com/authors/logout"
+
+# # Start a session
+# session = requests.Session()
+
+# # Credentials
+# email = "admin@gmail.com"
+# password = "admin"
+
+# # Login request
+# login_data = {'email': email, "password": password}
+# login_response = session.post(login_url, data=login_data)
+
+# if login_response.status_code == 200:
+#     print("Login successful!")
+
+#     # Access the logout page to retrieve CSRF token
+#     logout_response = session.get(logout_url)
+#     if logout_response.status_code == 200:
+#         # Retrieve CSRF token from logout_response
+#         # This part depends on how the CSRF token is provided in the logout page
+#         # For example, it might be in a cookie or in the HTML
+#         # csrf_token = csrf_response.json().get('csrf_token')
+#         print("CSRF Token:", logout_response.headers)
+#     else:
+#         print("Failed to access logout page, status code:", logout_response.status_code)
+# else:
+#     # print("Login failed, status code:", login_response.headers)
+#     logout_response = session.get(logout_url)
+#     print('logout response', logout_response)
+#     if logout_response.status_code == 200:
+#         # Retrieve CSRF token from logout_response
+#         # This part depends on how the CSRF token is provided in the logout page
+#         # For example, it might be in a cookie or in the HTML
+#         # csrf_token = csrf_response.json().get('csrf_token')
+#         print("CSRF Token:", logout_response.headers)
