@@ -3,14 +3,15 @@
     flex: 0.33;
     margin: 2.5px;
     margin-right: 1.35em;
-   margin-bottom: 2em
-
+    margin-bottom: 2em
 }
 
-.edit-container{
+
+.edit-container {
     display: flex;
     justify-content: flex-end;
 }
+
 .card-body {
     display: flex;
     flex-direction: column;
@@ -19,25 +20,26 @@
     background-color: rgba(217, 217, 217, 0.45);
     max-height: 300px;
     min-height: 250px;
-    
+
     border-radius: 1.2em;
 }
 
-.card-body:hover {
+/* .card-body:hover {
     cursor: pointer;
     background-color: rgba(255, 95, 31, 0.25);
 
-}
+} */
 
-.card-title, .card-text {
+.card-title,
+.card-text {
     text-align: center;
     width: fit-content;
 }
 
 .invisible {
     visibility: hidden;
-  }
-  
+}
+
 
 .edit-button {
     background: none;
@@ -46,23 +48,23 @@
 }
 
 .edit-button img {
-    width: 30px; 
+    width: 30px;
     height: auto;
 }
 
 
-.Editpost{
-  
+.Editpost {
+
     display: flex;
     justify-content: flex-end;
 }
 
-.footer-container{
+.footer-container {
     display: flex;
     justify-content: space-between;
 }
 
-.footer-container .userNamePost{
+.footer-container .userNamePost {
     font-size: 1.5em;
     color: #000;
     font-weight: 500;
@@ -70,4 +72,8 @@
 
 }
 
-  
+.like-count {
+    font-size: 17px;
+    font-weight: bold;
+    margin-left: 5px;
+}

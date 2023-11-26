@@ -10,7 +10,10 @@ const SignUp = () => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
+    const [github, setGithub] = useState('')
+    const [profileImage, setProfileImage] = useState('')
     const { registerUser } = useAuth();
+    
     const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
@@ -20,7 +23,7 @@ const SignUp = () => {
             return;
         }
         try {
-            await registerUser(email, username, password, () => navigate('/home'));
+            await registerUser(email, username, password, github, profileImage, () => navigate('/home'));
         } catch (error) {
             console.error('Registration failed', error);
             setError('Registration failed. Please try again.');
@@ -76,6 +79,25 @@ const SignUp = () => {
                                 onChange={e => setPassword(e.target.value)} 
                                 class="single-line-input" 
                             />
+                        </div>
+                        <div>
+                        <input 
+                            type="text" 
+                            placeholder="GitHub URL" 
+                            value={github} 
+                            onChange={e => setGithub(e.target.value)}
+                            className="single-line-input" 
+                        />
+                    
+                        </div>
+                        <div>
+                        <input 
+                            type="text" 
+                            placeholder="Profile Image URL" 
+                            value={profileImage} 
+                            onChange={e => setProfileImage(e.target.value)}
+                            className="single-line-input" 
+                        />
                         </div>
                         <button type="submit" className = "button-design">Sign up</button>
                         {error && <p className="error-message">{error}</p>}

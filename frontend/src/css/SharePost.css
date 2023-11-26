@@ -1,0 +1,29 @@
+.full-contain {
+
+    margin-left: 30px;
+    font-size: 18px;
+}
+
+.full-contain h4 {
+    color: rgba(0, 0, 0, 0.32)
+}
+
+.list-flex {
+    margin-left: 30px;
+}
+
+.outer-container {
+    position: relative;
+
+}
+
+.button-container {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    width: 150px;
+    color: white;
+    background-color: black;
+    height: 39px;
+    text-align: center;
+}
