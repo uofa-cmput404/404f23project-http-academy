@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import "../css/Profile.css";
 import axiosInstance from "../axiosInstance";
 // import { useLocation } from "react-router-dom";
@@ -19,12 +19,7 @@ const Profile = () => {
   const userId = storedUser.id.split("/").pop()
 
 
-  useEffect(() => {
 
-    fetchFollowers();
-    fetchFollowing();
-    fetchPosts();
-  }, [userId]);
 
   const handleUnfriend = (requesterId) => {
 
@@ -40,9 +35,7 @@ const Profile = () => {
       });
   };
 
-
-  const fetchFollowers = () => {
-
+  const fetchFollowers = useCallback(() => {
     axiosInstance.get(`/authors/${userId}/followers`)
       .then(response => {
         setFollowers(response.data.items);
@@ -50,9 +43,9 @@ const Profile = () => {
       .catch(error => {
         console.error('Error fetching followers:', error);
       });
-  };
+  }, [userId]);
 
-  const fetchFollowing = () => {
+  const fetchFollowing = useCallback(() => {
     axiosInstance.get(`/authors/${userId}/following`)
       .then(response => {
         setFollowing(response.data.items);
@@ -60,37 +53,29 @@ const Profile = () => {
       .catch(error => {
         console.error('Error fetching following:', error);
       });
-  };
+  }, [userId]);
 
-  // const followButtonStyle = {
-  //   border: '1px solid black',
-  //   backgroundColor: 'white',
-  //   color: 'black',
-  //   marginTop: '20px',
-  //   width: "180px",
-  //   textAlign: "center"
-  // };
-
-  const fetchPosts = () => {
-
-    console.log('user id sent when getting posts', userId)
-    // const url = "authors/" + userId + "/posts/" + "ownPosts/"
+  const fetchPosts = useCallback(() => {
     const url = `authors/${userId}/posts/ownPosts/`;
     axiosInstance.get(url).then(response => {
-      console.log('all posts', response.data)
       const Posts = response.data.items
       const postsWithAuthors = Posts.map(post => ({
         ...post,
       }));
-
-      console.log('posts i own', postsWithAuthors)
       setPostsOwned(postsWithAuthors);
-
-
     }).catch(error => {
       console.log(error);
     });
-  }
+  }, [userId]);
+
+  useEffect(() => {
+    fetchFollowers();
+    fetchFollowing();
+    fetchPosts();
+  }, [userId, fetchFollowers, fetchFollowing, fetchPosts]);
+
+
+
 
 
 
