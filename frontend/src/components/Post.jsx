@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import axiosInstance from "../axiosInstance";
 import "../css/Post.css";
 import editIcon from '../assets/images/ellipsis.png';
@@ -14,9 +14,8 @@ export default function Post({ post, canEdit, authorDetails }) {
     const [modalMode, setModalMode] = useState("");
     const [liked, setLiked] = useState(false);
     const [likesCount, setLikesCount] = useState(0);
-    const navigate = useNavigate();
     const [allusers, setAllUsers] = useState([]);
-    const [likeCount, setLikeCount] = useState(0)
+    // const [likeCount, setLikeCount] = useState(0)
     const loggedINUser = JSON.parse(localStorage.getItem('user'));
     const storedUser = loggedINUser?.user;
     const userId = storedUser?.id.split("/").pop();
@@ -64,7 +63,7 @@ export default function Post({ post, canEdit, authorDetails }) {
             .then(response => {
                 const likeItems = response.data.items || [];
                 console.log('this are the likes for  post', response.data.items)
-                setLikeCount(response.data.items.length)
+                // setLikeCount(response.data.items.length)
                 setLikesCount(likeItems.length);
                 setLiked(likeItems.some(like => like.author.id === storedUser.url));
             })
