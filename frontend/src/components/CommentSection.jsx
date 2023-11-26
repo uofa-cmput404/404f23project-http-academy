@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+
 import axiosInstance from '../axiosInstance';
 import '../css/CommentSection.css'
 import { extractUUIDFromURL } from '../utilities/extractUIID';
@@ -124,7 +124,7 @@ export default function CommentSection({ postid }) {
   };
 
   const addComment = () => {
-    const commentUrl = `authors/${userId}/posts/${postid}/comments/`;
+    // const commentUrl = `authors/${userId}/posts/${postid}/comments/`;
     const publishTime = new Date();
     let content = commentText;
 
@@ -156,7 +156,7 @@ export default function CommentSection({ postid }) {
   };
 
   const fetchComments = () => {
-    const commentingUrl = `authors/${userId}/posts/${postid}/comments/`;
+    // const commentingUrl = `authors/${userId}/posts/${postid}/comments/`;
 
     const commentsUrl = `authors/${userId}/posts/${postid}/comments/`;
     console.log('request logegd for get cmmand', commentsUrl)
@@ -176,13 +176,13 @@ export default function CommentSection({ postid }) {
     setInputType(event.target.value);
   };
 
-  const checkTypeOfComment = (val) => {
-    if (val.contentType === "text/markdown") {
-      return (<ListItemText primary={<ReactCommonmark source={val.comment} />} secondary={val.author.displayName} />);
-    } else if (val.contentType === "text/plain") {
-      return (<ListItemText primary={val.comment} secondary={val.author.displayName} />);
-    }
-  }
+  // const checkTypeOfComment = (val) => {
+  //   if (val.contentType === "text/markdown") {
+  //     return (<ListItemText primary={<ReactCommonmark source={val.comment} />} secondary={val.author.displayName} />);
+  //   } else if (val.contentType === "text/plain") {
+  //     return (<ListItemText primary={val.comment} secondary={val.author.displayName} />);
+  //   }
+  // }
 
   const handleImageUpload = (event) => {
     const fileUploaded = event.target.files[0];
