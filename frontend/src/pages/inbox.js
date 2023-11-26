@@ -70,15 +70,15 @@ const Inbox = () => {
             .catch(error => console.error('Error accepting friend request:', error));
     };
 
-    const deleteFriendRequest = (requesterId, requestId) => {
-        const url = `authors/${userId}/followers/acceptFriend/${requesterId}/`;
-        axiosInstance.delete(url)
-            .then(() => {
-                // Update the state to remove the deleted request from the UI
-                setUsersInboxItems(prevItems => prevItems.filter(item => item.id !== requestId));
-            })
-            .catch(error => console.error('Error deleting friend request:', error));
-    };
+    // const deleteFriendRequest = (requesterId, requestId) => {
+    //     const url = `authors/${userId}/followers/acceptFriend/${requesterId}/`;
+    //     axiosInstance.delete(url)
+    //         .then(() => {
+    //             // Update the state to remove the deleted request from the UI
+    //             setUsersInboxItems(prevItems => prevItems.filter(item => item.id !== requestId));
+    //         })
+    //         .catch(error => console.error('Error deleting friend request:', error));
+    // };
 
 
     const fetchFollowers = (requestId) => {
