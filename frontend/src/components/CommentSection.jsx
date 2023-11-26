@@ -1,14 +1,11 @@
-
-
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import axiosInstance from '../axiosInstance';
-import Comment from './Comment';
 import '../css/CommentSection.css'
 import { extractUUIDFromURL } from '../utilities/extractUIID';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import FavoriteBorderOutlinedIcon from '@mui/icons-material/FavoriteBorderOutlined';
-import { FormControl, TextField, Button, InputLabel, MenuItem, Paper, Select, Divider, List, ListItem, ListItemText } from "@mui/material";
+import { FormControl, TextField, Button, InputLabel, MenuItem, Select, List, ListItem, ListItemText } from "@mui/material";
 var ReactCommonmark = require('react-commonmark');
 
 export default function CommentSection({ postid }) {
@@ -22,7 +19,7 @@ export default function CommentSection({ postid }) {
   const [allusers, setAllUsers] = useState([])
   const [likedComments, setLikedComments] = useState({});
   const [commentLikeCounts, setCommentLikeCounts] = useState({});
-  const { id } = useParams();
+
 
   useEffect(() => {
     fetchAllUsers();
