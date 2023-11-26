@@ -4,7 +4,7 @@ import "../css/Home.css";
 import { useNavigate } from "react-router-dom";
 import axiosInstance from "../axiosInstance";
 import { useAuth } from "../context/AuthContext";
-import { all } from "axios";
+// import { all } from "axios";
 
 export default function Home() {
     const { isAuthenticated } = useAuth();
@@ -35,7 +35,7 @@ export default function Home() {
     }, []); // Fetch all users
 
     useEffect(() => {
-        const url = "authors/" + userId + "/posts/"
+        // const url = "authors/" + userId + "/posts/"
         axiosInstance.get('posts/').then(response => {
             const publicPosts = response.data.items.filter(p => p.visibility === "PUBLIC");
             const postsWithAuthors = publicPosts.map(post => ({
