@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import "../css/Profile.css";
 import axiosInstance from "../axiosInstance";
-import { useLocation } from "react-router-dom";
+// import { useLocation } from "react-router-dom";
 import { Button, Avatar } from "@mui/material";
 import { yellow } from "@mui/material/colors";
 import Typography from '@mui/material/Typography';
@@ -9,14 +9,8 @@ import { extractUUIDFromURL } from "../utilities/extractUIID";
 import Post from '../components/Post';
 
 const Profile = () => {
-  const [username, setUsername] = useState("");
-  const [editMode, setEditMode] = useState(false);
-  const [error, setError] = useState("");
-  const [hasSentRequest, setHasSentRequest] = useState(false);
-  const location = useLocation();
-  const [author, setAuthor] = useState(null);
-  const [authorDetails, setAuthorDetails] = useState(null);
-  const [isCurrentUser, setIsCurrentUser] = useState(false);
+
+
   const [followers, setFollowers] = useState([]);
   const [postsowned, setPostsOwned] = useState([])
   const [following, setFollowing] = useState([]);
@@ -68,19 +62,20 @@ const Profile = () => {
       });
   };
 
-  const followButtonStyle = {
-    border: '1px solid black',
-    backgroundColor: 'white',
-    color: 'black',
-    marginTop: '20px',
-    width: "180px",
-    textAlign: "center"
-  };
+  // const followButtonStyle = {
+  //   border: '1px solid black',
+  //   backgroundColor: 'white',
+  //   color: 'black',
+  //   marginTop: '20px',
+  //   width: "180px",
+  //   textAlign: "center"
+  // };
 
   const fetchPosts = () => {
 
     console.log('user id sent when getting posts', userId)
-    const url = "authors/" + userId + "/posts/" + "ownPosts/"
+    // const url = "authors/" + userId + "/posts/" + "ownPosts/"
+    const url = `authors/${userId}/posts/ownPosts/`;
     axiosInstance.get(url).then(response => {
       console.log('all posts', response.data)
       const Posts = response.data.items
@@ -121,12 +116,12 @@ const Profile = () => {
     );
   };
 
-  const renderPosts = (item) => {
-    console.log('rendering posts', item)
-    // return(
-    //   <Post key={item.id} post={item} canEdit={userId === item.author} authorDetails={item.authorDetails} />
-    // )
-  }
+  // const renderPosts = (item) => {
+  //   console.log('rendering posts', item)
+  //   // return(
+  //   //   <Post key={item.id} post={item} canEdit={userId === item.author} authorDetails={item.authorDetails} />
+  //   // )
+  // }
 
 
   return (
