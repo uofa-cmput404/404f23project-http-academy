@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import Post from "../components/Post";
 import "../css/Home.css";
 import { useNavigate } from "react-router-dom";
 import axiosInstance from "../axiosInstance";
 import { useAuth } from "../context/AuthContext";
-import { all } from "axios";
+// import { all } from "axios";
 
 export default function Home() {
     const { isAuthenticated } = useAuth();
@@ -15,42 +15,23 @@ export default function Home() {
     const storedUser_str = storedUser.user
     const userId = storedUser_str.id.split("/").pop()
     useEffect(() => {
-        console.log('in home js', storedUser)
         if (!isAuthenticated) {
             navigate('/login'); // Redirect to login if not authenticated
         }
-    }, [isAuthenticated, navigate]);
+    }, [isAuthenticated, navigate, storedUser]);
 
     useEffect(() => {
+        // Fetch all users
         axiosInstance.get('authors/user').then(response => {
             const usersWithProcessedIds = response.data.items.map(user => ({
                 ...user
             }));
             setAllUsers(usersWithProcessedIds);
-            console.log('goot it working', usersWithProcessedIds)
-
         }).catch(error => {
             console.log(error);
         });
-    }, []); // Fetch all users
+    }, []);
 
-    useEffect(() => {
-        const url = "authors/" + userId + "/posts/"
-        axiosInstance.get('posts/').then(response => {
-            const publicPosts = response.data.items.filter(p => p.visibility === "PUBLIC");
-            const postsWithAuthors = publicPosts.map(post => ({
-                ...post,
-                authorDetails: findAuthorForPost(post)
-            }));
-
-            console.log('posts in home', postsWithAuthors)
-            setPosts(postsWithAuthors);
-
-
-        }).catch(error => {
-            console.log(error);
-        });
-    }, [allUsers]); // Fetch posts after users are loaded
 
 
 
@@ -60,16 +41,28 @@ export default function Home() {
     //     return segments
     // }
 
-    const findAuthorForPost = (post) => {
-        console.log('all users', allUsers);
-        console.log('post', post);
+    const findAuthorForPost = useCallback((post) => {
         const found = allUsers.find(user => {
             const userId = user.id.split("/").filter(Boolean).pop();
             return userId === post.author;
         });
-        console.log('found a user', found);
         return found;
-    };
+    }, [allUsers]);
+
+    useEffect(() => {
+        // Fetch posts after users are loaded
+        axiosInstance.get('posts/').then(response => {
+            const publicPosts = response.data.items.filter(p => p.visibility === "PUBLIC");
+            const postsWithAuthors = publicPosts.map(post => ({
+                ...post,
+                authorDetails: findAuthorForPost(post)
+            }));
+            setPosts(postsWithAuthors);
+        }).catch(error => {
+            console.log(error);
+        });
+    }, [allUsers, findAuthorForPost]);
+
 
     const postsChunks = posts.reduce((resultArray, item, index) => {
         console.log('postng works', posts)

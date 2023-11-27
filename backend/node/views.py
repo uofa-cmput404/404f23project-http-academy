@@ -9,7 +9,7 @@ from rest_framework.decorators import api_view
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 import base64
 import requests
-
+from node_functions import fetchRemoteAuthors
 
 
 
@@ -130,35 +130,39 @@ def getNodePosts(request):
     return Response(response, status.HTTP_200_OK)
 
 
+# @api_view(['GET'])
+# def getRemoteAuthors(request):
+#     allAuthors = []
+    
+#     for node in Node.objects.all():
+#         remoteHost = node.host
+#         if not remoteHost:
+#             response = {"error": "Please provide a valid hostname or IP address"}
+#             return Response(response, status=status.HTTP_400_BAD_REQUEST)
+
+#         try:
+#             response = requests.get(f'{remoteHost}/authors/', auth=(node.username, node.password))
+#             if response.status_code == 200:
+#                 remoteAuthors = response.json().get('results', [])
+#                 allAuthors.extend(remoteAuthors)
+#                 print('all remote authors', allAuthors)
+#                 # Here, you can iterate over remoteAuthors and create/update authors in your database
+#             else:
+#                 response = {"error": f"Couldn't connect to server at {remoteHost}"}
+#                 return Response(response, status=status.HTTP_503_SERVICE_UNAVAILABLE)
+#         except requests.exceptions.RequestException as e:
+#             response = {"error": f"Failed to get authors from {remoteHost}: {str(e)}"}
+#             return Response(response, status=status.HTTP_503_SERVICE_UNAVAILABLE)
+
+#     response = {"type": "authors", "items": allAuthors}
+#     return Response(response, status=status.HTTP_200_OK)
 @api_view(['GET'])
 def getRemoteAuthors(request):
-    allAuthors = []
-    
-    for node in Node.objects.all(): 
-        # get the host from header
-        remoteHost = node.host
-        if remoteHost == None: # this will not work for error checking - need to use raise valueError
-            response = {"error":"Please provide a valid hostname or IP address"}
-            return Response(response, status.HTTP_200_OK)
-
-        # get each author from the remote host
-        try:
-            AuthorRequest = requests.request.get(f'http://{remoteHost}/authors/',auth={node.username, node.password})
-        except Exception as e:
-            print(f"failed to get authors from {remoteHost}")
-            
-        if AuthorRequest.status_code != 200:
-            response = {"error": "Couldn't connect to the specified server"}
-            return Response(response, status.HTTP_200_OK)
-        else:
-            remoteAuthors = AuthorRequest.json().get('items')
-            allAuthors.extend(remoteAuthors)
-
-    response = {
-        "type": "authors",
-        "items":allAuthors
-    }
+    remoteAuthors = fetchRemoteAuthors()
+    response = {"type": "authors", "items": remoteAuthors}
     return Response(response, status=status.HTTP_200_OK)
+
+
 
 @api_view(['DELETE'])
 def deleteNode(request, host):

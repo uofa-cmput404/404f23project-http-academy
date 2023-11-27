@@ -163,10 +163,11 @@ from .models import AppUser
 from .serializers import UserUpdateSerializer
 from inbox.models import Inbox
 from django.middleware.csrf import get_token
+# from node import getNodePosts
 # Create your views here.
 
 from drf_yasg.utils import swagger_auto_schema
-
+from node.node_functions import fetchRemoteAuthors
 
 from rest_framework import generics
 class UserRegister(APIView):
@@ -188,6 +189,7 @@ class UserRegister(APIView):
 				"displayName": user.username
 				}
 				return Response(serializer.data, status=status.HTTP_201_CREATED)
+			
 		return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -247,9 +249,16 @@ class UserView(APIView):
 	authentication_classes = (SessionAuthentication,)
 
 	
+	# maybe we do this when the user logs in - liek retrive al lthe data and put in a store 
+	#for perfomance reasons so we dont have to calling the remote end points everytime the user 
+	#navigates to the hub 
 	@swagger_auto_schema(operation_description="Get a list of all authors", responses={200: UserSerializer(many=True) , 400: 'Bad Request'})
 	def get(self, request):
+		print('triggered')
 		serializer = UserSerializer(AppUser.objects.all(), many=True)
+		remote_authors = fetchRemoteAuthors()
+		print('remotinng', remote_authors)
+		#call the function in node 
 		authors = AppUser.objects.all()
 		authors_data = []
 		
@@ -273,6 +282,7 @@ class UserView(APIView):
 		return Response(response, status=status.HTTP_200_OK)
 		# customize it beofre sending
 
+	
 
 		
 

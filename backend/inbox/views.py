@@ -12,6 +12,7 @@ from like.serializers import LikeSerializer
 from .models import Inbox
 from like.models import Like
 from drf_yasg.utils import swagger_auto_schema
+from node.node_functions import identify_localauthor, send_request_to_remoteInbox
 
 class InboxView(APIView):
     """
@@ -49,6 +50,8 @@ class InboxView(APIView):
         """
         Adds a post or like to the inbox of the specified AppUser.
         """
+        print('authors inbox id ', author_id)
+        print('authors inbox id type', type(author_id))
         # print('i actually got hete')
         author = get_object_or_404(AppUser, pk=author_id)
         inbox, _ = Inbox.objects.get_or_create(authorId=author)
@@ -84,6 +87,8 @@ class InboxView(APIView):
             # If the post does not exist, create a new one
             new_post = Post.objects.create(id=post_id, **post_data, author=post_author)
             inbox.posts.add(new_post)
+        
+        # if not identify_localauthor()
 
         return Response({"detail": "Post processed for inbox"}, status=status.HTTP_201_CREATED)
 
@@ -123,6 +128,10 @@ class InboxView(APIView):
         follow_request = FriendRequest.objects.create(actor=actor, object=object, summary=summary)
         inbox.follow_request.add(follow_request)
         print("Follow request added to inbox", inbox)
+
+        if not identify_localauthor(object):
+            send_request_to_remoteInbox(follow_request, object)
+
         return Response({"detail": "Follow request added to inbox"}, status=status.HTTP_201_CREATED)
 
     @swagger_auto_schema(

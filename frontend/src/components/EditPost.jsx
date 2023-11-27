@@ -21,9 +21,6 @@ export default function EditPost({ onClose, posts }) {
   const url = `authors/${userId}/posts/${postId}/`;
 
   useEffect(() => {
-    console.log('post try editing id', postId)
-    console.log('post try editing post itself', posts)
-    console.log('post try editing post url', url)
     axiosInstance
       .get(url)
       .then((retrievedPost) => {
@@ -45,7 +42,7 @@ export default function EditPost({ onClose, posts }) {
       });
 
 
-  }, [postId]);
+  }, [postId, posts, url]);
 
   const editPost = (updatedTitle, updatedBody, updatedImage) => {
 

@@ -1,14 +1,11 @@
+import React, { useState, useEffect, useCallback } from 'react';
 
-
-import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
 import axiosInstance from '../axiosInstance';
-import Comment from './Comment';
 import '../css/CommentSection.css'
 import { extractUUIDFromURL } from '../utilities/extractUIID';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import FavoriteBorderOutlinedIcon from '@mui/icons-material/FavoriteBorderOutlined';
-import { FormControl, TextField, Button, InputLabel, MenuItem, Paper, Select, Divider, List, ListItem, ListItemText } from "@mui/material";
+import { FormControl, TextField, Button, InputLabel, MenuItem, Select, List, ListItem } from "@mui/material";
 var ReactCommonmark = require('react-commonmark');
 
 export default function CommentSection({ postid }) {
@@ -22,18 +19,8 @@ export default function CommentSection({ postid }) {
   const [allusers, setAllUsers] = useState([])
   const [likedComments, setLikedComments] = useState({});
   const [commentLikeCounts, setCommentLikeCounts] = useState({});
-  const { id } = useParams();
 
-  useEffect(() => {
-    fetchAllUsers();
-    fetchComments();
-  }, [userId, postid]);
 
-  useEffect(() => {
-    localComments.forEach(comment => {
-      fetchCommentLikes(comment.id.split('/').pop());
-    });
-  }, [localComments]);
 
   const findUserDisplayName = (uuid) => {
     console.log('all users', allusers)
@@ -43,26 +30,23 @@ export default function CommentSection({ postid }) {
   };
 
 
-  const fetchCommentLikes = (commentId) => {
+  const fetchCommentLikes = useCallback((commentId) => {
     const commentsUrl = `authors/${userId}/posts/comments/${commentId}/likes/`;
     axiosInstance.get(commentsUrl)
       .then(response => {
-        console.log('my likes from the backend', response);
-
         const isLiked = response.data ? response.data.some(like => like.author_id === userId) : false;
         const likeCount = response.data ? response.data.length : 0;
         setLikedComments(prevLikes => ({
           ...prevLikes,
           [commentId]: isLiked
         }));
-        console.log('set liked comments', likedComments)
         setCommentLikeCounts(prevCounts => ({
           ...prevCounts,
           [commentId]: likeCount
         }));
       })
       .catch(error => console.error('Error fetching comment likes:', error));
-  };
+  }, [userId]);
 
   const handleLikeComment = (commentId) => {
     const likeUrl = `authors/${userId}/posts/comments/${commentId}/likes/`;
@@ -116,18 +100,16 @@ export default function CommentSection({ postid }) {
 
 
 
-  const fetchAllUsers = () => {
+  const fetchAllUsers = useCallback(() => {
     axiosInstance.get("authors/user")
       .then(response => {
-
-        console.log('filters user showing', response.data.items)
         setAllUsers(response.data.items);
       })
       .catch(error => console.error('Error fetching users:', error));
-  };
+  }, []);
 
   const addComment = () => {
-    const commentUrl = `authors/${userId}/posts/${postid}/comments/`;
+    // const commentUrl = `authors/${userId}/posts/${postid}/comments/`;
     const publishTime = new Date();
     let content = commentText;
 
@@ -158,34 +140,27 @@ export default function CommentSection({ postid }) {
 
   };
 
-  const fetchComments = () => {
-    const commentingUrl = `authors/${userId}/posts/${postid}/comments/`;
-
+  const fetchComments = useCallback(() => {
     const commentsUrl = `authors/${userId}/posts/${postid}/comments/`;
-    console.log('request logegd for get cmmand', commentsUrl)
-    console.log('request logegd for get cmmand 2', userId, postid)
     axiosInstance.get(commentsUrl)
       .then(response => {
-        console.log('Fetched comments:', response.data);
         setLocalComments(response.data);
-
-
       })
       .catch(error => console.error('Error fetching comments:', error));
+  }, [userId, postid]);
 
-  };
 
   const handleInputTypeChange = (event) => {
     setInputType(event.target.value);
   };
 
-  const checkTypeOfComment = (val) => {
-    if (val.contentType === "text/markdown") {
-      return (<ListItemText primary={<ReactCommonmark source={val.comment} />} secondary={val.author.displayName} />);
-    } else if (val.contentType === "text/plain") {
-      return (<ListItemText primary={val.comment} secondary={val.author.displayName} />);
-    }
-  }
+  // const checkTypeOfComment = (val) => {
+  //   if (val.contentType === "text/markdown") {
+  //     return (<ListItemText primary={<ReactCommonmark source={val.comment} />} secondary={val.author.displayName} />);
+  //   } else if (val.contentType === "text/plain") {
+  //     return (<ListItemText primary={val.comment} secondary={val.author.displayName} />);
+  //   }
+  // }
 
   const handleImageUpload = (event) => {
     const fileUploaded = event.target.files[0];
@@ -201,6 +176,19 @@ export default function CommentSection({ postid }) {
   const handleBtnSelection = () => {
     hiddenFileInput.current.click();
   }
+
+
+  useEffect(() => {
+    fetchAllUsers();
+    fetchComments();
+  }, [fetchComments, fetchAllUsers]);
+
+  useEffect(() => {
+    localComments.forEach(comment => {
+      fetchCommentLikes(comment.id.split('/').pop());
+    });
+  }, [localComments, fetchCommentLikes]);
+
 
   const renderComment = (val) => {
     let commentContent;

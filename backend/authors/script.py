@@ -1,18 +1,22 @@
 import requests
 import json
 
-csrf_token_url = "http://127.0.0.1:8000/authors/login"
-login_url = "http://127.0.0.1:8000/authors/user"
-access_url = "https://cmput404-httpacademy-local-cb3d56814192.herokuapp.com/authors/logout"
+# csrf_token_url = "https://cmput404-httpacademy2-1c641b528836.herokuapp.com/authors/login"
+# login_url = "https://cmput404-httpacademy2-1c641b528836.herokuapp.com/authors/user"
+# access_url = "https://cmput404-httpacademy-local-cb3d56814192.herokuapp.com/authors/logout"
+
+csrf_token_url = 'https://cmput404-social-network-401e4cab2cc0.herokuapp.com/auth/login/'
+login_url = 'https://cmput404-social-network-401e4cab2cc0.herokuapp.com/authors/'
+# access_url = "https://cmput404-httpacademy-local-cb3d56814192.herokuapp.com/authors/logout"
 session = requests.Session()
 print("Session:", session)
 
 # credentials
-email = "http@gmail.com"
-password = "http"
+email = "http-academy"
+password = "cmput404"
 
 # Get CSRF token
-csrf_response = session.post(csrf_token_url, json={'email':email, "password":password})
+csrf_response = session.post(csrf_token_url, json={'username':email, "password":password})
 print("CSRF Response Status Code:", csrf_response.status_code)
 print("CSRF Response JSON:", csrf_response.json())
 

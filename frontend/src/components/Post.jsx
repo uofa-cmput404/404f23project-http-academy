@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from "react";
-import { Link, useNavigate } from 'react-router-dom';
+import React, { useEffect, useState, useCallback } from "react";
 import axiosInstance from "../axiosInstance";
 import "../css/Post.css";
 import editIcon from '../assets/images/ellipsis.png';
@@ -14,62 +13,46 @@ export default function Post({ post, canEdit, authorDetails }) {
     const [modalMode, setModalMode] = useState("");
     const [liked, setLiked] = useState(false);
     const [likesCount, setLikesCount] = useState(0);
-    const navigate = useNavigate();
     const [allusers, setAllUsers] = useState([]);
-    const [likeCount, setLikeCount] = useState(0)
+    // const [likeCount, setLikeCount] = useState(0)
     const loggedINUser = JSON.parse(localStorage.getItem('user'));
     const storedUser = loggedINUser?.user;
     const userId = storedUser?.id.split("/").pop();
 
-    useEffect(() => {
-        if (authorDetails) {
-            console.log('Author Details:', authorDetails);
-            fetchLikes();
-            getAllUsers();
-
-        }
-    }, [authorDetails]);
-
-    /*
-        dprecated for now
-    */
-    // const goToAuthorProfile = () => {
-    //     if (authorDetails) {
-    //         navigate(`/profile`, { state: { author: authorDetails } });
-    //     } else {
-    //         console.error('Author details are not available');
-    //     }
-    // };
-
-    const extractUUIDFromURL = (url) => {
+    const extractUUIDFromURL = useCallback((url) => {
         const parts = url.split('/');
         let uuid = parts.pop();
         if (uuid === '') uuid = parts.pop();
         return uuid;
-    }
+    }, []);
 
-    const getAllUsers = () => {
+    const getAllUsers = useCallback(() => {
         axiosInstance.get("authors/user")
             .then(response => {
                 const filteredUsers = response.data.items.filter(user => extractUUIDFromURL(user.id) !== userId);
                 setAllUsers(filteredUsers);
             })
             .catch(error => console.error('Error fetching users:', error));
-    };
+    }, [userId, extractUUIDFromURL]);
 
-    const fetchLikes = () => {
+    const fetchLikes = useCallback(() => {
         const postAuthorId = extractUUIDFromURL(authorDetails.id);
         const likeUrl = `authors/${postAuthorId}/posts/${post.post_id}/like/`;
         axiosInstance.get(likeUrl)
             .then(response => {
                 const likeItems = response.data.items || [];
-                console.log('this are the likes for  post', response.data.items)
-                setLikeCount(response.data.items.length)
                 setLikesCount(likeItems.length);
                 setLiked(likeItems.some(like => like.author.id === storedUser.url));
             })
             .catch(error => console.error('Error fetching likes:', error));
-    };
+    }, [authorDetails, post.post_id, extractUUIDFromURL, storedUser.url]);
+
+    useEffect(() => {
+        if (authorDetails) {
+            fetchLikes();
+            getAllUsers();
+        }
+    }, [authorDetails, fetchLikes, getAllUsers]);
 
     const handleLike = () => {
 

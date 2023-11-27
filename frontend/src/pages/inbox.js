@@ -1,6 +1,6 @@
 
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import axiosInstance from '../axiosInstance';
 import '../css/inbox.css';
 import Post from '../components/Post';
@@ -15,29 +15,24 @@ const Inbox = () => {
     const [acceptedRequests, setAcceptedRequests] = useState({});
     const [followers, setFollowers] = useState([])
 
-    useEffect(() => {
-        getAllusers();
-    }, []);
-
-    useEffect(() => {
-        if (allUsers.length > 0) {
-            getUsersInbox();
-            fetchFollowers();
-        }
-    }, [allUsers]);
 
 
-    const getAllusers = () => {
+
+    const getAllusers = useCallback(() => {
         return axiosInstance.get('authors/user')
             .then(response => {
                 setAllUsers(response.data.items);
                 return response;
             })
             .catch(error => console.log(error));
-    };
+    }, []);
 
+    const findAuthorForPost = useCallback((postId) => {
+        const foundUser = allUsers.find(user => user.id.includes(postId));
+        return foundUser;
+    }, [allUsers]);
 
-    const getUsersInbox = () => {
+    const getUsersInbox = useCallback(() => {
         axiosInstance.get(`authors/${userId}/inbox/`)
             .then(response => {
                 // Enrich posts with author details
@@ -50,15 +45,8 @@ const Inbox = () => {
                 setUsersInboxItems([...enrichedPosts, ...response.data.likes, ...response.data.follow_request]);
             })
             .catch(error => console.error('Error fetching inbox items:', error));
-    };
+    }, [userId, findAuthorForPost])
 
-    const findAuthorForPost = (postId) => {
-        console.log('what does postid ', postId)
-        console.log('all users ?', allUsers)
-        const foundUser = allUsers.find(user => user.id.includes(postId));
-        console.log('found user', foundUser)
-        return foundUser
-    };
 
     const acceptFriendRequest = (requesterId, requestId) => {
         const url = `authors/${userId}/followers/acceptFriend/${requesterId}/`;
@@ -70,31 +58,36 @@ const Inbox = () => {
             .catch(error => console.error('Error accepting friend request:', error));
     };
 
-    const deleteFriendRequest = (requesterId, requestId) => {
-        const url = `authors/${userId}/followers/acceptFriend/${requesterId}/`;
-        axiosInstance.delete(url)
-            .then(() => {
-                // Update the state to remove the deleted request from the UI
-                setUsersInboxItems(prevItems => prevItems.filter(item => item.id !== requestId));
-            })
-            .catch(error => console.error('Error deleting friend request:', error));
-    };
+    // const deleteFriendRequest = (requesterId, requestId) => {
+    //     const url = `authors/${userId}/followers/acceptFriend/${requesterId}/`;
+    //     axiosInstance.delete(url)
+    //         .then(() => {
+    //             // Update the state to remove the deleted request from the UI
+    //             setUsersInboxItems(prevItems => prevItems.filter(item => item.id !== requestId));
+    //         })
+    //         .catch(error => console.error('Error deleting friend request:', error));
+    // };
 
 
-    const fetchFollowers = (requestId) => {
+    const fetchFollowers = useCallback(() => {
         axiosInstance.get(`/authors/${userId}/followers`)
             .then(response => {
                 setFollowers(response.data.items.map(item => extractUUIDFromURL(item.id)));
             })
-            .catch(error => {
-                console.error('Error fetching followers:', error);
-            });
+            .catch(error => console.error('Error fetching followers:', error));
+    }, [userId]);
 
 
-        // friendrequests/
-        console.log('requester id', requestId)
-        console.log('all followers', followers)
-    };
+    useEffect(() => {
+        getAllusers();
+    }, [getAllusers]);
+
+    useEffect(() => {
+        if (allUsers.length > 0) {
+            getUsersInbox();
+            fetchFollowers();
+        }
+    }, [allUsers, getUsersInbox, fetchFollowers]);
 
 
     const Bidirectional = (friendId) => {
