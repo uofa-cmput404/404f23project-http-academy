@@ -13,6 +13,7 @@ import uuid
 from django.http import Http404
 from django.shortcuts import get_object_or_404
 from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
 
 def get_user(pk):
         try:
@@ -61,7 +62,14 @@ def own_posts_list(request, pk):
     except ObjectDoesNotExist:
         raise NotFound(detail="Author not found", code=404)
     
-
+@swagger_auto_schema(method='get', 
+                     manual_parameters=[openapi.Parameter('pk', openapi.IN_QUERY, description="Author ID", type=openapi.TYPE_STRING)],
+                     operation_description="Get all posts from an author with user_id = `pk`", 
+                     responses={200: "{'type': 'publicposts', 'items': {posts}}", 400: "{'type': 'error', 'message': {errors}}"})
+@swagger_auto_schema(method='post', 
+                     manual_parameters=[openapi.Parameter('post', openapi.IN_QUERY, description="Post data", type=openapi.TYPE_OBJECT),],
+                     operation_description="Create a new post using the data in `post`", 
+                     responses={201: "{'type': 'post', 'id': {id}}", 404: "{'type': 'error', 'detail': author not found}"})
 @api_view(['GET', 'POST'])
 def posts_list(request, pk = None):
     if request.method == 'POST':
@@ -115,7 +123,18 @@ def posts_list(request, pk = None):
             raise NotFound(detail="Author not found", code=404)
 
 
-
+@swagger_auto_schema(method='get', 
+                     manual_parameters=[openapi.Parameter('pk', openapi.IN_QUERY, description="Post ID", type=openapi.TYPE_STRING), openapi.Parameter('post_id', openapi.IN_QUERY, description="Post ID", type=openapi.TYPE_STRING)],
+                     operation_description="Get a post with post_id = `pk`", 
+                     responses={200: "{'type': 'post', 'id': {id}}", 404: "{'type': 'error', 'detail': post or author not found}"})
+@swagger_auto_schema(method='delete',
+                     manual_parameters=[openapi.Parameter('pk', openapi.IN_QUERY, description="Author ID", type=openapi.TYPE_STRING), openapi.Parameter('post_id', openapi.IN_QUERY, description="Post ID", type=openapi.TYPE_STRING)],
+                     operation_description="Delete a post with post_id = `pk`", 
+                     responses={204: "{'type': 'success', 'detail': 'Post deleted successfully'}", 404: "{'type': 'error', 'detail': post or author not found}", 500: "{'type': 'error', 'detail': 'Deletion failed'}"})
+@swagger_auto_schema(method='patch',
+                     manual_parameters=[openapi.Parameter('pk', openapi.IN_QUERY, description="Author ID", type=openapi.TYPE_STRING), openapi.Parameter('post_id', openapi.IN_QUERY, description="Post ID", type=openapi.TYPE_STRING), openapi.Parameter('post', openapi.IN_QUERY, description="Post data", type=openapi.TYPE_OBJECT)],
+                     operation_description="Update a post with post_id = `pk` using the data in `post`", 
+                     responses={200: "{'type': 'post', 'id': {id}}", 400: "{'type': 'error', 'message': {errors}}", 404: "{'type': 'error', 'detail': post or author not found}"})
 @api_view(['GET', 'DELETE', 'PATCH'])
 def post_detail(request, pk, post_id):
 
@@ -148,6 +167,14 @@ def post_detail(request, pk, post_id):
         serializer = PostSerializer(post)
         return Response(serializer.data)
 
+@swagger_auto_schema(method='get',
+                     manual_parameters=[openapi.Parameter('pk', openapi.IN_QUERY, description="Post ID", type=openapi.TYPE_STRING), openapi.Parameter('post_id', openapi.IN_QUERY, description="Post ID", type=openapi.TYPE_STRING)],
+                     operation_description="Get all comments for a post with post_id = `pk`", 
+                     responses={200: "{'type': 'comment', 'id': {id}}", 404: "{'type': 'error', 'detail': post or author not found}"})
+@swagger_auto_schema(method='post',
+                     manual_parameters=[openapi.Parameter('pk', openapi.IN_QUERY, description="Author ID", type=openapi.TYPE_STRING), openapi.Parameter('post_id', openapi.IN_QUERY, description="Post ID", type=openapi.TYPE_STRING), openapi.Parameter('comment', openapi.IN_QUERY, description="Comment data", type=openapi.TYPE_OBJECT)],
+                     operation_description="Create a new comment for a post with post_id = `pk` using the data in `comment`", 
+                     responses={201: "{'type': 'comment', 'id': {id}}", 400: "{'type': 'error', 'message': {errors}}", 404: "{'type': 'error', 'detail': post or author not found}"})
 @api_view(['GET', 'POST'])
 def comments_list(request, pk, post_id):
     if request.method == 'POST':
@@ -176,6 +203,19 @@ def comments_list(request, pk, post_id):
         print('ser data', serializer.data)
         return Response(serializer.data)
     return Response(serializer.data)
+
+@swagger_auto_schema(method='get',
+                        manual_parameters=[openapi.Parameter('comment_id', openapi.IN_QUERY, description="Comment ID", type=openapi.TYPE_STRING)],
+                        operation_description="Get all likes for a comment with comment_id = `pk`", 
+                        responses={200: "{'type': 'like', 'id': {id}}", 404: "{'type': 'error', 'detail': comment or author not found}"})
+@swagger_auto_schema(method='post',
+                        manual_parameters=[openapi.Parameter('comment_id', openapi.IN_QUERY, description="Comment ID", type=openapi.TYPE_STRING)],
+                        operation_description="Create a new like for a comment with comment_id = `pk` using the data in `like`", 
+                        responses={201: "{'type': 'like', 'id': {id}}", 400: "{'type': 'error', 'message': {errors}}", 404: "{'type': 'error', 'detail': comment or author not found}"})
+@swagger_auto_schema(method='delete',
+                        manual_parameters=[openapi.Parameter('comment_id', openapi.IN_QUERY, description="Comment ID", type=openapi.TYPE_STRING)],
+                        operation_description="Delete a like for a comment with comment_id = `pk`", 
+                        responses={204: "{'type': 'success', 'detail': 'Like deleted successfully'}", 404: "{'type': 'error', 'detail': comment or author not found}"})
 @api_view(['GET', 'POST', 'DELETE'])
 def comment_like(request, pk, comment_id):
     try:
@@ -223,6 +263,18 @@ def comment_like(request, pk, comment_id):
     else:
         return Response({"error": "Method not allowed"}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
+@swagger_auto_schema(method='get',
+                        manual_parameters=[openapi.Parameter('comment_id', openapi.IN_QUERY, description="Comment ID", type=openapi.TYPE_STRING)],
+                        operation_description="Get a comment with comment_id = `pk`", 
+                        responses={200: "{'type': 'comment', 'id': {id}}", 404: "{'type': 'error', 'detail': comment or author not found}"})
+@swagger_auto_schema(method='delete',
+                        manual_parameters=[openapi.Parameter('comment_id', openapi.IN_QUERY, description="Comment ID", type=openapi.TYPE_STRING)],
+                        operation_description="Delete a comment with comment_id = `pk`", 
+                        responses={204: "{'type': 'success', 'detail': 'Comment deleted successfully'}", 404: "{'type': 'error', 'detail': comment or author not found}"})
+@swagger_auto_schema(method='patch',
+                        manual_parameters=[openapi.Parameter('comment_id', openapi.IN_QUERY, description="Comment ID", type=openapi.TYPE_STRING), openapi.Parameter('comment', openapi.IN_QUERY, description="Comment data", type=openapi.TYPE_OBJECT)],
+                        operation_description="Update a comment with comment_id = `pk` using the data in `comment`", 
+                        responses={200: "{'type': 'comment', 'id': {id}}", 400: "{'type': 'error', 'message': {errors}}", 404: "{'type': 'error', 'detail': comment or author not found}"})
 @api_view(['GET', 'DELETE', 'PATCH'])
 def comment_detail(request, pk, post_id):
     # get the comment with the specified ID
