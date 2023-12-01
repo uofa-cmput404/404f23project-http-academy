@@ -12,38 +12,40 @@ import requests
 from authors.models import AppUser
 from followers.models import FriendRequest
 from followers.serializers import FriendRequestSerializer
-from posts.models import Post 
+from posts.models import Post
 from inbox.models import Inbox
 from posts.serializers import PostSerializer
-import json 
+import json
 LOCALHOSTS = ["http://127.0.0.1/", "https://cmput404-httpacademy2-1c641b528836.herokuapp.com/",
-                    "http://127.0.0.1:8000/"]
+              "http://127.0.0.1:8000/"]
+
 
 def fetchRemoteAuthors():
     allAuthors = []
     node = Node.objects.first()
- 
+
     if node:
         remoteHost = node.host
         if not remoteHost:
             return allAuthors
 
         request_url = f'{remoteHost}service/authors/'
-        # print('request url', request_url) 
+        # print('request url', request_url)
         try:
-            response = requests.get(request_url, auth=(node.username, node.password))
+            response = requests.get(
+                request_url, auth=(node.username, node.password))
             if response.status_code == 200:
                 remoteAuthors = response.json().get('items', [])
-                print('remote authors', json.dumps(response.json(), indent = 4))
+                print('remote authors', json.dumps(response.json(), indent=4))
                 for raw_author in remoteAuthors:
-                    transformed_author = transform_author_data(raw_author, node.team)
+                    transformed_author = transform_author_data(
+                        raw_author, node.team)
                     # print('remote author', transformed_author)
-                    
+
                     # Update or create the author in the database
                     create_or_update_author(transformed_author)
                     allAuthors.append(transformed_author)
 
-                    
         except requests.exceptions.RequestException as e:
             print(f"Error fetching authors from {remoteHost}: {e}")
             return allAuthors
@@ -52,6 +54,7 @@ def fetchRemoteAuthors():
 
 
 def fetchRemotePosts():
+    print('fetching remote posts')
     allPosts = []
     nodes = Node.objects.all()
 
@@ -63,27 +66,37 @@ def fetchRemotePosts():
             return allPosts
         request_url = f'{remoteHost}api/posts/'
         print('request url', request_url)
-        # print('request url', request_url) 
-        # try:
-        #     response = requests.get(request_url, auth=(node.username, node.password))
-        #     print('response from other team 2', json.dumps(response.json()))
-        #     if response.status_code == 200:
-        #         remoteAuthors = response.json().get('items', [])
-        #         # print('remote posts', json.dumps(response.json(), indent = 4))
-        #         # for raw_author in remoteAuthors:
-        #         #     transformed_author = transform_author_data(raw_author, node.team)
-        #         #     # print('remote author', transformed_author)
-                    
-        #         #     # Update or create the author in the database
-        #         #     create_or_update_author(transformed_author)
-        #         #     allAuthors.append(transformed_author)
 
-                    
-        # except requests.exceptions.RequestException as e:
-        #     print(f"Error fetching authors from {remoteHost}: {e}")
-        #     return allPosts
+        # print('request url', request_url)
+        try:
+            response = requests.get(
+                request_url, auth=(node.username, node.password))
+            print('response from other team 2', json.dumps(response.json()))
+            if response.status_code == 200:
+                remotePosts = response.json().get()
+                # print('remote posts', json.dumps(response.json(), indent = 4))
+                for raw_post in remotePosts:
+                    transformed_post = transform_post_data(raw_post, node.team)
+                #     # print('remote author', transformed_author)
+
+                #     # Update or create the author in the database
+                #     create_or_update_author(transformed_author)
+                #     allAuthors.append(transformed_author)
+
+        except requests.exceptions.RequestException as e:
+            print(f"Error fetching authors from {remoteHost}: {e}")
+            return allPosts
 
     return allPosts
+
+
+def transform_post_data(raw_post, team_id):
+
+    if team_id == 1:  # Assuming team 1 requires specific transformation
+        username = raw_post.get('displayName', 'unknown')
+
+        # print('all username,', username)
+        email = f"{username}@email.com"
 
 
 def create_or_update_author(author_data):
@@ -105,8 +118,8 @@ def create_or_update_author(author_data):
     AppUser.objects.update_or_create(user_id=user_id, defaults=defaults)
 
 
-#get to get their authors stuff using their url 
-#must have a 
+# get to get their authors stuff using their url
+# must have a
 def transform_author_data(raw_author, team_id):
     """
     Transforms raw author data to fit the AppUser model.
@@ -118,12 +131,11 @@ def transform_author_data(raw_author, team_id):
     """
     essential_fields = ['id', 'displayName', 'url', 'host']
     if not all(field in raw_author for field in essential_fields):
-        return None 
-    
-    
+        return None
+
     if team_id == 1:  # Assuming team 1 requires specific transformation
         username = raw_author.get('displayName', 'unknown')
-        
+
         # print('all username,', username)
         email = f"{username}@email.com"
 
@@ -139,12 +151,12 @@ def transform_author_data(raw_author, team_id):
             'email': email
         }
         # print('data transformed', data)
-        return data 
+        return data
     elif team_id == 2:
         # Handle other teams or default transformation
         pass
 
-    return raw_author  
+    return raw_author
 
 
 def identify_localauthor(author: AppUser):
@@ -154,24 +166,29 @@ def identify_localauthor(author: AppUser):
     return author.host in LOCALHOSTS
 
 
-def send_request_to_remoteInbox(follow_request:FriendRequest, object: AppUser):
-    print('am here for requests')
+def send_request_to_remoteInbox(follow_request: FriendRequest, object: AppUser):
+    print('am here for rmeote requests')
     try:
         node = Node.objects.get(host=object.host)
     except:
         print(f"[ERROR]: no node for user {object.displayName, object.url }")
         return
-    request_url = f'{object.url}inbox/'
+    base, author_id = object.url.rsplit('authors', 1)
+    request_url = f'{base}service/authors{author_id}/inbox/'
+
+    print('request url', request_url)
     friendReq = FriendRequestSerializer(follow_request)
     friendReqData_toSend = friendReq.data
     print('friend remote request data', friendReqData_toSend)
     try:
-        response = requests.post(request_url, json = friendReqData_toSend, auth=(node.username, node.password))
+        response = requests.post(
+            request_url, json=friendReqData_toSend, auth=(node.username, node.password))
+        print('status code response', response.status_code)
         if response.status_code == 200:
-           print('succeeded sent friend requests')
+            print('succeeded sent friend requests')
     except requests.exceptions.RequestException as e:
         print(f"couldnt sent friend request to remote inbox{node.host}: {e}")
-        
+
 
 def send_post_toInbox(post: Post, user: AppUser, send_to_follower):
     """
@@ -187,7 +204,9 @@ def send_post_toInbox(post: Post, user: AppUser, send_to_follower):
             else:
                 send_post_to_remoteInbox(post, recipient)
         except Exception as e:
-            print(f'Error sending post to {recipient.url, recipient.displayName}: {e}')
+            print(
+                f'Error sending post to {recipient.url, recipient.displayName}: {e}')
+
 
 def send_post_to_remoteInbox(post: Post, user: AppUser):
     try:
@@ -200,10 +219,93 @@ def send_post_to_remoteInbox(post: Post, user: AppUser):
     postReq = PostSerializer(post)
     postReqData_toSend = postReq.data
     try:
-        response = requests.post(request_url, json=postReqData_toSend, auth=(node.username, node.password))
+        response = requests.post(
+            request_url, json=postReqData_toSend, auth=(node.username, node.password))
         if response.ok:
-            print(f'Successfully sent post to global inbox {user.url}, {node.host}')
+            print(
+                f'Successfully sent post to global inbox {user.url}, {node.host}')
         else:
             print(f'Failed to send post: {response.status_code}')
     except requests.exceptions.RequestException as e:
         print(f"Error sending post to remote inbox {node.host}: {e}")
+
+
+def testsend_post_to_remoteInbox(post: Post, user: AppUser):
+    host_account = "https://whoiswill-7ef8b333cade.herokuapp.com/"
+    username = "admin"
+    password = "admin"
+    # try:
+    #     node = Node.objects.get(host=host_account)
+    # except Exception as e:
+    #     print(f"[ERROR]: No node for user {user.displayName, user.url}: {e}")
+    #     return
+    # print('node gotten', node)
+
+    request_url = "https://whoiswill-7ef8b333cade.herokuapp.com/service/authors/admin/posts/"
+
+    print('post am goign to send', post)
+    data = {
+        "type": "post",
+        "title": "8:23pm",
+        "id": "http://127.0.0.1:5454/authors/9de17f29c12e8f97bcbbd34cc908f1baba40658e/posts/764efa883dda1e11db47671c4a3bbd9e/",
+        "source": "http://lastplaceigotthisfrom.com/posts/yyyyy",
+        "origin": "http://whereitcamefrom.com/posts/zzzzz",
+        "description": "This post discusses stuff -- brief",
+        "contentType": "text/plain",
+        "content": "Þā wæs on burgum Bēowulf Scyldinga, lēof lēod-cyning, longe þrāge folcum gefrǣge (fæder ellor hwearf, aldor of earde), oð þæt him eft onwōc hēah Healfdene; hēold þenden lifde, gamol and gūð-rēow, glæde Scyldingas. Þǣm fēower bearn forð-gerīmed in worold wōcun, weoroda rǣswan, Heorogār and Hrōðgār and Hālga til; hȳrde ic, þat Elan cwēn Ongenþēowes wæs Heaðoscilfinges heals-gebedde. Þā wæs Hrōðgāre here-spēd gyfen, wīges weorð-mynd, þæt him his wine-māgas georne hȳrdon, oð þæt sēo geogoð gewēox, mago-driht micel. Him on mōd bearn, þæt heal-reced hātan wolde, medo-ærn micel men gewyrcean, þone yldo bearn ǣfre gefrūnon, and þǣr on innan eall gedǣlan geongum and ealdum, swylc him god sealde, būton folc-scare and feorum gumena. Þā ic wīde gefrægn weorc gebannan manigre mǣgðe geond þisne middan-geard, folc-stede frætwan. Him on fyrste gelomp ǣdre mid yldum, þæt hit wearð eal gearo, heal-ærna mǣst; scōp him Heort naman, sē þe his wordes geweald wīde hæfde. Hē bēot ne ālēh, bēagas dǣlde, sinc æt symle. Sele hlīfade hēah and horn-gēap: heaðo-wylma bād, lāðan līges; ne wæs hit lenge þā gēn þæt se ecg-hete āðum-swerian 85 æfter wæl-nīðe wæcnan scolde. Þā se ellen-gǣst earfoðlīce þrāge geþolode, sē þe in þȳstrum bād, þæt hē dōgora gehwām drēam gehȳrde hlūdne in healle; þǣr wæs hearpan swēg, swutol sang scopes. Sægde sē þe cūðe frum-sceaft fīra feorran reccan",
+        "author": {
+            "type": "author",
+            "id": "http://127.0.0.1:5454/authors/9de17f29c12e8f97bcbbd34cc908f1baba40658e",
+            "host": "http://127.0.0.1:5454/",
+            "displayName": "Lara Croft",
+            "url": "http://127.0.0.1:5454/authors/9de17f29c12e8f97bcbbd34cc908f1baba40658e",
+            "github": "http://github.com/laracroft",
+            "profileImage": "https://i.imgur.com/k7XVwpB.jpeg"
+        },
+        "categories": ["web", "tutorial"],
+        "count": 1023,
+        "comments": "http://127.0.0.1:5454/authors/9de17f29c12e8f97bcbbd34cc908f1baba40658e/posts/de305d54-75b4-431b-adb2-eb6b9e546013/comments",
+        "commentsSrc": {
+            "type": "comments",
+            "page": 1,
+            "size": 5,
+            "post": "http://127.0.0.1:5454/authors/9de17f29c12e8f97bcbbd34cc908f1baba40658e/posts/764efa883dda1e11db47671c4a3bbd9e",
+            "id": "http://127.0.0.1:5454/authors/9de17f29c12e8f97bcbbd34cc908f1baba40658e/posts/de305d54-75b4-431b-adb2-eb6b9e546013/comments",
+            "comments": [
+                {
+                    "type": "comment",
+                    "author": {
+                        "type": "author",
+                        "id": "http://127.0.0.1:5454/authors/1d698d25ff008f7538453c120f581471",
+                        "url": "http://127.0.0.1:5454/authors/1d698d25ff008f7538453c120f581471",
+                        "host": "http://127.0.0.1:5454/",
+                        "displayName": "Greg Johnson",
+                        "github": "http://github.com/gjohnson",
+                        "profileImage": "https://i.imgur.com/k7XVwpB.jpeg"
+                    },
+                    "comment": "Sick Olde English",
+                    "contentType": "text/markdown",
+                    "published": "2015-03-09T13:07:04+00:00",
+                    "id": "http://127.0.0.1:5454/authors/9de17f29c12e8f97bcbbd34cc908f1baba40658e/posts/de305d54-75b4-431b-adb2-eb6b9e546013/comments/f6255bb01c648fe967714d52a89e8e9c",
+                }
+            ]
+        },
+        "published": "2015-03-09T13:07:04+00:00",
+        "visibility": "PUBLIC",
+        "unlisted": False
+    }
+    # print('node username', node.username, node.password)
+    try:
+        response = requests.post(
+            request_url, json=data, auth=(username, password))
+        if response.ok:
+            print(
+                f'Successfully sent post to global inbox {user.url}')
+        else:
+            print(f'Failed to send post: {response.status_code}')
+    except requests.exceptions.RequestException as e:
+        print(f"Error sending post to remote inbox ")
+
+
+# edge case - users old posts prior to following another user
+# send all posts upon creation, can update other teams server once user gets to following them

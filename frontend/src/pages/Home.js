@@ -4,6 +4,7 @@ import "../css/Home.css";
 import { useNavigate } from "react-router-dom";
 import axiosInstance from "../axiosInstance";
 import { useAuth } from "../context/AuthContext";
+import GitHubPost from "../components/GithubPost";
 // import { all } from "axios";
 
 export default function Home() {
@@ -14,7 +15,9 @@ export default function Home() {
     const storedUser = JSON.parse(localStorage.getItem('user'));
     const storedUser_str = storedUser.user
     const userId = storedUser_str.id.split("/").pop()
+    const [githubUrl, setGithubUrl] = useState('');
     useEffect(() => {
+
         if (!isAuthenticated) {
             navigate('/login'); // Redirect to login if not authenticated
         }
@@ -22,6 +25,9 @@ export default function Home() {
 
     useEffect(() => {
         // Fetch all users
+        const githubUrl = storedUser_str.github;
+        setGithubUrl(githubUrl);
+        console.log('all users ', storedUser_str)
         axiosInstance.get('authors/user').then(response => {
             const usersWithProcessedIds = response.data.items.map(user => ({
                 ...user
@@ -79,6 +85,7 @@ export default function Home() {
     return (
         <div className="posts-container">
             <h1>Explore</h1>
+            {githubUrl && < GitHubPost githubUrl={githubUrl} className="posts-row" />}
             {postsChunks.map((chunk, chunkIndex) => (
                 <div key={chunkIndex} className="posts-row">
                     {chunk.map((post, postIndex) => (

@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from .models import Post, Comment, Like
-from django.urls import reverse 
+from django.urls import reverse
 from .serializers import PostSerializer, CommentSerializer, CommentLikeSerializer
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -9,26 +9,28 @@ from rest_framework.exceptions import NotFound
 from django.core.exceptions import ObjectDoesNotExist
 from rest_framework import status
 from authors.models import AppUser
-import uuid 
+import uuid
 from django.http import Http404
 from django.shortcuts import get_object_or_404
 from drf_yasg.utils import swagger_auto_schema
-from node.node_functions import send_post_toInbox, fetchRemotePosts
+from node.node_functions import send_post_toInbox, fetchRemotePosts, testsend_post_to_remoteInbox
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 
 
 def get_user(pk):
-        try:
-            user = AppUser.objects.get(pk=pk)
-        except AppUser.DoesNotExist:
-            return None
-        return user
+    try:
+        user = AppUser.objects.get(pk=pk)
+    except AppUser.DoesNotExist:
+        return None
+    return user
 
-def get_object(user,post_id):
-        try:
-            return user.post_user.get(post_id=post_id)
-        except Post.DoesNotExist:
-            return None
+
+def get_object(user, post_id):
+    try:
+        return user.post_user.get(post_id=post_id)
+    except Post.DoesNotExist:
+        return None
+
 
 @api_view(['GET'])
 def own_posts_list(request, pk):
@@ -46,7 +48,7 @@ def own_posts_list(request, pk):
 
             # Fetch friends' private and friends-only posts without order_by
             friends_posts = Post.objects.filter(
-                author__in=friends, 
+                author__in=friends,
                 visibility__in=["PRIVATE", "FRIENDS_ONLY"]
             )
 
@@ -55,7 +57,8 @@ def own_posts_list(request, pk):
             print('all posts on profile', posts)
         else:
             # Fetch all public posts
-            posts = Post.objects.filter(visibility="PUBLIC").order_by('-published')
+            posts = Post.objects.filter(
+                visibility="PUBLIC").order_by('-published')
 
         page = request.query_params.get('page', 1)
         size = request.query_params.get('size', 10)
@@ -75,28 +78,31 @@ def own_posts_list(request, pk):
         raise NotFound(detail="Author not found", code=404)
 
 
-    
 @api_view(['GET', 'POST'])
-def posts_list(request, pk = None):
+def posts_list(request, pk=None):
+
     if request.method == 'POST':
-        fetchRemotePosts()
+        print('i made aa new post')
         # if we want to create a new post, use the serializer and save if valid
         serializer = PostSerializer(data=request.data)
-        
-        
+
         if serializer.is_valid():
             serializer.save()
+            post_created = serializer.data
+            user = get_user(pk)
+            testsend_post_to_remoteInbox(post_created, user)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     else:
-        print('got here to get post')
+        # fetchRemotePosts()
+
         try:
-            
+
             if pk:
                 # Fetch posts for a specific author
                 posts = Post.objects.filter(author__user_id=pk)
-                
+
                 if request.user.is_authenticated and request.user.user_id == pk:
                     # If the request user is the author, show all their posts
                     posts = posts
@@ -126,9 +132,8 @@ def posts_list(request, pk = None):
             return Response({"type": "publicposts", "items": serializer.data}, status=status.HTTP_200_OK)
 
         except ObjectDoesNotExist:
-            
-            raise NotFound(detail="Author not found", code=404)
 
+            raise NotFound(detail="Author not found", code=404)
 
 
 @api_view(['GET', 'DELETE', 'PATCH'])
@@ -143,7 +148,7 @@ def post_detail(request, pk, post_id):
             post.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
         except Exception as e:
-            
+
             return Response({"error": "Deletion failed"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     elif request.method == 'PATCH':
@@ -163,13 +168,13 @@ def post_detail(request, pk, post_id):
         serializer = PostSerializer(post)
         return Response(serializer.data)
 
+
 @api_view(['GET', 'POST'])
 def comments_list(request, pk, post_id):
     if request.method == 'POST':
         print('Received comment data:', request.data)
         print('Comment post ID:', type(post_id))
 
-       
         request_data_with_postId = request.data.copy()
         request_data_with_postId['postId'] = post_id
 
@@ -191,6 +196,8 @@ def comments_list(request, pk, post_id):
         print('ser data', serializer.data)
         return Response(serializer.data)
     return Response(serializer.data)
+
+
 @api_view(['GET', 'POST', 'DELETE'])
 def comment_like(request, pk, comment_id):
     try:
@@ -210,7 +217,7 @@ def comment_like(request, pk, comment_id):
         return Response(response_data, status=status.HTTP_200_OK)
 
     elif request.method == 'POST':
-       
+
         user_id = request.data.get('author')
         user = get_object_or_404(AppUser, pk=user_id)
 
@@ -238,6 +245,7 @@ def comment_like(request, pk, comment_id):
     else:
         return Response({"error": "Method not allowed"}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
+
 @api_view(['GET', 'DELETE', 'PATCH'])
 def comment_detail(request, pk, post_id):
     # get the comment with the specified ID
@@ -264,7 +272,8 @@ def comment_detail(request, pk, post_id):
     else:
         # if we want to get a comment, use the serializer to return the comment
         return Response(serializer.data)
- 
+
+
 @api_view(['GET'])
 @swagger_auto_schema(operation_description="Get all image data for a post", responses={200: "{'type': 'author', 'id': {id}}", 400: "{'type': 'error', 'message': {errors}}"})
 def get_post_image(request, pk):
