@@ -34,6 +34,8 @@ class Post(models.Model):
     unlisted = models.BooleanField()
     url = models.URLField(max_length=500,editable=False,null=True)
     # comments = models.URLField(max_length=500,editable=False,default=str(url) + '/comments')
+
+    
 class Comment(models.Model):
 
     

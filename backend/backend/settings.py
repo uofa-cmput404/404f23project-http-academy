@@ -49,7 +49,8 @@ INSTALLED_APPS = [
     'drf_yasg',
     'inbox',
     'followers',
-    'like'
+    'like',
+    'github',
     # 'comment'
 ]
 

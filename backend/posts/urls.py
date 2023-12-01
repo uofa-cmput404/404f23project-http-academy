@@ -41,4 +41,5 @@ urlpatterns = [
     # path('<uuid:comment_id>/like/', include('like.urls')),
     path('comments/<uuid:comment_id>/likes/', views.comment_like),
 
+    path('<uuid:post_id>/github/', include('github.urls')),
 ]
