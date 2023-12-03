@@ -9,6 +9,7 @@ https://docs.djangoproject.com/en/4.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
+import django_on_heroku
 
 from pathlib import Path
 import os
@@ -96,6 +97,17 @@ DATABASES = {
     }
 }
 
+# Use PostgreSQL in GitHub Actions workflow
+if 'GITHUB_ACTIONS' in os.environ:
+    DATABASES['default'] = {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'your_database_name',
+        'USER': 'your_postgres_user',
+        'PASSWORD': 'your_postgres_password',
+        'HOST': 'localhost',
+        'PORT': '5432',
+    }
+
 AUTH_USER_MODEL = 'authors.AppUser'
 
 REST_FRAMEWORK = {
@@ -159,3 +171,6 @@ CORS_ALLOW_CREDENTIALS = True
 
 
 CSRF_TRUSTED_ORIGINS = ['http://localhost:3000']
+
+
+django_on_heroku.settings(locals()) # bottom of the file
