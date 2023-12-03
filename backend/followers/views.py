@@ -57,6 +57,7 @@ class AcceptFriendRequest(APIView):
         print(' iaccepted ur request - THIS IS YOUU THE REQUESTER', requester)
         # Check if the friend request exists and is not already accepted
         friend_request = FriendRequest.objects.filter(actor=requester, object=user).first()
+        # print('created request', friend_request)
         if not friend_request or friend_request.accepted:
             return Response({"detail": "Friend request does not exist or is already accepted."}, status=status.HTTP_404_NOT_FOUND)
 

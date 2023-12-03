@@ -10,13 +10,21 @@
     width: 25%;
 }
 
-html, body {
+html,
+body {
     height: 100%;
     font-family: 'Inter', sans-serif;
 }
 
-.posts-container h1{
-  
+.posts-container h1 {
+
     display: flex;
     font-size: 4em;
+}
+
+.github-st {
+    display: flex;
+    background-color: brown;
+    flex-direction: row;
+
 }

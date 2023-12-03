@@ -20,7 +20,7 @@ export default function SharePost({ posts, users }) {
         setPost(enrichedPosts);
         setPostId(posts.post_id);
         setAllusers(users);
-    }, [posts, users, findAuthorForPost]); 
+    }, [posts, users, findAuthorForPost]);
 
     return (
         <div className='outer-container'>

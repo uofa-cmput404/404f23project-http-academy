@@ -17,9 +17,14 @@ const Profile = () => {
   const storedUser_val = JSON.parse(localStorage.getItem('user'));
   const storedUser = storedUser_val.user
   const userId = storedUser.id.split("/").pop()
+  const [githubUrl, setGithubUrl] = useState('');
 
 
 
+  useEffect(() => {
+    const githubUrl = storedUser.github;
+    setGithubUrl(githubUrl);
+  }, [storedUser.github])
 
   const handleUnfriend = (requesterId) => {
 
@@ -56,6 +61,7 @@ const Profile = () => {
   }, [userId]);
 
   const fetchPosts = useCallback(() => {
+
     const url = `authors/${userId}/posts/ownPosts/`;
     axiosInstance.get(url).then(response => {
       const Posts = response.data.items
@@ -84,7 +90,7 @@ const Profile = () => {
     const userName = user.displayName;
     const hasImage = userProfileUrl && userProfileUrl.match(/\.(jpeg|jpg|gif|png)$/);
     const avatarStyle = { width: 100, height: 100 };
-
+    const githubUsername = githubUrl.split('/').pop();
     return (
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', marginTop: "40px" }}>
         {hasImage ? (
@@ -97,6 +103,11 @@ const Profile = () => {
         <Typography variant="body1" style={{ fontSize: "40px", fontWeight: "bold", marginTop: '10px', textAlign: 'center', width: '100px' }}>
           {userName}
         </Typography>
+        {githubUsername && (
+          <a href={githubUrl} target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none', color: '#7D633C' }}>
+            @{githubUsername}
+          </a>
+        )}
       </div>
     );
   };
@@ -141,6 +152,7 @@ const Profile = () => {
             </div>
           </div>
         </div>
+
         <div className="post-section">
           <div className="post-heading">
             <h1>Posts</h1>
@@ -164,4 +176,3 @@ const Profile = () => {
 };
 
 export default Profile;
-

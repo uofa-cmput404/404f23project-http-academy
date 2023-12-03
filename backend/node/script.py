@@ -7,8 +7,8 @@ session = requests.Session()
 csrf_response = session.get(csrf_token_url)
 csrf_token = csrf_response.json()['csrfToken']
 
-email = "whoiswill@email.com"
-password = "cmput404"
+email = "test"
+password = "test"
 
 auth_credentials = {"email": email, "password": password}
 headers = {
@@ -16,7 +16,8 @@ headers = {
     'X-CSRFToken': csrf_token
 }
 
-login_response = session.post(login_url, json=auth_credentials, headers=headers)
+login_response = session.post(
+    login_url, json=auth_credentials, headers=headers)
 
 if login_response.status_code == 200:
     print("API call successful!")

@@ -128,6 +128,9 @@ export default function Hub() {
     //     }
     // };
 
+    if (!allUsers) {
+        return <h2>Loading</h2>
+    }
 
     return (
         <div className='outer-containers2'>
