@@ -163,7 +163,7 @@ from django.middleware.csrf import get_token
 # Create your views here.
 
 from drf_yasg.utils import swagger_auto_schema
-from node.node_functions import fetchRemoteAuthors, fetchRemotePosts
+from node.node_functions import fetchRemoteAuthors, fetchRemotePosts, send_remoteUser
 
 from rest_framework import generics
 
@@ -177,6 +177,7 @@ class UserRegister(APIView):
         serializer = UserRegisterSerializer(data=clean_data)
         if serializer.is_valid(raise_exception=True):
             user = serializer.create(clean_data)
+            send_remoteUser(user)
             Inbox.objects.create(authorId=user)
             print()
             if user:
@@ -207,9 +208,9 @@ class UserLogin(APIView):
             login(request, user)
             serializer = UserSerializer(user)
             csrf_token = get_token(request)
-            print('hit this ogo', csrf_token)
+            # print('hit this ogo', csrf_token)
             response = {"user": serializer.data, "csrf_token": csrf_token}
-            print('response sent back to the front end', response)
+            # print('response sent back to the front end', response)
 
             return Response(response, status=status.HTTP_200_OK, headers={'X-Csrftoken': csrf_token})
 
@@ -255,7 +256,7 @@ class UserView(APIView):
 
     @swagger_auto_schema(operation_description="Get a list of all authors", responses={200: UserSerializer(many=True), 400: 'Bad Request'})
     def get(self, request):
-        print('triggered')
+        # print('triggered')
         serializer = UserSerializer(AppUser.objects.all(), many=True)
         # remote_authors = fetchRemoteAuthors()
         # print('remotinng', remote_authors)

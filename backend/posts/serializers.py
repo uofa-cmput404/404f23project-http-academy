@@ -26,6 +26,7 @@ class PostSerializer(serializers.ModelSerializer):
         post = Post.objects.create(**validated_data)
         user = validated_data.get('author')
         post_id = str(post.post_id)  # Use the auto-generated UUID
+        post.id = post_id
         post.url = user.url + "/posts/" + post_id
         post.save()
         return post

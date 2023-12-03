@@ -10,6 +10,7 @@ from rest_framework.permissions import IsAuthenticatedOrReadOnly
 import base64
 import requests
 from authors.models import AppUser
+from authors.serializers import UserSerializer
 from followers.models import FriendRequest
 from followers.serializers import FriendRequestSerializer
 from posts.models import Post
@@ -190,6 +191,45 @@ def send_request_to_remoteInbox(follow_request: FriendRequest, object: AppUser):
         print(f"couldnt sent friend request to remote inbox{node.host}: {e}")
 
 
+def send_remoteUser(user: AppUser):
+    """
+    send all our users upon creation to remote team 
+    """
+
+    host_rm = "https://whoiswill-3127a59583ac.herokuapp.com/"
+    # try:
+    #     node = Node.objects.get(host=object.host)
+    # except:
+    #     print(f"[ERROR]: no node for user {object.displayName, object.url }")
+    #     return
+    base, author_id = user.url.rsplit('authors', 1)
+    print('user ready to send to the remote')
+    print(base, author_id)
+    print('user to send to whoiswill', user)
+
+    data = {
+        "type": "author",
+        "id": user.id,
+        "host": user.host,
+        "email": user.email,
+        "displayName": user.username,
+        "github": "http://github.com/laracroft",
+        "profileImage": "https://i.imgur.com/k7XVwpB.jpeg"
+    }
+
+    request_url = f'{host_rm}service/authors{author_id}/'
+    username = "admin"
+    password = "admin"
+    try:
+        response = requests.post(
+            request_url, json=data, auth=(username, password))
+        print('status code response', response.status_code)
+        if response.status_code == 200:
+            print('succeeded sending users')
+    except requests.exceptions.RequestException as e:
+        print(f"couldnt sent friend request to remote database")
+
+
 def send_post_toInbox(post: Post, user: AppUser, send_to_follower):
     """
     Send a post to the inbox of followers or all users.
@@ -240,22 +280,57 @@ def testsend_post_to_remoteInbox(post: Post, user: AppUser):
     #     print(f"[ERROR]: No node for user {user.displayName, user.url}: {e}")
     #     return
     # print('node gotten', node)
+    base, author_id = user.url.rsplit('authors', 1)
+    request_url = f"https://whoiswill-3127a59583ac.herokuapp.com/service/authors/{author_id}/posts/"
 
-    request_url = "https://whoiswill-7ef8b333cade.herokuapp.com/service/authors/admin/posts/"
+    # print('post am goign to send', post)
+    source_rm = post["source"]
+    origin_rm = post["origin"]
+    title_rm = post["title"]
+    contentType_rm = post["contentType"]
+    visibility_rm = post["visibility"]
+    content_rm = post["content"]
+    id_rm = post["id"]
+    published_rm = post["published"]
+    unlisted_rm = post["unlisted"]
+    data_2 = {
+        "type": "post",
+        "title": title_rm,
+        "id": id_rm,
+        "description": None,
+        "contentType": contentType_rm,
+        "content": "TEST Þā wæs on burgum Bēowulf Scyldinga, lēof lēod-cyning, longe þrāge folcum gefrǣge (fæder ellor hwearf, aldor of earde), oð þæt him eft onwōc hēah Healfdene; hēold þenden lifde, gamol and gūð-rēow, glæde Scyldingas. Þǣm fēower bearn forð-gerīmed in worold wōcun, weoroda rǣswan, Heorogār and Hrōðgār and Hālga til; hȳrde ic, þat Elan cwēn Ongenþēowes wæs Heaðoscilfinges heals-gebedde. Þā wæs Hrōðgāre here-spēd gyfen, wīges weorð-mynd, þæt him his wine-māgas georne hȳrdon, oð þæt sēo geogoð gewēox, mago-driht micel. Him on mōd bearn, þæt heal-reced hātan wolde, medo-ærn micel men gewyrcean, þone yldo bearn ǣfre gefrūnon, and þǣr on innan eall gedǣlan geongum and ealdum, swylc him god sealde, būton folc-scare and feorum gumena. Þā ic wīde gefrægn weorc gebannan manigre mǣgðe geond þisne middan-geard, folc-stede frætwan. Him on fyrste gelomp ǣdre mid yldum, þæt hit wearð eal gearo, heal-ærna mǣst; scōp him Heort naman, sē þe his wordes geweald wīde hæfde. Hē bēot ne ālēh, bēagas dǣlde, sinc æt symle. Sele hlīfade hēah and horn-gēap: heaðo-wylma bād, lāðan līges; ne wæs hit lenge þā gēn þæt se ecg-hete āðum-swerian 85 æfter wæl-nīðe wæcnan scolde. Þā se ellen-gǣst earfoðlīce þrāge geþolode, sē þe in þȳstrum bād, þæt hē dōgora gehwām drēam gehȳrde hlūdne in healle; þǣr wæs hearpan swēg, swutol sang scopes. Sægde sē þe cūðe frum-sceaft fīra feorran reccan",
+        "source": source_rm,
+        "origin": origin_rm,
+        "contentType": contentType_rm,
+        "content": content_rm,
+        "author": {
+            "id": user.id,
+        },
+        "categories": [],
 
-    print('post am goign to send', post)
+        "published": published_rm,
+        "visibility": visibility_rm,
+        "unlisted": unlisted_rm
+    }
+
+    print('data to send', data_2)
+    print('data to send', type(data_2.get("title")))
+    print('Source', type(data_2.get("source")))
+    print('origin', type(data_2.get("origin")))
+    postID = post["id"].split("/").pop()
     data = {
         "type": "post",
-        "title": "8:23pm",
-        "id": "http://127.0.0.1:5454/authors/9de17f29c12e8f97bcbbd34cc908f1baba40658e/posts/764efa883dda1e11db47671c4a3bbd9e/",
-        "source": "http://lastplaceigotthisfrom.com/posts/yyyyy",
+        "title": post["title"],
+        "id": f"http://127.0.0.1:5454/authors/{author_id}/posts/{postID}/",
+        "source": source_rm,
         "origin": "http://whereitcamefrom.com/posts/zzzzz",
         "description": "This post discusses stuff -- brief",
         "contentType": "text/plain",
-        "content": "Þā wæs on burgum Bēowulf Scyldinga, lēof lēod-cyning, longe þrāge folcum gefrǣge (fæder ellor hwearf, aldor of earde), oð þæt him eft onwōc hēah Healfdene; hēold þenden lifde, gamol and gūð-rēow, glæde Scyldingas. Þǣm fēower bearn forð-gerīmed in worold wōcun, weoroda rǣswan, Heorogār and Hrōðgār and Hālga til; hȳrde ic, þat Elan cwēn Ongenþēowes wæs Heaðoscilfinges heals-gebedde. Þā wæs Hrōðgāre here-spēd gyfen, wīges weorð-mynd, þæt him his wine-māgas georne hȳrdon, oð þæt sēo geogoð gewēox, mago-driht micel. Him on mōd bearn, þæt heal-reced hātan wolde, medo-ærn micel men gewyrcean, þone yldo bearn ǣfre gefrūnon, and þǣr on innan eall gedǣlan geongum and ealdum, swylc him god sealde, būton folc-scare and feorum gumena. Þā ic wīde gefrægn weorc gebannan manigre mǣgðe geond þisne middan-geard, folc-stede frætwan. Him on fyrste gelomp ǣdre mid yldum, þæt hit wearð eal gearo, heal-ærna mǣst; scōp him Heort naman, sē þe his wordes geweald wīde hæfde. Hē bēot ne ālēh, bēagas dǣlde, sinc æt symle. Sele hlīfade hēah and horn-gēap: heaðo-wylma bād, lāðan līges; ne wæs hit lenge þā gēn þæt se ecg-hete āðum-swerian 85 æfter wæl-nīðe wæcnan scolde. Þā se ellen-gǣst earfoðlīce þrāge geþolode, sē þe in þȳstrum bād, þæt hē dōgora gehwām drēam gehȳrde hlūdne in healle; þǣr wæs hearpan swēg, swutol sang scopes. Sægde sē þe cūðe frum-sceaft fīra feorran reccan",
+        "content": "TEST Þā wæs on burgum Bēowulf Scyldinga, lēof lēod-cyning, longe þrāge folcum gefrǣge (fæder ellor hwearf, aldor of earde), oð þæt him eft onwōc hēah Healfdene; hēold þenden lifde, gamol and gūð-rēow, glæde Scyldingas. Þǣm fēower bearn forð-gerīmed in worold wōcun, weoroda rǣswan, Heorogār and Hrōðgār and Hālga til; hȳrde ic, þat Elan cwēn Ongenþēowes wæs Heaðoscilfinges heals-gebedde. Þā wæs Hrōðgāre here-spēd gyfen, wīges weorð-mynd, þæt him his wine-māgas georne hȳrdon, oð þæt sēo geogoð gewēox, mago-driht micel. Him on mōd bearn, þæt heal-reced hātan wolde, medo-ærn micel men gewyrcean, þone yldo bearn ǣfre gefrūnon, and þǣr on innan eall gedǣlan geongum and ealdum, swylc him god sealde, būton folc-scare and feorum gumena. Þā ic wīde gefrægn weorc gebannan manigre mǣgðe geond þisne middan-geard, folc-stede frætwan. Him on fyrste gelomp ǣdre mid yldum, þæt hit wearð eal gearo, heal-ærna mǣst; scōp him Heort naman, sē þe his wordes geweald wīde hæfde. Hē bēot ne ālēh, bēagas dǣlde, sinc æt symle. Sele hlīfade hēah and horn-gēap: heaðo-wylma bād, lāðan līges; ne wæs hit lenge þā gēn þæt se ecg-hete āðum-swerian 85 æfter wæl-nīðe wæcnan scolde. Þā se ellen-gǣst earfoðlīce þrāge geþolode, sē þe in þȳstrum bād, þæt hē dōgora gehwām drēam gehȳrde hlūdne in healle; þǣr wæs hearpan swēg, swutol sang scopes. Sægde sē þe cūðe frum-sceaft fīra feorran reccan",
         "author": {
             "type": "author",
-            "id": "http://127.0.0.1:5454/authors/9de17f29c12e8f97bcbbd34cc908f1baba40658e",
+            "id": f"http://127.0.0.1:5454/authors/{author_id}",
             "host": "http://127.0.0.1:5454/",
             "displayName": "Lara Croft",
             "url": "http://127.0.0.1:5454/authors/9de17f29c12e8f97bcbbd34cc908f1baba40658e",
@@ -294,18 +369,38 @@ def testsend_post_to_remoteInbox(post: Post, user: AppUser):
         "visibility": "PUBLIC",
         "unlisted": False
     }
-    # print('node username', node.username, node.password)
+    # post["author"] = str(post['author'])
+
     try:
         response = requests.post(
-            request_url, json=data, auth=(username, password))
+            request_url, json=data_2, auth=(username, password))
         if response.ok:
-            print(
-                f'Successfully sent post to global inbox {user.url}')
+            print('response ')
+            # print(
+            # f'Successfully sent post to who is will {data}')
         else:
             print(f'Failed to send post: {response.status_code}')
     except requests.exceptions.RequestException as e:
-        print(f"Error sending post to remote inbox ")
+        print(f"Error sending post to who is will")
 
 
 # edge case - users old posts prior to following another user
 # send all posts upon creation, can update other teams server once user gets to following them
+
+
+""""
+    server 1 
+
+        
+        (4:16) user 1  -> send friend req to user 2
+        
+    
+    server 2    - > receives friend req in inbox 
+                    -> can choose to accept/reject friend req
+                        -> if accept (user 1 in following list of user 2 )
+        4:13 posts before rrquest:
+            [first post, second post]
+        user 2  accepts friend requests
+        posts after rrquest:
+            [third post]
+"""

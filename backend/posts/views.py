@@ -128,7 +128,7 @@ def posts_list(request, pk=None):
                 posttosee = paginator.page(paginator.num_pages)
 
             serializer = PostSerializer(posttosee, many=True)
-            print('data returned to front end', serializer.data)
+            # print('data returned to front end', serializer.data)
             return Response({"type": "publicposts", "items": serializer.data}, status=status.HTTP_200_OK)
 
         except ObjectDoesNotExist:
@@ -172,8 +172,8 @@ def post_detail(request, pk, post_id):
 @api_view(['GET', 'POST'])
 def comments_list(request, pk, post_id):
     if request.method == 'POST':
-        print('Received comment data:', request.data)
-        print('Comment post ID:', type(post_id))
+        # print('Received comment data:', request.data)
+        # print('Comment post ID:', type(post_id))
 
         request_data_with_postId = request.data.copy()
         request_data_with_postId['postId'] = post_id
