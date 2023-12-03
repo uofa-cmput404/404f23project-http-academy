@@ -247,7 +247,6 @@ def comment_like(request, pk, comment_id):
 
 
 
-
 @api_view(['GET', 'DELETE', 'PATCH'])
 def comment_detail(request, pk, post_id):
     # get the comment with the specified ID
