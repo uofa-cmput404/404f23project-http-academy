@@ -246,6 +246,8 @@ def comment_like(request, pk, comment_id):
         return Response({"error": "Method not allowed"}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
 
+
+
 @api_view(['GET', 'DELETE', 'PATCH'])
 def comment_detail(request, pk, post_id):
     # get the comment with the specified ID
