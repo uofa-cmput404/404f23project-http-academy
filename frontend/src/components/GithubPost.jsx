@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
 import isGithubUrl from 'is-github-url';
 import "../css/Post.css";
 

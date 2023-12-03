@@ -7,7 +7,6 @@ import { yellow } from "@mui/material/colors";
 import Typography from '@mui/material/Typography';
 import { extractUUIDFromURL } from "../utilities/extractUIID";
 import Post from '../components/Post';
-import GitHubPost from "../components/GithubPost";
 
 const Profile = () => {
 
@@ -25,7 +24,7 @@ const Profile = () => {
   useEffect(() => {
     const githubUrl = storedUser.github;
     setGithubUrl(githubUrl);
-  }, [])
+  }, [storedUser.github])
 
   const handleUnfriend = (requesterId) => {
 
