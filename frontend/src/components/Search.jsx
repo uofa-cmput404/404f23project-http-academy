@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import axiosInstance from "../axiosInstance";
 import '../css/Search.css';
 
 export default function Search({ setPosts, findAuthorForPost, oldPosts }) {
   const [searchQuery, setSearchQuery] = useState('');
 
-  const handlePostSearch = () => {
+  const handlePostSearch = useCallback(() => {
     try {
       axiosInstance.get(`posts/search/${searchQuery}/`)
         .then(response => {
@@ -17,25 +17,22 @@ export default function Search({ setPosts, findAuthorForPost, oldPosts }) {
           setPosts(postsWithAuthors);
         })
         .catch(error => console.error(error));
-    }
-    catch (e) {
+    } catch (e) {
       console.log(e);
     }
-  };
+  }, [searchQuery, setPosts, findAuthorForPost]);
 
   useEffect(() => {
     if (searchQuery.trim() === '') {
       setPosts(oldPosts);
-      console.log(oldPosts);
     } else {
       handlePostSearch();
-      console.log(oldPosts);
     }
   }, [searchQuery, oldPosts, setPosts, handlePostSearch]);
 
   const handleChange = (event) => {
     setSearchQuery(event.target.value);
-    if (searchQuery === '') {
+    if (event.target.value === '') {
       setPosts(oldPosts);
     }
   };
