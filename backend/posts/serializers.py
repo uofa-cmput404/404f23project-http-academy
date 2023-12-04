@@ -22,14 +22,49 @@ class PostSerializer(serializers.ModelSerializer):
 
         return commentRepresentation
 
+    # def create(self, validated_data):
+    #     # post = Post.objects.create(**validated_data)
+    #     user = validated_data.get('author')
+
+    #     """
+    #     create posts for foreign authors
+    #     1. i want to try and get the user being set in in the user field
+    #     2. if the user is a foreign author then create post for them using their uuid
+    #     """
+    #     if user.isForeign:
+    #         post = Post.objects.create(**validated_data, author = )
+
+    #     post_id = str(post.post_id)  # Use the auto-generated UUID
+    #     post.id = post_id
+    #     post.url = user.url + "/posts/" + post_id
+    #     post.save()
+    #     return post
+
     def create(self, validated_data):
-        post = Post.objects.create(**validated_data)
         user = validated_data.get('author')
-        post_id = str(post.post_id)  # Use the auto-generated UUID
-        post.id = post_id
-        post.url = user.url + "/posts/" + post_id
-        post.save()
-        return post
+
+        # Create a new post instance without saving it to the database yet
+        post = Post(**validated_data)
+
+        try:
+            # Check if the user is a foreign author
+            if user.isForeign:
+                # Extract the foreign post ID from the user's URL
+                post_foreign_id = user.url.split('/')[-1]
+                post.id = f"{user.url}/posts/{post_foreign_id}/"
+                post.foreign = post_foreign_id
+            else:
+                # Generate the id for a local author
+                post.id = f"{user.host}authors/{user.pk}/posts/{post.post_id}/"
+
+            # Save the post instance
+            post.save()
+            return post
+
+        except Exception as e:
+            # Log the exception or handle it as needed
+            print(f"Error in creating post: {str(e)}")
+            return {'status': f'failed to create post: {str(e)}'}
 
     def update(self, instance, validated_data):
         # Update and return an existing `Post` instance, given the validated data
@@ -61,7 +96,39 @@ class CommentSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         # Create and return a new `Comment` instance, given the validated data
-        return Comment.objects.create(**validated_data)
+        user = validated_data.get('author')
+
+        # Create a new post instance without saving it to the database yet
+        comment = Comment(**validated_data)
+        try:
+            # Check if the user is a foreign author
+            if comment.isForeign:
+                # Extract the foreign post ID from the user's URL
+                comment_foreign_id = comment.url.split('/')[-1]
+                comment_url = str(comment.postId.id) + \
+                    "comments/" + str(comment.comment_id)
+                comment.id = comment_url
+                comment.url = comment.id
+                comment.foreign = comment_foreign_id
+
+            else:
+                comment_url = str(comment.postId.id) + \
+                    "comments/" + str(comment.comment_id)
+                comment.id = comment_url
+                comment.url = comment.id
+                print('comment field', comment.id)
+                print('comment field', comment.author)
+                print('comment field', comment.url)
+                print('comment field', comment.isForeign)
+                print('comment field', comment.foreign)
+            # Save the post instance
+            comment.save()
+            return comment
+
+        except Exception as e:
+            # Log the exception or handle it as needed
+            print(f"Error in creating post: {str(e)}")
+            return {'status': f'failed to create post: {str(e)}'}
 
     def update(self, instance, validated_data):
         # Update and return an existing `Comment` instance, given the validated data

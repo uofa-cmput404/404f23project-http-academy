@@ -74,10 +74,14 @@ class Comment(models.Model):
         Post, on_delete=models.CASCADE, db_index=True, related_name="comment_for_post")
     url = models.URLField(max_length=500, editable=False,
                           null=True, blank=True)
+    isForeign = models.BooleanField(default=False)
+    foreign = models.UUIDField(default=uuid.uuid4, editable=True)
 
     def save(self, *args, **kwargs):
-        self.url = str(self.postId.url) + "/comments/" + str(self.comment_id)
-        self.id = self.url
+        if not self.author.isForeign:
+            self.foreign = self.comment_id
+            self.url = str(self.postId.id) + "comments/" + str(self.comment_id)
+            self.id = self.url
         super().save(*args, **kwargs)
 
 
@@ -90,6 +94,8 @@ class Like(models.Model):
     commentId = models.ForeignKey(
         Comment, on_delete=models.CASCADE, db_index=True, null=True)
     like = models.IntegerField(default=0)
+    isForeign = models.BooleanField(default=False)
+    foreign = models.UUIDField(default=uuid.uuid4, editable=True)
 
 
 class Category(models.Model):

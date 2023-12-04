@@ -17,6 +17,7 @@ from posts.models import Post
 from inbox.models import Inbox
 from posts.serializers import PostSerializer
 import json
+from posts.models import Comment
 LOCALHOSTS = ["http://127.0.0.1/", "https://cmput404-httpacademy2-1c641b528836.herokuapp.com/",
               "http://127.0.0.1:8000/"]
 
@@ -196,7 +197,7 @@ def send_remoteUser(user: AppUser):
     send all our users upon creation to remote team 
     """
 
-    host_rm = "https://whoiswill-3127a59583ac.herokuapp.com/"
+    host_rm = "https://whowill-648a6cd76980.herokuapp.com/"
     # try:
     #     node = Node.objects.get(host=object.host)
     # except:
@@ -270,8 +271,45 @@ def send_post_to_remoteInbox(post: Post, user: AppUser):
         print(f"Error sending post to remote inbox {node.host}: {e}")
 
 
+def sendComment_toRemoteHost(comment: Comment, user: AppUser):
+    host_account = "https://whowill-648a6cd76980.herokuapp.com/"
+    username = "admin"
+    password = "admin"
+
+    # Convert UUID objects to strings
+    comment_id_str = str(
+        comment["postId"]) if 'postId' in comment and comment['postId'] is not None else None
+    user_id_str = str(user.id)
+
+    commentData = {
+        "type": "comment",
+        "author": {
+            "id": user_id_str,
+        },
+        "comment": comment.get('comment', ''),
+        "contentType": comment.get('contentType', ''),
+        "published": comment.get('published', ''),
+        "id": comment_id_str,
+    }
+
+    # Construct the request URL
+    request_url = f"{host_account}service/authors/{user_id_str}/posts/{comment_id_str}/comments"
+    print('comment data to send to whoiswill', commentData)
+
+    # Send the POST request
+    try:
+        response = requests.post(
+            request_url, json=commentData, auth=(username, password))
+        if response.ok:
+            print('Successfully sent comment to who is will')
+        else:
+            print(f'Failed to send post: {response.status_code}')
+    except requests.exceptions.RequestException as e:
+        print(f"Error sending comment to who is will: {e}")
+
+
 def testsend_post_to_remoteInbox(post: Post, user: AppUser):
-    host_account = "https://whoiswill-7ef8b333cade.herokuapp.com/"
+    host_account = "https://whowill-648a6cd76980.herokuapp.com/"
     username = "admin"
     password = "admin"
     # try:
@@ -281,23 +319,24 @@ def testsend_post_to_remoteInbox(post: Post, user: AppUser):
     #     return
     # print('node gotten', node)
     base, author_id = user.url.rsplit('authors', 1)
-    request_url = f"https://whoiswill-3127a59583ac.herokuapp.com/service/authors/{author_id}/posts/"
+    request_url = f"https://whowill-648a6cd76980.herokuapp.com/service/authors{author_id}/posts/"
 
-    # print('post am goign to send', post)
-    source_rm = post["source"]
-    origin_rm = post["origin"]
-    title_rm = post["title"]
-    contentType_rm = post["contentType"]
-    visibility_rm = post["visibility"]
-    content_rm = post["content"]
-    id_rm = post["id"]
-    published_rm = post["published"]
-    unlisted_rm = post["unlisted"]
+    print('request url', request_url)
+    source_rm = post.source
+    origin_rm = post.origin
+    title_rm = post.title
+    contentType_rm = post.contentType
+    visibility_rm = post.visibility
+    content_rm = post.content
+    id_rm = post.id
+    published_rm = post.published.isoformat() if post.published else None
+    unlisted_rm = post.unlisted
+    image_rm = post.image
     data_2 = {
         "type": "post",
         "title": title_rm,
         "id": id_rm,
-        "description": None,
+        "description": "",
         "contentType": contentType_rm,
         "content": "TEST Þā wæs on burgum Bēowulf Scyldinga, lēof lēod-cyning, longe þrāge folcum gefrǣge (fæder ellor hwearf, aldor of earde), oð þæt him eft onwōc hēah Healfdene; hēold þenden lifde, gamol and gūð-rēow, glæde Scyldingas. Þǣm fēower bearn forð-gerīmed in worold wōcun, weoroda rǣswan, Heorogār and Hrōðgār and Hālga til; hȳrde ic, þat Elan cwēn Ongenþēowes wæs Heaðoscilfinges heals-gebedde. Þā wæs Hrōðgāre here-spēd gyfen, wīges weorð-mynd, þæt him his wine-māgas georne hȳrdon, oð þæt sēo geogoð gewēox, mago-driht micel. Him on mōd bearn, þæt heal-reced hātan wolde, medo-ærn micel men gewyrcean, þone yldo bearn ǣfre gefrūnon, and þǣr on innan eall gedǣlan geongum and ealdum, swylc him god sealde, būton folc-scare and feorum gumena. Þā ic wīde gefrægn weorc gebannan manigre mǣgðe geond þisne middan-geard, folc-stede frætwan. Him on fyrste gelomp ǣdre mid yldum, þæt hit wearð eal gearo, heal-ærna mǣst; scōp him Heort naman, sē þe his wordes geweald wīde hæfde. Hē bēot ne ālēh, bēagas dǣlde, sinc æt symle. Sele hlīfade hēah and horn-gēap: heaðo-wylma bād, lāðan līges; ne wæs hit lenge þā gēn þæt se ecg-hete āðum-swerian 85 æfter wæl-nīðe wæcnan scolde. Þā se ellen-gǣst earfoðlīce þrāge geþolode, sē þe in þȳstrum bād, þæt hē dōgora gehwām drēam gehȳrde hlūdne in healle; þǣr wæs hearpan swēg, swutol sang scopes. Sægde sē þe cūðe frum-sceaft fīra feorran reccan",
         "source": source_rm,
@@ -308,6 +347,7 @@ def testsend_post_to_remoteInbox(post: Post, user: AppUser):
             "id": user.id,
         },
         "categories": [],
+        "image": image_rm,
 
         "published": published_rm,
         "visibility": visibility_rm,
@@ -318,66 +358,17 @@ def testsend_post_to_remoteInbox(post: Post, user: AppUser):
     print('data to send', type(data_2.get("title")))
     print('Source', type(data_2.get("source")))
     print('origin', type(data_2.get("origin")))
-    postID = post["id"].split("/").pop()
-    data = {
-        "type": "post",
-        "title": post["title"],
-        "id": f"http://127.0.0.1:5454/authors/{author_id}/posts/{postID}/",
-        "source": source_rm,
-        "origin": "http://whereitcamefrom.com/posts/zzzzz",
-        "description": "This post discusses stuff -- brief",
-        "contentType": "text/plain",
-        "content": "TEST Þā wæs on burgum Bēowulf Scyldinga, lēof lēod-cyning, longe þrāge folcum gefrǣge (fæder ellor hwearf, aldor of earde), oð þæt him eft onwōc hēah Healfdene; hēold þenden lifde, gamol and gūð-rēow, glæde Scyldingas. Þǣm fēower bearn forð-gerīmed in worold wōcun, weoroda rǣswan, Heorogār and Hrōðgār and Hālga til; hȳrde ic, þat Elan cwēn Ongenþēowes wæs Heaðoscilfinges heals-gebedde. Þā wæs Hrōðgāre here-spēd gyfen, wīges weorð-mynd, þæt him his wine-māgas georne hȳrdon, oð þæt sēo geogoð gewēox, mago-driht micel. Him on mōd bearn, þæt heal-reced hātan wolde, medo-ærn micel men gewyrcean, þone yldo bearn ǣfre gefrūnon, and þǣr on innan eall gedǣlan geongum and ealdum, swylc him god sealde, būton folc-scare and feorum gumena. Þā ic wīde gefrægn weorc gebannan manigre mǣgðe geond þisne middan-geard, folc-stede frætwan. Him on fyrste gelomp ǣdre mid yldum, þæt hit wearð eal gearo, heal-ærna mǣst; scōp him Heort naman, sē þe his wordes geweald wīde hæfde. Hē bēot ne ālēh, bēagas dǣlde, sinc æt symle. Sele hlīfade hēah and horn-gēap: heaðo-wylma bād, lāðan līges; ne wæs hit lenge þā gēn þæt se ecg-hete āðum-swerian 85 æfter wæl-nīðe wæcnan scolde. Þā se ellen-gǣst earfoðlīce þrāge geþolode, sē þe in þȳstrum bād, þæt hē dōgora gehwām drēam gehȳrde hlūdne in healle; þǣr wæs hearpan swēg, swutol sang scopes. Sægde sē þe cūðe frum-sceaft fīra feorran reccan",
-        "author": {
-            "type": "author",
-            "id": f"http://127.0.0.1:5454/authors/{author_id}",
-            "host": "http://127.0.0.1:5454/",
-            "displayName": "Lara Croft",
-            "url": "http://127.0.0.1:5454/authors/9de17f29c12e8f97bcbbd34cc908f1baba40658e",
-            "github": "http://github.com/laracroft",
-            "profileImage": "https://i.imgur.com/k7XVwpB.jpeg"
-        },
-        "categories": ["web", "tutorial"],
-        "count": 1023,
-        "comments": "http://127.0.0.1:5454/authors/9de17f29c12e8f97bcbbd34cc908f1baba40658e/posts/de305d54-75b4-431b-adb2-eb6b9e546013/comments",
-        "commentsSrc": {
-            "type": "comments",
-            "page": 1,
-            "size": 5,
-            "post": "http://127.0.0.1:5454/authors/9de17f29c12e8f97bcbbd34cc908f1baba40658e/posts/764efa883dda1e11db47671c4a3bbd9e",
-            "id": "http://127.0.0.1:5454/authors/9de17f29c12e8f97bcbbd34cc908f1baba40658e/posts/de305d54-75b4-431b-adb2-eb6b9e546013/comments",
-            "comments": [
-                {
-                    "type": "comment",
-                    "author": {
-                        "type": "author",
-                        "id": "http://127.0.0.1:5454/authors/1d698d25ff008f7538453c120f581471",
-                        "url": "http://127.0.0.1:5454/authors/1d698d25ff008f7538453c120f581471",
-                        "host": "http://127.0.0.1:5454/",
-                        "displayName": "Greg Johnson",
-                        "github": "http://github.com/gjohnson",
-                        "profileImage": "https://i.imgur.com/k7XVwpB.jpeg"
-                    },
-                    "comment": "Sick Olde English",
-                    "contentType": "text/markdown",
-                    "published": "2015-03-09T13:07:04+00:00",
-                    "id": "http://127.0.0.1:5454/authors/9de17f29c12e8f97bcbbd34cc908f1baba40658e/posts/de305d54-75b4-431b-adb2-eb6b9e546013/comments/f6255bb01c648fe967714d52a89e8e9c",
-                }
-            ]
-        },
-        "published": "2015-03-09T13:07:04+00:00",
-        "visibility": "PUBLIC",
-        "unlisted": False
-    }
+    # postID = post["id"].split("/").pop()
+
     # post["author"] = str(post['author'])
 
     try:
         response = requests.post(
             request_url, json=data_2, auth=(username, password))
         if response.ok:
-            print('response ')
-            # print(
-            # f'Successfully sent post to who is will {data}')
+            print('response ', response.json())
+            print(
+                f'Successfully sent post to who is will {response.status_code}')
         else:
             print(f'Failed to send post: {response.status_code}')
     except requests.exceptions.RequestException as e:
