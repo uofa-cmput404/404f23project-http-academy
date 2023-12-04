@@ -15,6 +15,7 @@ from django.shortcuts import get_object_or_404
 from drf_yasg.utils import swagger_auto_schema
 from node.node_functions import send_post_toInbox, fetchRemotePosts, testsend_post_to_remoteInbox, sendComment_toRemoteHost
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
+from django.db.models import Q
 
 
 def get_user(pk):
@@ -289,3 +290,10 @@ def get_post_image(request, pk):
     post = Post.objects.get(id=pk)
     serializer = PostSerializer(post, many=False)
     return Response(serializer.data["image"])
+
+@api_view(['GET'])
+def search_posts(request, query):
+    # TODO: Handle the error when nothing is found
+    posts = Post.objects.filter(Q(title__icontains=query) | Q(content__icontains=query) | Q(author__username__icontains=query))
+    serializer = PostSerializer(posts, many=True)
+    return Response(serializer.data)

@@ -95,8 +95,8 @@ export default function Post({ post, canEdit, authorDetails }) {
 
     const handleComment = () => {
         setOpenModal(true);
-        setModalMode('comment')
-    }
+        setModalMode('comment');
+    };
 
     return (
         <div className="card">

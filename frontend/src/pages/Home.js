@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import axiosInstance from "../axiosInstance";
 import { useAuth } from "../context/AuthContext";
 import GitHubPost from "../components/GithubPost";
+import Search from "../components/Search";
 // import { all } from "axios";
 
 export default function Home() {
@@ -13,9 +14,11 @@ export default function Home() {
     const [posts, setPosts] = useState([]);
     const [allUsers, setAllUsers] = useState([]);
     const storedUser = JSON.parse(localStorage.getItem('user'));
-    const storedUser_str = storedUser.user
-    const userId = storedUser_str.id.split("/").pop()
+    const storedUser_str = storedUser.user;
+    const userId = storedUser_str.id.split("/").pop();
     const [githubUrl, setGithubUrl] = useState('');
+    const [oldPosts, setOldPosts] = useState([]);
+
     useEffect(() => {
 
         if (!isAuthenticated) {
@@ -27,7 +30,7 @@ export default function Home() {
         // Fetch all users
         const githubUrl = storedUser_str.github;
         setGithubUrl(githubUrl);
-        console.log('all users ', storedUser_str)
+        console.log('all users ', storedUser_str);
         axiosInstance.get('authors/user').then(response => {
             const usersWithProcessedIds = response.data.items.map(user => ({
                 ...user
@@ -37,9 +40,6 @@ export default function Home() {
             console.log(error);
         });
     }, [storedUser_str]);
-
-
-
 
     // const extractIdFromUrl = (url) => {
     //     console.log('url sent ', url)
@@ -64,6 +64,7 @@ export default function Home() {
                 authorDetails: findAuthorForPost(post)
             }));
             setPosts(postsWithAuthors);
+            setOldPosts(postsWithAuthors);
         }).catch(error => {
             console.log(error);
         });
@@ -71,7 +72,7 @@ export default function Home() {
 
 
     const postsChunks = posts.reduce((resultArray, item, index) => {
-        console.log('postng works', posts)
+        console.log('postng works', posts);
         const chunkIndex = Math.floor(index / 3);
 
         if (!resultArray[chunkIndex]) {
@@ -82,17 +83,25 @@ export default function Home() {
         return resultArray;
     }, []);
 
+
+
     return (
         <div className="posts-container">
             <h1>Explore</h1>
+            <Search setPosts={setPosts} findAuthorForPost={findAuthorForPost} oldPosts={oldPosts} />
             {githubUrl && < GitHubPost githubUrl={githubUrl} className="posts-row" />}
-            {postsChunks.map((chunk, chunkIndex) => (
-                <div key={chunkIndex} className="posts-row">
-                    {chunk.map((post, postIndex) => (
-                        <Post key={postIndex} post={post} canEdit={userId === post.author} authorDetails={post.authorDetails} />
-                    ))}
-                </div>
-            ))}
+            {posts.length === 0 ? (
+                <p>No posts found.</p>
+            ) : (
+                postsChunks.map((chunk, chunkIndex) => (
+                    <div key={chunkIndex} className="posts-row">
+                        {chunk.map((post, postIndex) => (
+                            <Post key={postIndex} post={post} canEdit={userId === post.author} authorDetails={post.authorDetails} />
+                        ))}
+                    </div>
+                ))
+            )}
+
         </div>
     );
 }
