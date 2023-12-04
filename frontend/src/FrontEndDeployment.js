@@ -1,3 +1,4 @@
+/*
 // Example using Axios for API requests in React
 import axios from 'axios';
 
@@ -9,4 +10,4 @@ axios.get('https://your-django-api.herokuapp.com/api/endpoint')
   .catch(error => {
     // Handle error
     console.error('Error fetching data:', error);
-  });
+  });*/
