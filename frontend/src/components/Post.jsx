@@ -114,7 +114,7 @@ export default function Post({ post, canEdit, authorDetails }) {
 
             <div className="footer-container">
                 <div className="userNamePost">
-                    {/* {console.log('person who made post', authorDetails)} */}
+                    {console.log('person who made post', authorDetails)}
                     {authorDetails?.displayName && (
                         <span>
                             {authorDetails.displayName}

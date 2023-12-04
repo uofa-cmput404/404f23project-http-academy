@@ -30,7 +30,7 @@ export default function Home() {
         // Fetch all users
         const githubUrl = storedUser_str.github;
         setGithubUrl(githubUrl);
-        // console.log('all users ', storedUser_str);
+        console.log('all users ', storedUser_str);
         axiosInstance.get('authors/user').then(response => {
             const usersWithProcessedIds = response.data.items.map(user => ({
                 ...user
@@ -39,7 +39,7 @@ export default function Home() {
         }).catch(error => {
             console.log(error);
         });
-    }, []);
+    }, [storedUser_str]);
 
     // const extractIdFromUrl = (url) => {
     //     console.log('url sent ', url)
@@ -72,7 +72,7 @@ export default function Home() {
 
 
     const postsChunks = posts.reduce((resultArray, item, index) => {
-        // console.log('postng works', posts);
+        console.log('postng works', posts);
         const chunkIndex = Math.floor(index / 3);
 
         if (!resultArray[chunkIndex]) {
