@@ -13,7 +13,7 @@ import uuid
 from django.http import Http404
 from django.shortcuts import get_object_or_404
 from drf_yasg.utils import swagger_auto_schema
-from node.node_functions import send_post_toInbox, fetchRemotePosts, testsend_post_to_remoteInbox
+from node.node_functions import send_post_toInbox, fetchRemotePosts, testsend_post_to_remoteInbox, sendComment_toRemoteHost
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 
 
@@ -87,10 +87,14 @@ def posts_list(request, pk=None):
         serializer = PostSerializer(data=request.data)
 
         if serializer.is_valid():
-            serializer.save()
-            post_created = serializer.data
+            # serializer.save()
+            # post_created = serializer.data
+            # user = get_user(pk)
+            # testsend_post_to_remoteInbox(post_created, user)
+            post = serializer.save()  # Save and get the post instance
             user = get_user(pk)
-            testsend_post_to_remoteInbox(post_created, user)
+            print('post object', post)
+            testsend_post_to_remoteInbox(post, user)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -177,12 +181,16 @@ def comments_list(request, pk, post_id):
 
         request_data_with_postId = request.data.copy()
         request_data_with_postId['postId'] = post_id
-
+        user = get_object_or_404(AppUser, pk=pk)
         serializer = CommentSerializer(data=request_data_with_postId)
-
         if serializer.is_valid():
+
             print('it actually worked and saved a comment')
             serializer.save()
+            comment_toSend = serializer.data
+
+            print('comment to send', comment_toSend["id"])
+            sendComment_toRemoteHost(comment_toSend, user)
         else:
             print('serialzier eerror', serializer.errors)
             return Response(serializer.errors)
