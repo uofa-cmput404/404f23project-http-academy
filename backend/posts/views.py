@@ -285,6 +285,7 @@ def get_post_image(request, pk):
 
 @api_view(['GET'])
 def search_posts(request, query):
-    posts = Post.objects.filter(Q(title__icontains=query) | Q(content__icontains=query))
+    # TODO: Handle the error when nothing is found
+    posts = Post.objects.filter(Q(title__icontains=query) | Q(content__icontains=query) | Q(author__username__icontains=query))
     serializer = PostSerializer(posts, many=True)
     return Response(serializer.data)

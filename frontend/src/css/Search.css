@@ -1,0 +1,30 @@
+.search-container {
+  position: relative;
+  width: 300px;
+}
+
+input[type="text"] {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px 0 0 5px;
+  outline: none;
+}
+
+button {
+  padding: 10px 15px;
+  border: 1px solid #ccc;
+  border-radius: 0 5px 5px 0;
+  background-color: #4CAF50;
+  color: white;
+  cursor: pointer;
+  outline: none;
+}
+
+button:hover {
+  background-color: #45a049;
+}
+
+input[type="text"],
+button {
+  transition: all 0.3s ease;
+}
