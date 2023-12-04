@@ -39,7 +39,7 @@ export default function Home() {
         }).catch(error => {
             console.log(error);
         });
-    }, []);
+    }, [storedUser_str]);
 
     // const extractIdFromUrl = (url) => {
     //     console.log('url sent ', url)
