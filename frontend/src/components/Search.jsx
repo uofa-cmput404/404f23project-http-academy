@@ -31,7 +31,7 @@ export default function Search({ setPosts, findAuthorForPost, oldPosts }) {
       handlePostSearch();
       console.log(oldPosts);
     }
-  }, [searchQuery, oldPosts, setPosts]);
+  }, [searchQuery, oldPosts, setPosts, handlePostSearch]);
 
   const handleChange = (event) => {
     setSearchQuery(event.target.value);
