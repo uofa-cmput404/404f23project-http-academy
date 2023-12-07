@@ -40,21 +40,21 @@ def own_posts_list(request, pk):
         user = get_user(pk)
         if user:
             # Fetch the user's own posts without order_by
-            own_posts = Post.objects.filter(author=user)
+            posts = Post.objects.filter(author=user)
 
             # Identify friends as those who are both followers and following
-            followers = set(user.followers.all())
-            following = set(user.following.all())
-            friends = followers.intersection(following)
+            # followers = set(user.followers.all())
+            # following = set(user.following.all())
+            # friends = followers.intersection(following)
 
             # Fetch friends' private and friends-only posts without order_by
-            friends_posts = Post.objects.filter(
-                author__in=friends,
-                visibility__in=["PRIVATE", "FRIENDS_ONLY"]
-            )
+            # friends_posts = Post.objects.filter(
+            #     author__in=friends,
+            #     visibility__in=["PRIVATE", "FRIENDS_ONLY"]
+            # )
 
             # Combine user's own posts with friends' posts and then apply order_by
-            posts = own_posts.union(friends_posts).order_by('-published')
+            # posts = own_posts.union(friends_posts).order_by('-published')
             print('all posts on profile', posts)
         else:
             # Fetch all public posts
@@ -297,3 +297,41 @@ def search_posts(request, query):
     posts = Post.objects.filter(Q(title__icontains=query) | Q(content__icontains=query) | Q(author__username__icontains=query))
     serializer = PostSerializer(posts, many=True)
     return Response(serializer.data)
+
+@api_view(['GET'])
+def homepage(request, pk):
+    try:
+        user = get_user(pk)
+        followers = set(user.followers.all())
+        following = set(user.following.all())
+        friends = followers.intersection(following)
+        friends_posts = Post.objects.filter(
+            author__in = friends,
+            visibility__in = ["PRIVATE", "FRIENDS_ONLY"]
+        )
+        user_private_and_friends_posts = Post.objects.filter(
+            author = user,
+            visibility__in = ["PRIVATE", "FRIENDS_ONLY"]
+        )
+        public_posts = Post.objects.filter(visibility="PUBLIC")
+        posts = public_posts.union(friends_posts)
+        posts = posts.union(user_private_and_friends_posts)
+
+        posts = posts.order_by('-published')
+        page = request.query_params.get('page', 1)
+        size = request.query_params.get('size', 10)
+        paginator = Paginator(posts, size)
+
+        try:
+            posttosee = paginator.page(page)
+        except PageNotAnInteger:
+            posttosee = paginator.page(1)
+        except EmptyPage:
+            posttosee = paginator.page(paginator.num_pages)
+
+        serializer = PostSerializer(posttosee, many=True)
+        # print('data returned to front end', serializer.data)
+        return Response({"type": "homepage", "items": serializer.data}, status=status.HTTP_200_OK)
+
+    except ObjectDoesNotExist:
+        raise NotFound(detail="Author not found", code=404)
