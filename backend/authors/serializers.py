@@ -18,7 +18,7 @@ class UserRegisterSerializer(serializers.ModelSerializer):
             user_obj = AppUser.objects.create(
                 email=clean_data["email"],
                 username=clean_data.get("username", ""),
-                displayName=clean_data.get("displayName", ""),
+                displayName=clean_data.get("username", ""),
                 github=clean_data.get("github", ""),
                 profileImage=clean_data.get("profileImage", ""),
                 isForeign=True,  # Set isForeign to True
@@ -28,7 +28,7 @@ class UserRegisterSerializer(serializers.ModelSerializer):
             user_obj = AppUser.objects.create(
                 email=clean_data["email"],
                 username=clean_data.get("username", ""),
-                displayName=clean_data.get("displayName", ""),
+                displayName=clean_data.get("username", ""),
                 github=clean_data.get("github", ""),
                 profileImage=clean_data.get("profileImage", ""),
                 isForeign=False,  # Set isForeign to false
