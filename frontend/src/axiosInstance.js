@@ -4,7 +4,8 @@ axios.defaults.xsrfCookieName = 'csrftoken';
 axios.defaults.xsrfHeaderName = 'X-CSRFToken';
 axios.defaults.withCredentials = true;
 
-const baseURL = 'https://cmput404-httpacademy5-2f1f7827d5c1.herokuapp.com/';
+// const baseURL = 'https://cmput404-httpacademy5-2f1f7827d5c1.herokuapp.com/';
+const baseURL = 'http://localhost:8000/';
 
 // TODO: this is broken; CORS is not configured correctly, but using the default axios instance works
 const axiosInstance = axios.create({

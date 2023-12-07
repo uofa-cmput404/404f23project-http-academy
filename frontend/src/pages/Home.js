@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, useRef } from "react";
 import Post from "../components/Post";
 import "../css/Home.css";
 import { useNavigate } from "react-router-dom";
@@ -26,11 +26,13 @@ export default function Home() {
         }
     }, [isAuthenticated, navigate, storedUser]);
 
+    const storedUserRef = useRef(storedUser_str);
+
     useEffect(() => {
         // Fetch all users
-        const githubUrl = storedUser_str.github;
+        const githubUrl = storedUserRef.current.github;
         setGithubUrl(githubUrl);
-        console.log('all users ', storedUser_str);
+        console.log('all users ', storedUserRef.current);
         axiosInstance.get('authors/user').then(response => {
             const usersWithProcessedIds = response.data.items.map(user => ({
                 ...user
