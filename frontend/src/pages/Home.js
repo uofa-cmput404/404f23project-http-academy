@@ -59,9 +59,9 @@ export default function Home() {
 
     useEffect(() => {
         // Fetch posts after users are loaded
-        axiosInstance.get('posts/').then(response => {
-            const publicPosts = response.data.items.filter(p => p.visibility === "PUBLIC");
-            const postsWithAuthors = publicPosts.map(post => ({
+        axiosInstance.get(`posts/${userId}/homepage/`).then(response => {
+            const posts = response.data.items;
+            const postsWithAuthors = posts.map(post => ({
                 ...post,
                 authorDetails: findAuthorForPost(post)
             }));
@@ -70,7 +70,7 @@ export default function Home() {
         }).catch(error => {
             console.log(error);
         });
-    }, [allUsers, findAuthorForPost]);
+    }, [allUsers, findAuthorForPost, userId]);
 
 
     const postsChunks = posts.reduce((resultArray, item, index) => {

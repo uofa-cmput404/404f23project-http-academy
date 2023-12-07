@@ -40,5 +40,6 @@ urlpatterns = [
     path('<uuid:post_id>/like/', include('like.urls')),
     # path('<uuid:comment_id>/like/', include('like.urls')),
     path('comments/<uuid:comment_id>/likes/', views.comment_like),
-    path('search/<str:query>/', views.search_posts)
+    path('search/<str:query>/', views.search_posts),
+    path('<uuid:pk>/homepage/', views.homepage)
 ]
