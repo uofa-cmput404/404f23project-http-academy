@@ -17,7 +17,6 @@ from node.node_functions import send_post_toInbox, fetchRemotePosts, testsend_po
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.db.models import Q
 
-
 def get_user(pk):
     try:
         user = AppUser.objects.get(pk=pk)
@@ -81,9 +80,19 @@ def own_posts_list(request, pk):
 
 @api_view(['GET', 'POST'])
 def posts_list(request, pk=None):
-
     if request.method == 'POST':
-        print('i made aa new post')
+        all_users = AppUser.objects.all()
+        matched_user = None
+
+        filtered = all_users.filter(foreign__contains=request.data["author"])
+
+        if filtered.count() > 0:
+            for user in all_users:
+                print("User url", user.url)
+                if str(user.foreign) == request.data["author"]:
+                    matched_user = user
+            request.data["author"] = str(matched_user.user_id)
+
         # if we want to create a new post, use the serializer and save if valid
         serializer = PostSerializer(data=request.data)
 
@@ -93,10 +102,13 @@ def posts_list(request, pk=None):
             # user = get_user(pk)
             # testsend_post_to_remoteInbox(post_created, user)
             post = serializer.save()  # Save and get the post instance
-            user = get_user(pk)
-            print('post object', post)
-            testsend_post_to_remoteInbox(post, user)
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+            if pk:
+                user = get_user(pk) 
+                print('post object', post)
+                testsend_post_to_remoteInbox(post, user)
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+            else:
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     else:
