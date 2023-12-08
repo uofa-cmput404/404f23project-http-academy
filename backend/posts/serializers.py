@@ -53,9 +53,11 @@ class PostSerializer(serializers.ModelSerializer):
                 post_foreign_id = user.url.split('/')[-1]
                 post.id = f"{user.url}/posts/{post_foreign_id}/"
                 post.foreign = post_foreign_id
+                post.url = user.url + "/posts/" + post.id
             else:
                 # Generate the id for a local author
                 post.id = f"{user.host}authors/{user.pk}/posts/{post.post_id}/"
+                post.url = user.url + "/posts/" + post.id
 
             # Save the post instance
             post.save()
