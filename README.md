@@ -7,6 +7,7 @@ CMPUT 404 Project: Social Distribution
 
 [Team Wiki](https://github.com/uofa-cmput404/404f23project-http-academy/wiki)
 
+[Video](https://drive.google.com/file/d/1IZ7j19jS-3wPFJuJ1_wZ74ck5tbkseHx/view?usp=drive_link)
 
 
 API Documentation
