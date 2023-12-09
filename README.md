@@ -41,7 +41,7 @@ pass:
 Group Connections
 ==================
 
-#Team WhoisWill:
+# Team WhoisWill:
 Front-End URL: https://whosocialwill.netlify.app/
 Backend URL: https://whoiswill-130181bf2e5e.herokuapp.com/
 API URL: https://whoiswill-130181bf2e5e.herokuapp.com/swagger
