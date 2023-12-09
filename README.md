@@ -31,11 +31,15 @@ Generally everything is LICENSE'D under the  Apache 2 license by Abram Hindle.
 
 Public Users
 ==============
-user: 
-pass:
+user: admin@email.com
 
-user: 
-pass: 
+pass: admin
+
+Front-end URL: https://http-academy.netlify.app/
+
+backend URL: https://cmput404-httpacademy15-6f9ce3a9597d.herokuapp.com/
+
+API Documentation: https://cmput404-httpacademy15-6f9ce3a9597d.herokuapp.com/swagger
 
 
 Group Connections
