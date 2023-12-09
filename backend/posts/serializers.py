@@ -80,6 +80,7 @@ class PostSerializer(serializers.ModelSerializer):
         instance.visibility = validated_data.get(
             'visibility', instance.visibility)
         instance.unlisted = validated_data.get('unlisted', instance.unlisted)
+        instance.image_url = validated_data.get('image_url', instance.image_url)
         instance.save()
         return instance
 

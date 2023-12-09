@@ -165,16 +165,18 @@ def identify_localauthor(author: AppUser):
     """
     will tell u if user is a local author
     """
-    return author.host in LOCALHOSTS
+    return author.isForeign == False
 
 
 def send_request_to_remoteInbox(follow_request: FriendRequest, object: AppUser):
-    print('am here for rmeote requests')
-    try:
-        node = Node.objects.get(host=object.host)
-    except:
-        print(f"[ERROR]: no node for user {object.displayName, object.url }")
-        return
+    print('am here for rmeote requests', object.host)
+    # try:
+    #     node = Node.objects.get(host=object.host)
+    # except:
+    #     print(f"[ERROR]: no node for user {object.displayName, object.url }")
+    #     return
+    username = "admin"
+    password = "admin"
     base, author_id = object.url.rsplit('authors', 1)
     request_url = f'{base}service/authors{author_id}/inbox/'
 
@@ -184,12 +186,12 @@ def send_request_to_remoteInbox(follow_request: FriendRequest, object: AppUser):
     print('friend remote request data', friendReqData_toSend)
     try:
         response = requests.post(
-            request_url, json=friendReqData_toSend, auth=(node.username, node.password))
+            request_url, json=friendReqData_toSend, auth=(username, password))
         print('status code response', response.status_code)
         if response.status_code == 200:
             print('succeeded sent friend requests')
     except requests.exceptions.RequestException as e:
-        print(f"couldnt sent friend request to remote inbox{node.host}: {e}")
+        print(f"couldnt sent friend request to remote inbox: {e}")
 
 
 def send_remoteUser(user: AppUser):

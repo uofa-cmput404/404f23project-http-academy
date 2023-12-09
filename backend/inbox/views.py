@@ -136,7 +136,9 @@ class InboxView(APIView):
         inbox.follow_request.add(follow_request)
         # print("Follow request added to inbox", inbox)
 
+        print("Object...", identify_localauthor(object))
         if not identify_localauthor(object):
+            print("identifying local...", object)
             send_request_to_remoteInbox(follow_request, object)
 
         return Response({"detail": "Follow request added to inbox"}, status=status.HTTP_201_CREATED)
