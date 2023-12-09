@@ -44,7 +44,7 @@ export default function EditPost({ onClose, posts }) {
 
   }, [postId, posts, url]);
 
-  const editPost = (updatedTitle, updatedBody, updatedImage) => {
+  const editPost = (updatedTitle, updatedBody, updatedUrl, updatedImage) => {
 
 
     if (post.title !== updatedTitle) {
@@ -62,11 +62,17 @@ export default function EditPost({ onClose, posts }) {
       post.visibility = visibility;
     }
 
+    if (post.image_url !== updatedUrl) {
+      post.image_url = updatedUrl;
+    }
+   
+
     const updatedPost = {
       title: post.title,
       content: post.content,
       image: post.image,
-      visibility: visibility
+      visibility: visibility,
+      image_url: post.image_url
     };
 
     console.log('this is sedning to backend', post);
@@ -125,6 +131,9 @@ export default function EditPost({ onClose, posts }) {
           <h2>Body</h2>
           <textarea id="body" name="body" rows="4" cols="50" defaultValue={post.content} class="single-line-input"></textarea>
 
+          <h2>Image URL</h2>
+				  <input type="text" id="image_url" name="image_url" defaultValue={post.image_url} class="single-line-input" maxLength={50} />
+		
 
           <br />
           <div className="postfooter-container">
@@ -134,6 +143,7 @@ export default function EditPost({ onClose, posts }) {
                 editPost(
                   document.getElementById("title").value,
                   document.getElementById("body").value,
+                  document.getElementById("image_url").value,
                   image
                 )
               }

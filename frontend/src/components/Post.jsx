@@ -100,6 +100,7 @@ export default function Post({ post, canEdit, authorDetails }) {
 
     return (
         <div className="card">
+            
             <div className="edit-container">
                 <button onClick={handleEdit} className={`edit-button ${canEdit ? "" : "invisible"}`}>
                     <img src={editIcon} alt="Edit" />
@@ -107,8 +108,18 @@ export default function Post({ post, canEdit, authorDetails }) {
             </div>
 
 
+
             <div className="card-body">
-                <h2 className="card-title">{post.title}</h2>
+                <div className="outerpostDiv">
+                    <div className="titleDiv">
+                    <h2 className="card-title">{post.title}</h2>
+                    </div>
+                    {post.image_url && (
+                    <div className="post_imgDiv">
+                        <img src = {post.image_url} alt = "postimage" className="postImage"/>
+                    </div>)}
+                </div>
+                
             </div>
 
 

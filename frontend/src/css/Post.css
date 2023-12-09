@@ -15,15 +15,20 @@
 .card-body {
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    align-items: center;
+    /* justify-content: center; */
+    /* align-items: center; */
     background-color: rgba(217, 217, 217, 0.45);
     max-height: 300px;
     min-height: 250px;
-
     border-radius: 1.2em;
 }
 
+
+.titleDiv{
+    display: flex;
+    justify-content: center;
+    max-height: 15%;
+}
 /* .card-body:hover {
     cursor: pointer;
     background-color: rgba(255, 95, 31, 0.25);
@@ -76,4 +81,31 @@
     font-size: 17px;
     font-weight: bold;
     margin-left: 5px;
+}
+/* 
+.post_imgDiv{
+    background-color: yellow;
+    width: 100%;
+    max-height: 100%;
+}
+
+.postImage{
+    
+    width: 100%;
+    object-fit: cover;
+    border-radius: 1.2em;
+} */
+
+
+.post_imgDiv {
+
+    width: 100%;
+    /* max-height: 100%; Remove this line */
+}
+
+.postImage {
+    width: 100%;
+
+    object-fit: cover;
+    border-radius: 1.2em;
 }

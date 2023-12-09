@@ -43,9 +43,11 @@ class PostSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         user = validated_data.get('author')
 
+        print('validated data from front end', validated_data)
         # Create a new post instance without saving it to the database yet
         post = Post(**validated_data)
-
+        image_url = validated_data.pop('image_url', None)
+        print('post field', post.image_url)
         try:
             # Check if the user is a foreign author
             if user.isForeign:
@@ -59,6 +61,9 @@ class PostSerializer(serializers.ModelSerializer):
                 post.id = f"{user.host}authors/{user.pk}/posts/{post.post_id}/"
                 post.url = user.url + "/posts/" + post.id
 
+            if not post.image_url:
+                print('hit this to create')
+                post.image_url = None
             # Save the post instance
             post.save()
             return post

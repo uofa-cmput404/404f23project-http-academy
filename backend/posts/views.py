@@ -93,6 +93,7 @@ def posts_list(request, pk=None):
                     matched_user = user
             request.data["author"] = str(matched_user.user_id)
 
+        print('request data', request.data)
         # if we want to create a new post, use the serializer and save if valid
         serializer = PostSerializer(data=request.data)
 
@@ -104,12 +105,13 @@ def posts_list(request, pk=None):
             post = serializer.save()  # Save and get the post instance
             if pk:
                 user = get_user(pk) 
-                print('post object', post)
+                print('post object', post.image_url)
                 testsend_post_to_remoteInbox(post, user)
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
             else:
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
         else:
+            print('serializer eroorrs', serializer)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     else:
         # fetchRemotePosts()

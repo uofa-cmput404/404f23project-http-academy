@@ -28,7 +28,7 @@ export default function MakePost({ onClose }) {
 			content: body ? body : null,
 			visibility: visibility,
 			unlisted: false,
-			image_url: image_url
+			image_url: image_url ? image_url : null
 		};
 
 		console.log('post dataa', postSent);
@@ -75,18 +75,21 @@ export default function MakePost({ onClose }) {
 						<button className={visibility === "UNLISTED" ? "selected" : ""} onClick={() => setVisibility("UNLISTED")}>Unlisted</button>
 					</div>
 				</div>
-				<h2>Image URL</h2>
-				<input type="text" id="image_url" name="image_url" class="single-line-input" maxLength={50} />
-				{/* <h2>Title</h2>
-				<input type="text" id="title" name="title" class="single-line-input" maxLength={80} /> */}
+
+				<h2>Title</h2>
+				<input type="text" id="title" name="title" class="single-line-input" maxLength={80} />
+				
 				<h2>Body</h2>
 				<textarea id="body" name="body" rows="4" cols="50" class="single-line-input"></textarea>
 
+				<h2>Image URL</h2>
+				<input type="text" id="image_url" name="image_url" class="single-line-input" maxLength={500} />
+		
 
 				<br />
 				<div className="postfooter-container">
 					<input type="file" accept="image/*" onChange={handleImageUpload} />
-					<button onClick={() => addPost(document.getElementById("title").value, document.getElementById("body").value, document.getElementById("image_url"))}>Post</button>
+					<button onClick={() => addPost(document.getElementById("title").value, document.getElementById("body").value, document.getElementById("image_url").value)}>Post</button>
 				</div>
 
 

@@ -38,7 +38,7 @@ class Post(models.Model):
     visibility = models.CharField(max_length=100, default='PUBLIC')
     unlisted = models.BooleanField()
     url = models.URLField(max_length=500, editable=False, null=True)
-    image_url = models.URLField(max_length=500, editable=False, null=True)
+    image_url = models.URLField(max_length=500, null=True)
     # comments = models.URLField(max_length=500,editable=False,default=str(url) + '/comments')
 
     def save(self, *args, **kwargs):
