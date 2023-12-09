@@ -36,7 +36,7 @@ Authors:
 
 <br> 
 
-Generally everything is LICENSE'D under the MIT License.
+Generally everything is LICENSE'D under the Apache 2.0 License.
 
 <br></br>
 
