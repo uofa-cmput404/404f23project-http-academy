@@ -4,11 +4,11 @@
 **CMPUT 404 Project Name:** `SDIST`  
 
 ### Links
-[Public URI](https://chimp-chat-1e0cca1cc8ce.herokuapp.com/)  
-[API Documentation](https://cmput404-httpacademy15-6f9ce3a9597d.herokuapp.com/swagger)
-[Team Wiki](https://github.com/uofa-cmput404/404f23project-http-academy/wiki)
-[Video](https://youtu.be/lszR3KuJQAo)
-[Project requirements](https://github.com/uofa-cmput404/project-socialdistribution/blob/master/project.org) 
+[Public URI](https://chimp-chat-1e0cca1cc8ce.herokuapp.com/). 
+[API Documentation](https://cmput404-httpacademy15-6f9ce3a9597d.herokuapp.com/swagger).   
+[Team Wiki](https://github.com/uofa-cmput404/404f23project-http-academy/wiki).   
+[Video](https://youtu.be/lszR3KuJQAo).   
+[Project requirements](https://github.com/uofa-cmput404/project-socialdistribution/blob/master/project.org).  
 
 <br>
 
