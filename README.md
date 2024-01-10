@@ -3,6 +3,18 @@
 **Group Name:** `HTTP-Academy`  
 **CMPUT 404 Project Name:** `SDIST`  
 
+### Project Description
+The internet operates on interconnectedness and peer-to-peer interactions at its core. There isn't a compelling reason why everyone should be confined to using specific platforms like facebook.com, google+, or myspace. If these social networks offered an API, users could potentially link them together, choosing the network that best suits their preferences. This move could also grant users greater autonomy.
+
+Inspired by the ethos of diaspora (https://diasporafoundation.org/), our aim is to create a platform similar to diaspora but with a much simpler approach. This blogging and social networking platform will enable the importation of content from various sources (such as GitHub, Twitter, etc.) and facilitate the sharing and distribution of posts and other content.
+
+Users, even on different servers, will be able to aggregate posts from their friends onto their own server.
+
+Our platform will adopt an inbox model for sharing posts with friends. This concept resembles ActivityPub (https://www.w3.org/TR/activitypub/), but we aim for simplicity since ActivityPub's complexity exceeds the scope of our class project.
+
+Additionally, our focus won't heavily incorporate encryption or security features into this platform. We prioritize simplicity and a RESTful approach.
+
+
 ### Links
 [Public URI](https://chimp-chat-1e0cca1cc8ce.herokuapp.com/). 
 [API Documentation](https://cmput404-httpacademy15-6f9ce3a9597d.herokuapp.com/swagger).   
